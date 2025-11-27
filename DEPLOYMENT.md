@@ -44,13 +44,15 @@ git push -u origin main
 
 **Configuración Básica:**
 - **Name**: `carnaval-api`
-- **Root Directory**: `server`
+- **Root Directory**: `server` ⚠️ **MUY IMPORTANTE: Debe ser exactamente `server`**
 - **Environment**: `Node`
 - **Region**: `Frankfurt` (o el más cercano a España)
 - **Branch**: `main`
 - **Build Command**: `npm install`
 - **Start Command**: `npm start`
 - **Plan**: `Free`
+
+> ⚠️ **CRÍTICO**: Si ves el error "Missing script: start", verifica que el **Root Directory** esté configurado como `server` (sin `/` al inicio ni al final)
 
 ### 2.3 Variables de Entorno del Backend
 
@@ -69,7 +71,7 @@ JWT_EXPIRES_IN=24h
 
 1. Click en "Create Web Service"
 2. Espera 2-5 minutos mientras se despliega
-3. Copia la URL (ej: `https://carnaval-api.onrender.com`)
+3. Copia la URL (ej: `https://carnavalweb.onrender.com/`)
 
 ## Paso 3: Deploy del Frontend en Render
 
