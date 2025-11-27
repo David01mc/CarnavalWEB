@@ -1,0 +1,193 @@
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { body, validationResult } from 'express-validator';
+import { MongoClient, ObjectId } from 'mongodb';
+import dotenv from 'dotenv';
+import auth from '../middleware/auth.js';
+
+dotenv.config();
+
+const router = express.Router();
+
+// MongoDB connection
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri);
+
+let usersCollection;
+
+// Conectar a MongoDB
+async function connectDB() {
+    if (!usersCollection) {
+        await client.connect();
+        const dbName = process.env.DB_NAME || 'CarnavalRAG';
+        const db = client.db(dbName);
+        usersCollection = db.collection('users');
+    }
+}
+
+// @route   POST /api/auth/register
+// @desc    Registrar nuevo usuario
+// @access  Public (cambiar a Private si solo admins pueden crear usuarios)
+router.post(
+    '/register',
+    [
+        body('username', 'Username is required').notEmpty(),
+        body('email', 'Please include a valid email').isEmail(),
+        body('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { username, email, password, role } = req.body;
+
+        try {
+            await connectDB();
+
+            // Verificar si el usuario ya existe
+            let user = await usersCollection.findOne({ $or: [{ email }, { username }] });
+            if (user) {
+                return res.status(400).json({ msg: 'User already exists' });
+            }
+
+            // Crear hash de la contraseña
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+
+            // Crear nuevo usuario
+            const newUser = {
+                username,
+                email,
+                password: hashedPassword,
+                role: role || 'user', // Por defecto 'user', puede ser 'admin'
+                createdAt: new Date(),
+                lastLogin: null
+            };
+
+            const result = await usersCollection.insertOne(newUser);
+
+            // Crear payload para JWT
+            const payload = {
+                user: {
+                    id: result.insertedId.toString(),
+                    username: username,
+                    role: newUser.role
+                }
+            };
+
+            // Firmar token
+            jwt.sign(
+                payload,
+                process.env.JWT_SECRET,
+                { expiresIn: process.env.JWT_EXPIRES_IN || '24h' },
+                (err, token) => {
+                    if (err) throw err;
+                    res.json({ token, user: { id: result.insertedId, username, email, role: newUser.role } });
+                }
+            );
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).send('Server error');
+        }
+    }
+);
+
+// @route   POST /api/auth/login
+// @desc    Autenticar usuario y obtener token
+// @access  Public
+router.post(
+    '/login',
+    [
+        body('username', 'Username is required').notEmpty(),
+        body('password', 'Password is required').exists()
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { username, password } = req.body;
+
+        try {
+            await connectDB();
+
+            // Verificar si el usuario existe
+            const user = await usersCollection.findOne({ username });
+            if (!user) {
+                return res.status(400).json({ msg: 'Invalid credentials' });
+            }
+
+            // Verificar contraseña
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ msg: 'Invalid credentials' });
+            }
+
+            // Actualizar último login
+            await usersCollection.updateOne(
+                { _id: user._id },
+                { $set: { lastLogin: new Date() } }
+            );
+
+            // Crear payload para JWT
+            const payload = {
+                user: {
+                    id: user._id.toString(),
+                    username: user.username,
+                    role: user.role
+                }
+            };
+
+            // Firmar token
+            jwt.sign(
+                payload,
+                process.env.JWT_SECRET,
+                { expiresIn: process.env.JWT_EXPIRES_IN || '24h' },
+                (err, token) => {
+                    if (err) throw err;
+                    res.json({
+                        token,
+                        user: {
+                            id: user._id,
+                            username: user.username,
+                            email: user.email,
+                            role: user.role
+                        }
+                    });
+                }
+            );
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).send('Server error');
+        }
+    }
+);
+
+// @route   GET /api/auth/user
+// @desc    Obtener usuario autenticado
+// @access  Private
+router.get('/user', auth, async (req, res) => {
+    try {
+        await connectDB();
+
+        const user = await usersCollection.findOne(
+            { _id: new ObjectId(req.user.id) },
+            { projection: { password: 0 } } // No devolver la contraseña
+        );
+
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
+export default router;
