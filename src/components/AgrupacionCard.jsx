@@ -176,18 +176,6 @@ function AgrupacionCard({ agrupacion, onEdit, onDelete }) {
                     )}
                 </div>
 
-                {agrupacion.link && (
-                    <a
-                        href={agrupacion.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-secondary btn-small"
-                        style={{ marginBottom: '0.5rem', display: 'inline-flex', gap: '0.5rem', alignItems: 'center' }}
-                    >
-                        <i className="fas fa-link"></i> Ver en web
-                    </a>
-                )}
-
                 {user && (
                     <div className="card-actions">
                         <button className="btn btn-primary btn-small" onClick={onEdit}>
