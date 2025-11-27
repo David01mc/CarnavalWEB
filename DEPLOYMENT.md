@@ -48,7 +48,7 @@ git push -u origin main
 - **Environment**: `Node`
 - **Region**: `Frankfurt` (o el más cercano a España)
 - **Branch**: `main`
-- **Build Command**: `npm install`
+- **Build Command**: `npm install` (automáticamente instala dependencias del servidor)
 - **Start Command**: `npm start`
 - **Plan**: `Free`
 
