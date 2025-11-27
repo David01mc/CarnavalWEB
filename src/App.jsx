@@ -6,7 +6,7 @@ import DeleteConfirmModal from './components/DeleteConfirmModal';
 import Login from './components/Login';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
 const API_ENDPOINT = `${API_URL}/api/agrupaciones`;
 
 function AppContent() {
@@ -54,9 +54,17 @@ function AppContent() {
       const url = editingItem ? `${API_ENDPOINT}/${editingItem._id}` : API_ENDPOINT;
       const method = editingItem ? 'PUT' : 'POST';
 
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json'
+      };
+      if (token) {
+        headers['x-auth-token'] = token;
+      }
+
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(formData),
       });
 
@@ -73,8 +81,15 @@ function AppContent() {
   // Delete
   const handleDelete = async () => {
     try {
+      const token = localStorage.getItem('token');
+      const headers = {};
+      if (token) {
+        headers['x-auth-token'] = token;
+      }
+
       const response = await fetch(`${API_ENDPOINT}/${deleteItem._id}`, {
         method: 'DELETE',
+        headers,
       });
 
       if (!response.ok) throw new Error('Error al eliminar');
