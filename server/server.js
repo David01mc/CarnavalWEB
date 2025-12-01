@@ -73,6 +73,36 @@ app.get('/api/agrupaciones', async (req, res) => {
   }
 });
 
+// GET featured agrupación of the day (public)
+app.get('/api/agrupaciones/featured', async (req, res) => {
+  try {
+    // Get all agrupaciones
+    const agrupaciones = await db.collection('agrupaciones').find({}).toArray();
+
+    if (agrupaciones.length === 0) {
+      return res.status(404).json({ error: 'No agrupaciones found' });
+    }
+
+    // Calculate days since epoch (1970-01-01)
+    const now = new Date();
+    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const daysSinceEpoch = Math.floor(startOfDay.getTime() / (1000 * 60 * 60 * 24));
+
+    // Select index based on the day (deterministic)
+    const index = daysSinceEpoch % agrupaciones.length;
+
+    // Return the featured agrupación of the day
+    res.json({
+      agrupacion: agrupaciones[index],
+      date: startOfDay.toISOString().split('T')[0],
+      index: index,
+      total: agrupaciones.length
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET single entry by ID
 app.get('/api/agrupaciones/:id', async (req, res) => {
   try {
