@@ -54,15 +54,25 @@ app.use('/api/auth', authRoutes);
 // GET all entries (public)
 app.get('/api/agrupaciones', async (req, res) => {
   try {
-    const { search, category, year } = req.query;
+    const { title, author, category, year } = req.query;
     const query = {};
 
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { author: { $regex: search, $options: 'i' } }
-      ];
+    // Build query conditions
+    const conditions = [];
+
+    if (title) {
+      conditions.push({ name: { $regex: title, $options: 'i' } });
     }
+
+    if (author) {
+      conditions.push({ 'authors.name': { $regex: author, $options: 'i' } });
+    }
+
+    // Combine conditions with AND logic
+    if (conditions.length > 0) {
+      query.$and = conditions;
+    }
+
     if (category) query.category = category;
     if (year) query.year = year;
 

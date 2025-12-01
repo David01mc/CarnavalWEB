@@ -17,7 +17,8 @@ function AppContent() {
   const [agrupaciones, setAgrupaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [titleSearch, setTitleSearch] = useState('');
+  const [authorSearch, setAuthorSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [yearFilter, setYearFilter] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -31,7 +32,8 @@ function AppContent() {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (searchTerm) params.append('search', searchTerm);
+      if (titleSearch) params.append('title', titleSearch);
+      if (authorSearch) params.append('author', authorSearch);
       if (categoryFilter) params.append('category', categoryFilter);
       if (yearFilter) params.append('year', yearFilter);
 
@@ -50,7 +52,7 @@ function AppContent() {
 
   useEffect(() => {
     fetchAgrupaciones();
-  }, [searchTerm, categoryFilter, yearFilter]);
+  }, [titleSearch, authorSearch, categoryFilter, yearFilter]);
 
   // Create or Update
   const handleSave = async (formData) => {
@@ -139,12 +141,22 @@ function AppContent() {
 
               <div className="sidebar-content">
                 <div className="filter-section">
-                  <label><i className="fas fa-search"></i> Búsqueda</label>
+                  <label><i className="fas fa-heading"></i> Buscar por Título</label>
                   <input
                     type="text"
-                    placeholder="Buscar por nombre o autor..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Nombre de la agrupación..."
+                    value={titleSearch}
+                    onChange={(e) => setTitleSearch(e.target.value)}
+                  />
+                </div>
+
+                <div className="filter-section">
+                  <label><i className="fas fa-user"></i> Buscar por Autor</label>
+                  <input
+                    type="text"
+                    placeholder="Nombre del autor..."
+                    value={authorSearch}
+                    onChange={(e) => setAuthorSearch(e.target.value)}
                   />
                 </div>
 
