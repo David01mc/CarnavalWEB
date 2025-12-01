@@ -24,6 +24,7 @@ function AppContent() {
   const [editingItem, setEditingItem] = useState(null);
   const [deleteItem, setDeleteItem] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Fetch data
   const fetchAgrupaciones = async () => {
@@ -123,81 +124,107 @@ function AppContent() {
         <Home />
       ) : (
         <>
-          <header className="header">
-            <div>
-              <h1><i className="fas fa-theater-masks"></i> Gestión de Carnaval</h1>
-              <p>Sistema de administración de agrupaciones y letras</p>
-            </div>
-          </header>
+          <div className="collection-layout">
+            {/* Sidebar with filters */}
+            <aside className={`filters-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+              <div className="sidebar-header">
+                <h3><i className="fas fa-filter"></i> Filtros</h3>
+                <button
+                  className="toggle-sidebar-btn"
+                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                >
+                  <i className="fas fa-chevron-left"></i>
+                </button>
+              </div>
 
-          <div className="controls">
-            <div className="search-box">
-              <span className="search-icon"><i className="fas fa-search"></i></span>
-              <input
-                type="text"
-                placeholder="Buscar por nombre o autor..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+              <div className="sidebar-content">
+                <div className="filter-section">
+                  <label><i className="fas fa-search"></i> Búsqueda</label>
+                  <input
+                    type="text"
+                    placeholder="Buscar por nombre o autor..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
 
-            <div className="filter-group">
-              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-                <option value="">Todas las categorías</option>
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+                <div className="filter-section">
+                  <label><i className="fas fa-tag"></i> Categoría</label>
+                  <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+                    <option value="">Todas las categorías</option>
+                    {categories.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
 
-              <select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)}>
-                <option value="">Todos los años</option>
-                {years.map(year => (
-                  <option key={year} value={year}>{year}</option>
-                ))}
-              </select>
-            </div>
+                <div className="filter-section">
+                  <label><i className="fas fa-calendar"></i> Año</label>
+                  <select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)}>
+                    <option value="">Todos los años</option>
+                    {years.map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
+                </div>
 
-            {user && (
-              <button
-                className="btn btn-primary"
-                onClick={() => {
-                  setEditingItem(null);
-                  setShowForm(true);
-                }}
-              >
-                <i className="fas fa-plus"></i> Nueva Agrupación
-              </button>
-            )}
+                {user && (
+                  <div className="filter-section">
+                    <button
+                      className="btn btn-primary btn-block"
+                      onClick={() => {
+                        setEditingItem(null);
+                        setShowForm(true);
+                      }}
+                    >
+                      <i className="fas fa-plus"></i> Nueva Agrupación
+                    </button>
+                  </div>
+                )}
+              </div>
+            </aside>
+
+            {/* Main content area */}
+            <main className="collection-main">
+              {error && (
+                <div className="error-message">
+                  <i className="fas fa-exclamation-triangle"></i> {error}
+                </div>
+              )}
+
+              {loading ? (
+                <div className="loading"><i className="fas fa-spinner fa-spin"></i> Cargando...</div>
+              ) : agrupaciones.length === 0 ? (
+                <div className="empty-state">
+                  <div style={{ fontSize: '4rem' }}><i className="fas fa-theater-masks"></i></div>
+                  <h2>No hay agrupaciones</h2>
+                  <p>Comienza agregando una nueva agrupación</p>
+                </div>
+              ) : (
+                <div className="cards-grid">{agrupaciones.map(agrupacion => (
+                  <AgrupacionCard
+                    key={agrupacion._id}
+                    agrupacion={agrupacion}
+                    onEdit={() => {
+                      setEditingItem(agrupacion);
+                      setShowForm(true);
+                    }}
+                    onDelete={() => setDeleteItem(agrupacion)}
+                  />
+                ))}</div>
+              )}
+            </main>
           </div>
 
-          {error && (
-            <div className="error-message">
-              <i className="fas fa-exclamation-triangle"></i> {error}
-            </div>
-          )}
-
-          {loading ? (
-            <div className="loading"><i className="fas fa-spinner fa-spin"></i> Cargando...</div>
-          ) : agrupaciones.length === 0 ? (
-            <div className="empty-state">
-              <div style={{ fontSize: '4rem' }}><i className="fas fa-theater-masks"></i></div>
-              <h2>No hay agrupaciones</h2>
-              <p>Comienza agregando una nueva agrupación</p>
-            </div>
-          ) : (
-            <div className="cards-grid">
-              {agrupaciones.map(agrupacion => (
-                <AgrupacionCard
-                  key={agrupacion._id}
-                  agrupacion={agrupacion}
-                  onEdit={() => {
-                    setEditingItem(agrupacion);
-                    setShowForm(true);
-                  }}
-                  onDelete={() => setDeleteItem(agrupacion)}
-                />
-              ))}
-            </div>
+          {/* Floating button to show sidebar when collapsed */}
+          {sidebarCollapsed && (
+            <button
+              className="floating-sidebar-toggle"
+              onClick={() => setSidebarCollapsed(false)}
+              title="Mostrar filtros"
+            >
+              <i className="fas fa-chevron-right"></i>
+            </button>
           )}
 
           {showForm && (
