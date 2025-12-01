@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-function Navbar({ onNavigate, currentView }) {
+function Navbar({ onViewChange, onLoginClick, currentView }) {
     const { user, logout } = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -10,7 +10,7 @@ function Navbar({ onNavigate, currentView }) {
     };
 
     const handleNavigation = (view) => {
-        onNavigate(view);
+        onViewChange(view);
         setMenuOpen(false);
     };
 
@@ -80,7 +80,8 @@ function Navbar({ onNavigate, currentView }) {
                         <button
                             className="dropdown-item"
                             onClick={() => {
-                                handleNavigation('login');
+                                onLoginClick();
+                                setMenuOpen(false);
                             }}
                         >
                             <i className="fas fa-sign-in-alt"></i>

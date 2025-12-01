@@ -20,6 +20,7 @@
 @import './components/forms.css';
 @import './components/dropdown.css';
 @import './components/featured.css';
+@import './components/instagram.css';
 
 /* 6. Layouts */
 @import './layouts/collection.css';

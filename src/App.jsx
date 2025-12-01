@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import './styles/index.css';
 import AgrupacionCard from './components/AgrupacionCard';
 import AgrupacionForm from './components/AgrupacionForm';
@@ -11,6 +11,23 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
 const API_ENDPOINT = `${API_URL}/api/agrupaciones`;
 
+// Hook personalizado para debounce
+function useDebounce(value, delay) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 function AppContent() {
   const { user, logout, loading: authLoading } = useAuth();
   const [currentView, setCurrentView] = useState('home');
@@ -19,6 +36,10 @@ function AppContent() {
   const [error, setError] = useState(null);
   const [titleSearch, setTitleSearch] = useState('');
   const [authorSearch, setAuthorSearch] = useState('');
+
+  // Debounce search terms (wait 500ms after typing stops)
+  const debouncedTitle = useDebounce(titleSearch, 500);
+  const debouncedAuthor = useDebounce(authorSearch, 500);
   const [categoryFilter, setCategoryFilter] = useState('');
   const [yearFilter, setYearFilter] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -27,21 +48,54 @@ function AppContent() {
   const [showLogin, setShowLogin] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalItems, setTotalItems] = useState(0);
+
+  // Infinite Scroll Observer
+  const observer = useRef();
+  const lastAgrupacionElementRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(prevPage => prevPage + 1);
+      }
+    });
+
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore]);
+
   // Fetch data
-  const fetchAgrupaciones = async () => {
+  const fetchAgrupaciones = async (pageNum = 1, reset = false) => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (titleSearch) params.append('title', titleSearch);
-      if (authorSearch) params.append('author', authorSearch);
+      if (debouncedTitle) params.append('title', debouncedTitle);
+      if (debouncedAuthor) params.append('author', debouncedAuthor);
       if (categoryFilter) params.append('category', categoryFilter);
       if (yearFilter) params.append('year', yearFilter);
+
+      // Pagination params
+      params.append('page', pageNum);
+      params.append('limit', 12);
 
       const response = await fetch(`${API_ENDPOINT}?${params}`);
       if (!response.ok) throw new Error('Error al cargar los datos');
 
-      const data = await response.json();
-      setAgrupaciones(data);
+      const result = await response.json();
+
+      // Handle paginated response
+      if (reset) {
+        setAgrupaciones(result.data);
+      } else {
+        setAgrupaciones(prev => [...prev, ...result.data]);
+      }
+
+      setTotalItems(result.pagination.total);
+      setHasMore(result.pagination.page < result.pagination.pages);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -50,9 +104,18 @@ function AppContent() {
     }
   };
 
+  // Reset filters effect
   useEffect(() => {
-    fetchAgrupaciones();
-  }, [titleSearch, authorSearch, categoryFilter, yearFilter]);
+    setPage(1);
+    fetchAgrupaciones(1, true);
+  }, [debouncedTitle, debouncedAuthor, categoryFilter, yearFilter]);
+
+  // Load more effect (triggered by page change)
+  useEffect(() => {
+    if (page > 1) {
+      fetchAgrupaciones(page, false);
+    }
+  }, [page]);
 
   // Create or Update
   const handleSave = async (formData) => {
@@ -76,192 +139,232 @@ function AppContent() {
 
       if (!response.ok) throw new Error('Error al guardar');
 
-      await fetchAgrupaciones();
+      setPage(1);
+      await fetchAgrupaciones(1, true);
       setShowForm(false);
       setEditingItem(null);
     } catch (err) {
-      alert('Error: ' + err.message);
+      setError(err.message);
     }
   };
 
   // Delete
-  const handleDelete = async () => {
+  const handleDeleteClick = (item) => {
+    setDeleteItem(item);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteItem) return;
+
     try {
       const token = localStorage.getItem('token');
-      const headers = {};
-      if (token) {
-        headers['x-auth-token'] = token;
-      }
-
       const response = await fetch(`${API_ENDPOINT}/${deleteItem._id}`, {
         method: 'DELETE',
-        headers,
+        headers: {
+          'x-auth-token': token
+        }
       });
 
       if (!response.ok) throw new Error('Error al eliminar');
 
-      await fetchAgrupaciones();
+      setPage(1);
+      await fetchAgrupaciones(1, true);
       setDeleteItem(null);
     } catch (err) {
-      alert('Error: ' + err.message);
+      setError(err.message);
     }
   };
 
-  // Get unique categories and years
-  const categories = [...new Set(agrupaciones.map(a => a.category))].filter(Boolean);
-  const years = [...new Set(agrupaciones.map(a => a.year))].filter(Boolean).sort().reverse();
-
-  const handleNavigation = (view) => {
-    setCurrentView(view);
-    if (view === 'login') {
-      setShowLogin(true);
-    }
+  const handleEdit = (item) => {
+    setEditingItem(item);
+    setShowForm(true);
   };
+
+  if (authLoading) return <div className="loading">Cargando...</div>;
 
   return (
     <div className="app">
-      <Navbar onNavigate={handleNavigation} currentView={currentView} />
+      <Navbar
+        user={user}
+        onLogout={logout}
+        onLoginClick={() => setShowLogin(true)}
+        currentView={currentView}
+        onViewChange={setCurrentView}
+      />
+
+      {showLogin && (
+        <Login
+          onClose={() => setShowLogin(false)}
+          onLoginSuccess={() => setShowLogin(false)}
+        />
+      )}
 
       {currentView === 'home' ? (
-        <Home />
+        <Home onViewChange={setCurrentView} />
       ) : (
-        <>
-          <div className="collection-layout">
-            {/* Sidebar with filters */}
-            <aside className={`filters-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
-              <div className="sidebar-header">
-                <h3><i className="fas fa-filter"></i> Filtros</h3>
-                <button
-                  className="toggle-sidebar-btn"
-                  onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                >
-                  <i className="fas fa-chevron-left"></i>
-                </button>
-              </div>
-
-              <div className="sidebar-content">
-                <div className="filter-section">
-                  <label><i className="fas fa-heading"></i> Buscar por Título</label>
-                  <input
-                    type="text"
-                    placeholder="Nombre de la agrupación..."
-                    value={titleSearch}
-                    onChange={(e) => setTitleSearch(e.target.value)}
-                  />
-                </div>
-
-                <div className="filter-section">
-                  <label><i className="fas fa-user"></i> Buscar por Autor</label>
-                  <input
-                    type="text"
-                    placeholder="Nombre del autor..."
-                    value={authorSearch}
-                    onChange={(e) => setAuthorSearch(e.target.value)}
-                  />
-                </div>
-
-                <div className="filter-section">
-                  <label><i className="fas fa-tag"></i> Categoría</label>
-                  <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-                    <option value="">Todas las categorías</option>
-                    {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="filter-section">
-                  <label><i className="fas fa-calendar"></i> Año</label>
-                  <select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)}>
-                    <option value="">Todos los años</option>
-                    {years.map(year => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {user && (
-                  <div className="filter-section">
-                    <button
-                      className="btn btn-primary btn-block"
-                      onClick={() => {
-                        setEditingItem(null);
-                        setShowForm(true);
-                      }}
-                    >
-                      <i className="fas fa-plus"></i> Nueva Agrupación
-                    </button>
-                  </div>
-                )}
-              </div>
-            </aside>
-
-            {/* Main content area */}
-            <main className="collection-main">
-              {error && (
-                <div className="error-message">
-                  <i className="fas fa-exclamation-triangle"></i> {error}
-                </div>
-              )}
-
-              {loading ? (
-                <div className="loading"><i className="fas fa-spinner fa-spin"></i> Cargando...</div>
-              ) : agrupaciones.length === 0 ? (
-                <div className="empty-state">
-                  <div style={{ fontSize: '4rem' }}><i className="fas fa-theater-masks"></i></div>
-                  <h2>No hay agrupaciones</h2>
-                  <p>Comienza agregando una nueva agrupación</p>
-                </div>
-              ) : (
-                <div className="cards-grid">{agrupaciones.map(agrupacion => (
-                  <AgrupacionCard
-                    key={agrupacion._id}
-                    agrupacion={agrupacion}
-                    onEdit={() => {
-                      setEditingItem(agrupacion);
-                      setShowForm(true);
-                    }}
-                    onDelete={() => setDeleteItem(agrupacion)}
-                  />
-                ))}</div>
-              )}
-            </main>
-          </div>
-
-          {/* Floating button to show sidebar when collapsed */}
+        <div className="collection-layout">
+          {/* Floating Toggle Button (Visible when sidebar is collapsed) */}
           {sidebarCollapsed && (
             <button
               className="floating-sidebar-toggle"
               onClick={() => setSidebarCollapsed(false)}
               title="Mostrar filtros"
             >
-              <i className="fas fa-chevron-right"></i>
+              <i className="fas fa-filter"></i>
             </button>
           )}
 
-          {showForm && (
-            <AgrupacionForm
-              initialData={editingItem}
-              onSave={handleSave}
-              onCancel={() => {
-                setShowForm(false);
-                setEditingItem(null);
-              }}
-            />
-          )}
+          {/* Sidebar */}
+          <aside className={`filters-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+            <div className="sidebar-header">
+              <h3><i className="fas fa-filter"></i> Filtros</h3>
+              <button
+                className="toggle-sidebar-btn"
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                title={sidebarCollapsed ? "Expandir" : "Colapsar"}
+              >
+                <i className={`fas fa-chevron-${sidebarCollapsed ? 'right' : 'left'}`}></i>
+              </button>
+            </div>
 
-          {deleteItem && (
-            <DeleteConfirmModal
-              item={deleteItem}
-              onConfirm={handleDelete}
-              onCancel={() => setDeleteItem(null)}
-            />
-          )}
-        </>
+            <div className="sidebar-content">
+              <div className="filter-section">
+                <label><i className="fas fa-heading"></i> Buscar por Título</label>
+                <input
+                  type="text"
+                  placeholder="Nombre de la agrupación..."
+                  value={titleSearch}
+                  onChange={(e) => setTitleSearch(e.target.value)}
+                />
+              </div>
+
+              <div className="filter-section">
+                <label><i className="fas fa-user"></i> Buscar por Autor</label>
+                <input
+                  type="text"
+                  placeholder="Nombre del autor..."
+                  value={authorSearch}
+                  onChange={(e) => setAuthorSearch(e.target.value)}
+                />
+              </div>
+
+              <div className="filter-section">
+                <label><i className="fas fa-tag"></i> Categoría</label>
+                <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+                  <option value="">Todas</option>
+                  <option value="Comparsa">Comparsa</option>
+                  <option value="Chirigota">Chirigota</option>
+                  <option value="Coro">Coro</option>
+                  <option value="Cuarteto">Cuarteto</option>
+                </select>
+              </div>
+
+              <div className="filter-section">
+                <label><i className="fas fa-calendar"></i> Año</label>
+                <select value={yearFilter} onChange={(e) => setYearFilter(e.target.value)}>
+                  <option value="">Todos</option>
+                  {Array.from({ length: 30 }, (_, i) => 2025 - i).map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+
+              {user && (
+                <button className="btn btn-primary btn-block" onClick={() => {
+                  setEditingItem(null);
+                  setShowForm(true);
+                }}>
+                  <i className="fas fa-plus"></i> Nueva Agrupación
+                </button>
+              )}
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="collection-main">
+            {error && <div className="error-message">{error}</div>}
+
+            {loading && agrupaciones.length === 0 ? (
+              <div className="loading"><i className="fas fa-spinner fa-spin"></i> Cargando...</div>
+            ) : (
+              <>
+                {agrupaciones.length === 0 && !loading && (
+                  <div className="empty-state">
+                    <div style={{ fontSize: '4rem' }}><i className="fas fa-theater-masks"></i></div>
+                    <h2>No hay agrupaciones</h2>
+                    <p>Comienza agregando una nueva agrupación</p>
+                  </div>
+                )}
+
+                {/* Cards Grid */}
+                <div className="cards-grid">
+                  {agrupaciones.map((item, index) => {
+                    if (agrupaciones.length === index + 1) {
+                      return (
+                        <div ref={lastAgrupacionElementRef} key={item._id}>
+                          <AgrupacionCard
+                            agrupacion={item}
+                            onEdit={() => {
+                              setEditingItem(item);
+                              setShowForm(true);
+                            }}
+                            onDelete={() => setDeleteItem(item)}
+                            isAuthenticated={!!user}
+                          />
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <AgrupacionCard
+                          key={item._id}
+                          agrupacion={item}
+                          onEdit={() => {
+                            setEditingItem(item);
+                            setShowForm(true);
+                          }}
+                          onDelete={() => setDeleteItem(item)}
+                          isAuthenticated={!!user}
+                        />
+                      );
+                    }
+                  })}
+                </div>
+
+                {/* Loading Indicator for Infinite Scroll */}
+                {loading && agrupaciones.length > 0 && (
+                  <div style={{ textAlign: 'center', margin: '2rem 0', width: '100%' }}>
+                    <i className="fas fa-spinner fa-spin fa-2x" style={{ color: 'var(--primary-color)' }}></i>
+                  </div>
+                )}
+
+                {!hasMore && agrupaciones.length > 0 && (
+                  <div style={{ textAlign: 'center', margin: '2rem 0', opacity: 0.5 }}>
+                    <p>Has llegado al final</p>
+                  </div>
+                )}
+              </>
+            )}
+          </main>
+        </div>
       )}
 
-      {showLogin && (
-        <Login onClose={() => setShowLogin(false)} />
+      {showForm && (
+        <AgrupacionForm
+          item={editingItem}
+          onSave={handleSave}
+          onCancel={() => {
+            setShowForm(false);
+            setEditingItem(null);
+          }}
+        />
+      )}
+
+      {deleteItem && (
+        <DeleteConfirmModal
+          item={deleteItem}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeleteItem(null)}
+        />
       )}
     </div>
   );

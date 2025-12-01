@@ -42,6 +42,13 @@ async function connectDB() {
     await client.connect();
     db = client.db(process.env.DB_NAME || 'CarnavalRAG');
     console.log('✅ Connected to MongoDB');
+
+    // Create indexes for performance
+    await db.collection('agrupaciones').createIndex({ name: 1 });
+    await db.collection('agrupaciones').createIndex({ 'authors.name': 1 });
+    await db.collection('agrupaciones').createIndex({ category: 1 });
+    await db.collection('agrupaciones').createIndex({ year: 1 });
+    console.log('⚡ Indexes created/verified');
   } catch (error) {
     console.error('❌ MongoDB connection error:', error);
     process.exit(1);
@@ -76,8 +83,27 @@ app.get('/api/agrupaciones', async (req, res) => {
     if (category) query.category = category;
     if (year) query.year = year;
 
-    const agrupaciones = await db.collection('agrupaciones').find(query).toArray();
-    res.json(agrupaciones);
+    // Pagination
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const skip = (page - 1) * limit;
+
+    const total = await db.collection('agrupaciones').countDocuments(query);
+    const agrupaciones = await db.collection('agrupaciones')
+      .find(query)
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+
+    res.json({
+      data: agrupaciones,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -86,27 +112,37 @@ app.get('/api/agrupaciones', async (req, res) => {
 // GET featured agrupación of the day (public)
 app.get('/api/agrupaciones/featured', async (req, res) => {
   try {
-    // Get all agrupaciones
-    const agrupaciones = await db.collection('agrupaciones').find({}).toArray();
+    // 1. Get total count (FAST)
+    const count = await db.collection('agrupaciones').countDocuments();
 
-    if (agrupaciones.length === 0) {
+    if (count === 0) {
       return res.status(404).json({ error: 'No agrupaciones found' });
     }
 
-    // Calculate days since epoch (1970-01-01)
+    // 2. Calculate index based on the day (deterministic)
     const now = new Date();
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const daysSinceEpoch = Math.floor(startOfDay.getTime() / (1000 * 60 * 60 * 24));
 
-    // Select index based on the day (deterministic)
-    const index = daysSinceEpoch % agrupaciones.length;
+    const index = daysSinceEpoch % count;
+
+    // 3. Fetch ONLY the specific document (FAST)
+    const agrupaciones = await db.collection('agrupaciones')
+      .find({})
+      .skip(index)
+      .limit(1)
+      .toArray();
+
+    if (agrupaciones.length === 0) {
+      return res.status(404).json({ error: 'Agrupación not found' });
+    }
 
     // Return the featured agrupación of the day
     res.json({
-      agrupacion: agrupaciones[index],
+      agrupacion: agrupaciones[0],
       date: startOfDay.toISOString().split('T')[0],
       index: index,
-      total: agrupaciones.length
+      total: count
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

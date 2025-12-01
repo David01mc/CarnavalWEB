@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import FeaturedAgrupacion from './FeaturedAgrupacion';
+import InstagramFeed from './InstagramFeed';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
 const API_ENDPOINT = `${API_URL}/api/agrupaciones`;
@@ -80,6 +81,9 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* Instagram Feed Section */}
+      <InstagramFeed />
     </div>
   );
 }
