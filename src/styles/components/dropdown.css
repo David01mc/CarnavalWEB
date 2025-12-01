@@ -1,0 +1,119 @@
+/* Dropdown Component Styles */
+
+.dropdown-menu {
+  position: fixed;
+  top: 0;
+  right: -350px;
+  width: 350px;
+  height: 100vh;
+  background: var(--surface);
+  box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-menu.open {
+  right: 0;
+}
+
+.dropdown-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--border);
+}
+
+.dropdown-header h3 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.close-dropdown {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-dropdown:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg);
+}
+
+.dropdown-content {
+  padding: 1rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.dropdown-item i {
+  font-size: 1.2rem;
+  width: 24px;
+  color: var(--primary-light);
+}
+
+.dropdown-item:hover {
+  background: var(--surface-light);
+  transform: translateX(5px);
+}
+
+.dropdown-item.active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+}
+
+.dropdown-divider {
+  height: 2px;
+  background: var(--border);
+  margin: 1rem 0;
+}
+
+.logout-item {
+  color: var(--error);
+}
+
+.logout-item i {
+  color: var(--error);
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}

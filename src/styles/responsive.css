@@ -1,0 +1,140 @@
+/* Responsive Styles - Media Queries */
+
+@media (max-width: 768px) {
+  .app {
+    padding: 1rem;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .navbar-brand i {
+    font-size: 1.5rem;
+  }
+
+  .user-info-nav {
+    display: none;
+  }
+
+  .dropdown-menu {
+    width: 280px;
+    right: -280px;
+  }
+
+  .home-container {
+    padding: 0 1rem 1rem;
+  }
+
+  .hero-section {
+    padding: 2rem 1.5rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-text {
+    font-size: 1rem;
+  }
+
+  .section-header h2 {
+    font-size: 2rem;
+  }
+
+  .featured-card-container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 968px) {
+  .featured-image-large {
+    height: 400px;
+  }
+
+  .featured-title-large {
+    font-size: 2rem;
+  }
+
+  .featured-badge-large {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .author-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .expand-btn {
+    align-self: flex-end;
+  }
+
+  .author-image-large {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+@media (max-width: 768px) {
+  .lyric-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 968px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filters-sidebar {
+    position: fixed;
+    left: 0;
+    top: 80px;
+    z-index: 200;
+    box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .filters-sidebar.collapsed {
+    left: -300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .collection-main {
+    padding: 1rem;
+  }
+}

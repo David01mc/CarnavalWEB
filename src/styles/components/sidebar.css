@@ -1,0 +1,191 @@
+/* Sidebar Component Styles */
+
+.collection-layout {
+  display: flex;
+  gap: 0;
+  min-height: calc(100vh - 80px);
+}
+
+/* Filters Sidebar */
+.filters-sidebar {
+  width: 300px;
+  background: var(--surface);
+  border-right: 2px solid var(--border);
+  transition: all 0.3s ease;
+  position: sticky;
+  top: 80px;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.filters-sidebar.collapsed {
+  width: 0;
+  border-right: none;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toggle-sidebar-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.toggle-sidebar-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
+}
+
+.filters-sidebar.collapsed .toggle-sidebar-btn i {
+  transform: rotate(180deg);
+}
+
+.sidebar-content {
+  padding: 1.5rem;
+}
+
+.filter-section {
+  margin-bottom: 1.5rem;
+}
+
+.filter-section label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-section label i {
+  color: var(--primary-light);
+  width: 20px;
+}
+
+.filter-section input,
+.filter-section select {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--background);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.filter-section input:focus,
+.filter-section select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+}
+
+.btn-block {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Collection Main Content */
+.collection-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* Responsive adjustments for sidebar */
+@media (max-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 968px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filters-sidebar {
+    position: fixed;
+    left: 0;
+    top: 80px;
+    z-index: 200;
+    box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .filters-sidebar.collapsed {
+    left: -300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .collection-main {
+    padding: 1rem;
+  }
+}
+
+/* Floating Sidebar Toggle Button */
+.floating-sidebar-toggle {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border: none;
+  border-radius: 0 50% 50% 0;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  box-shadow: 2px 0 15px rgba(233, 30, 99, 0.4);
+  transition: all 0.3s ease;
+}
+
+.floating-sidebar-toggle:hover {
+  width: 60px;
+  box-shadow: 3px 0 20px rgba(233, 30, 99, 0.6);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+}
+
+.floating-sidebar-toggle i {
+  animation: pulse-horizontal 2s ease-in-out infinite;
+}

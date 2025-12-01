@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './index.css';
+import './styles/index.css';
 import AgrupacionCard from './components/AgrupacionCard';
 import AgrupacionForm from './components/AgrupacionForm';
 import DeleteConfirmModal from './components/DeleteConfirmModal';

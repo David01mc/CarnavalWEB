@@ -1,0 +1,29 @@
+/* Main CSS Entry Point - Imports all modular stylesheets */
+
+/* 1. Variables - Must load first */
+@import './variables.css';
+
+/* 2. Base - Reset and global styles */
+@import './base.css';
+
+/* 3. Utilities - Reusable classes */
+@import './utilities.css';
+
+/* 4. Animations */
+@import './animations.css';
+
+/* 5. Components */
+@import './components/navbar.css';
+@import './components/sidebar.css';
+@import './components/cards.css';
+@import './components/modals.css';
+@import './components/forms.css';
+@import './components/dropdown.css';
+@import './components/featured.css';
+
+/* 6. Layouts */
+@import './layouts/collection.css';
+@import './layouts/home.css';
+
+/* 7. Responsive - Must load last */
+@import './responsive.css';

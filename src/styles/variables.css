@@ -1,0 +1,26 @@
+/* CSS Variables - Design Tokens */
+:root {
+    /* Primary Colors */
+    --primary: #e91e63;
+    --primary-dark: #c2185b;
+    --primary-light: #f8bbd0;
+
+    /* Secondary Colors */
+    --secondary: #673ab7;
+    --secondary-dark: #512da8;
+
+    /* Background Colors */
+    --background: #0a0a0a;
+    --surface: #1a1a1a;
+    --surface-light: #2a2a2a;
+
+    /* Text Colors */
+    --text: #ffffff;
+    --text-secondary: #b0b0b0;
+
+    /* UI Colors */
+    --border: #333;
+    --success: #4caf50;
+    --error: #f44336;
+    --warning: #ff9800;
+}
