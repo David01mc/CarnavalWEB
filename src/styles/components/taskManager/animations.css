@@ -1,0 +1,89 @@
+/* ============================================
+   ANIMATIONS & RESPONSIVE DESIGN
+   ============================================ */
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablets and smaller laptops - 3 columns */
+@media (max-width: 1400px) and (min-width: 1025px) {
+    .kanban-board {
+        grid-template-columns: repeat(3, minmax(280px, 1fr));
+    }
+}
+
+/* Tablets - 2 columns */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .kanban-board {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile - 1 column */
+@media (max-width: 768px) {
+    .task-manager {
+        padding: 1rem;
+    }
+
+    .task-manager-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .header-left h1 {
+        font-size: 2rem;
+    }
+
+    .kanban-board {
+        grid-template-columns: 1fr;
+    }
+
+    .task-filters {
+        flex-direction: column;
+    }
+
+    .filter-item {
+        min-width: 100%;
+    }
+
+    .column-content {
+        max-height: 500px;
+    }
+}

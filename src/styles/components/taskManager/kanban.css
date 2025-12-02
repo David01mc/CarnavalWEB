@@ -1,0 +1,201 @@
+/* ============================================
+   KANBAN BOARD - Layout, Columns & Filters
+   ============================================ */
+
+/* Main Container */
+.task-manager {
+    max-width: 95%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 3rem;
+    color: var(--text-color);
+}
+
+/* Header */
+.task-manager-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.header-left h1 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-left h1 i {
+    -webkit-text-fill-color: #667eea;
+}
+
+.header-left p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Filters */
+.task-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.filter-item {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    padding: 0 1rem;
+    transition: all 0.3s ease;
+}
+
+.filter-item:focus-within {
+    border-color: var(--admin-purple);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.filter-item i {
+    color: var(--admin-purple);
+    margin-right: 0.75rem;
+}
+
+.filter-item input,
+.filter-item select {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    padding: 1rem 0;
+    font-size: 1rem;
+}
+
+.filter-item input:focus,
+.filter-item select:focus {
+    outline: none;
+}
+
+.filter-item select {
+    cursor: pointer;
+}
+
+/* Kanban Board Grid */
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    height: calc(100vh - 250px);
+    /* Fixed height to enable column scrolling */
+}
+
+/* Kanban Column */
+.kanban-column {
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Take full height of grid cell */
+}
+
+.kanban-column:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.column-header {
+    padding: 1.5rem;
+    border-bottom: 2px solid;
+    background: rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+    /* Prevent header from shrinking */
+}
+
+.column-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.column-title i {
+    font-size: 1.3rem;
+}
+
+.column-title h3 {
+    flex: 1;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.task-count {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.column-content {
+    padding: 1rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    /* Take remaining space */
+}
+
+/* Custom Scrollbar */
+.column-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.column-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.column-content::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.3);
+    border-radius: 10px;
+}
+
+.column-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.5);
+}
+
+/* Empty Column State */
+.empty-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+.empty-column i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}

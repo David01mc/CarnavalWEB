@@ -1,0 +1,231 @@
+/* ============================================
+   TASK MODAL - Dialog, Form & Sticky Elements
+   ============================================ */
+
+.task-modal {
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Sticky Header */
+.task-modal .modal-header {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    z-index: 100;
+    padding: 1.5rem 2rem;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    margin: 0;
+}
+
+.task-modal .close-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-secondary);
+    z-index: 10;
+}
+
+.task-modal .close-button:hover {
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff4444;
+    transform: rotate(90deg) scale(1.1);
+}
+
+.task-modal .close-button:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+/* Modal Body - Scrollable Content */
+.task-modal .modal-body {
+    padding: 2rem;
+}
+
+/* Tag Input */
+.tag-input-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tag-input-container input {
+    flex: 1;
+}
+
+.add-tag-btn {
+    background: var(--admin-purple);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-tag-btn:hover {
+    background: var(--admin-purple-light);
+    transform: scale(1.05);
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.tag-chip {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    color: var(--admin-purple-light);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.tag-chip button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.tag-chip button:hover {
+    transform: scale(1.2);
+}
+
+/* Subtasks List in Modal */
+.subtasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.subtask-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.subtask-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.subtask-text {
+    flex: 1;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.remove-subtask-btn {
+    background: rgba(255, 0, 0, 0.1);
+    border: none;
+    color: #ff4444;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.remove-subtask-btn:hover {
+    background: rgba(255, 0, 0, 0.2);
+    transform: scale(1.1);
+}
+
+/* Sticky Footer - Action Buttons */
+.modal-actions-separated {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, #1a1a2e 20%);
+    backdrop-filter: blur(10px);
+    border-top: 2px solid rgba(102, 126, 234, 0.2);
+    z-index: 100;
+}
+
+.modal-actions-separated .btn {
+    flex: 1;
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.modal-actions-separated .btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-actions-separated .btn-primary {
+    background: var(--admin-primary-gradient);
+    border: none;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* Select Dropdowns */
+.task-modal select {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.task-modal select:hover {
+    border-color: rgba(102, 126, 234, 0.5);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.task-modal select:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.task-modal select option {
+    background: #1a1a2e;
+    color: var(--text-color);
+    padding: 0.75rem;
+}

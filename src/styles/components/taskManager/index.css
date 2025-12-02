@@ -1,0 +1,9 @@
+/* ============================================
+   TASK MANAGER - Main Entry Point
+   Imports all modular CSS files
+   ============================================ */
+
+@import './kanban.css';
+@import './task-card.css';
+@import './task-modal.css';
+@import './animations.css';

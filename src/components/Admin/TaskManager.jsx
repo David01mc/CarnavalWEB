@@ -18,7 +18,7 @@ import {
 import TaskColumn from './TaskColumn';
 import TaskCard from './TaskCard';
 import TaskModal from './TaskModal';
-import '../../styles/components/taskManager.css';
+import '../../styles/components/taskManager/index.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
 
@@ -97,13 +97,32 @@ const TaskManager = () => {
         }
 
         const activeTask = tasks.find(t => t._id === active.id);
-        const overColumn = over.id;
+        const overTask = tasks.find(t => t._id === over.id);
 
-        // If dropped on a column
-        if (COLUMNS.find(col => col.id === overColumn)) {
-            if (activeTask.status !== overColumn) {
-                // Move to different column
-                await moveTask(active.id, overColumn);
+        // Case 1: Dropped over another task (reorder within column or move between columns)
+        if (overTask) {
+            const activeIndex = tasks.findIndex(t => t._id === active.id);
+            const overIndex = tasks.findIndex(t => t._id === over.id);
+
+            // Same column reordering
+            if (activeTask.status === overTask.status) {
+                if (activeIndex !== overIndex) {
+                    // Reorder tasks locally
+                    const reorderedTasks = arrayMove(tasks, activeIndex, overIndex);
+                    setTasks(reorderedTasks);
+
+                    // Update order on backend
+                    await updateTaskOrder(reorderedTasks.filter(t => t.status === activeTask.status));
+                }
+            } else {
+                // Moving to different column
+                await moveTask(active.id, overTask.status);
+            }
+        }
+        // Case 2: Dropped on empty column area
+        else if (COLUMNS.find(col => col.id === over.id)) {
+            if (activeTask.status !== over.id) {
+                await moveTask(active.id, over.id);
             }
         }
 
@@ -134,6 +153,36 @@ const TaskManager = () => {
         } catch (err) {
             console.error('Error moving task:', err);
             setError(err.message);
+        }
+    };
+
+    // Update task order within a column
+    const updateTaskOrder = async (columnTasks) => {
+        try {
+            const token = localStorage.getItem('token');
+
+            // Create batch update with new order values
+            const tasksWithOrder = columnTasks.map((task, index) => ({
+                id: task._id,
+                status: task.status,
+                order: index
+            }));
+
+            const response = await fetch(`${API_URL}/api/tasks/reorder`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-auth-token': token,
+                },
+                body: JSON.stringify({ tasks: tasksWithOrder }),
+            });
+
+            if (!response.ok) throw new Error('Error al reordenar tareas');
+        } catch (err) {
+            console.error('Error reordering tasks:', err);
+            setError(err.message);
+            // Refetch to restore correct order
+            await fetchTasks();
         }
     };
 
