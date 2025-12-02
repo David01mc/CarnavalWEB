@@ -10,6 +10,7 @@ import ForumList from './components/Forum/ForumList';
 import ForumTopic from './components/Forum/ForumTopic';
 import Profile from './components/Profile';
 import AdminAgrupaciones from './components/Admin/AdminAgrupaciones';
+import TaskManager from './components/Admin/TaskManager';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -220,6 +221,8 @@ function AppContent() {
         )
       ) : currentView === 'profile' ? (
         <Profile />
+      ) : currentView === 'task-manager' ? (
+        <TaskManager />
       ) : currentView === 'admin-agrupaciones' ? (
         <AdminAgrupaciones />
       ) : (

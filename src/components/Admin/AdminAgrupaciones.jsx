@@ -7,23 +7,22 @@ const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replac
 const AdminAgrupaciones = () => {
     // Force update
     const { user } = useAuth();
-    const [activeTab, setActiveTab] = useState('create');
     const [message, setMessage] = useState({ type: '', text: '' });
 
     // Form State
     const initialFormState = {
         name: '',
-        author: '', // We'll convert this to authors array on submit
+        author: '',
         year: new Date().getFullYear(),
         category: 'Comparsa Adultos',
         city: 'Cádiz',
         callejera: 'No',
         descripcion: '',
-        tipo: '' // Costume description
+        tipo: ''
     };
     const [formData, setFormData] = useState(initialFormState);
 
-    // Edit Mode State
+    // Search/Edit State
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [editingId, setEditingId] = useState(null);
@@ -48,10 +47,9 @@ const AdminAgrupaciones = () => {
 
             const method = editingId ? 'PUT' : 'POST';
 
-            // Format data for backend
             const payload = {
                 ...formData,
-                authors: [{ name: formData.author, role: 'Autor' }] // Simple author handling for now
+                authors: [{ name: formData.author, role: 'Autor' }]
             };
 
             const response = await fetch(url, {
@@ -107,6 +105,13 @@ const AdminAgrupaciones = () => {
         });
         setSearchResults([]);
         setSearchQuery('');
+        window.scrollTo({ top: document.querySelector('.admin-form').offsetTop - 100, behavior: 'smooth' });
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setFormData(initialFormState);
+        setMessage({ type: '', text: '' });
     };
 
     if (!user || user.role !== 'admin') {
@@ -117,30 +122,7 @@ const AdminAgrupaciones = () => {
         <div className="admin-container animate-fade-in">
             <div className="admin-header">
                 <h1><i className="fas fa-crown"></i> Gestión de Agrupaciones</h1>
-                <p>Añade o edita las agrupaciones del Carnaval</p>
-            </div>
-
-            <div className="admin-tabs">
-                <button
-                    className={`tab-btn ${activeTab === 'create' ? 'active' : ''}`}
-                    onClick={() => {
-                        setActiveTab('create');
-                        setEditingId(null);
-                        setFormData(initialFormState);
-                        setMessage({ type: '', text: '' });
-                    }}
-                >
-                    <i className="fas fa-plus-circle"></i> Crear Nueva
-                </button>
-                <button
-                    className={`tab-btn ${activeTab === 'edit' ? 'active' : ''}`}
-                    onClick={() => {
-                        setActiveTab('edit');
-                        setMessage({ type: '', text: '' });
-                    }}
-                >
-                    <i className="fas fa-edit"></i> Editar Existente
-                </button>
+                <p>Busca para editar o rellena el formulario para crear una nueva</p>
             </div>
 
             <div className="admin-content">
@@ -150,20 +132,22 @@ const AdminAgrupaciones = () => {
                     </div>
                 )}
 
-                {activeTab === 'edit' && !editingId && (
-                    <div className="search-section">
-                        <div className="search-box">
-                            <i className="fas fa-search"></i>
-                            <input
-                                type="text"
-                                placeholder="Buscar agrupación para editar..."
-                                value={searchQuery}
-                                onChange={(e) => {
-                                    setSearchQuery(e.target.value);
-                                    searchAgrupaciones(e.target.value);
-                                }}
-                            />
-                        </div>
+                {/* Search Section - Always Visible */}
+                <div className="search-section">
+                    <h3><i className="fas fa-search"></i> Buscar para Editar</h3>
+                    <div className="search-box">
+                        <i className="fas fa-search"></i>
+                        <input
+                            type="text"
+                            placeholder="Escribe el nombre de la agrupación..."
+                            value={searchQuery}
+                            onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                                searchAgrupaciones(e.target.value);
+                            }}
+                        />
+                    </div>
+                    {searchResults.length > 0 && (
                         <div className="search-results">
                             {searchResults.map(result => (
                                 <div
@@ -181,10 +165,21 @@ const AdminAgrupaciones = () => {
                                 </div>
                             ))}
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
 
-                {(activeTab === 'create' || editingId) && (
+                <hr className="admin-divider" />
+
+                {/* Form Section - Always Visible */}
+                <div className="form-section">
+                    <h3>
+                        {editingId ? (
+                            <span><i className="fas fa-edit"></i> Editando: {formData.name}</span>
+                        ) : (
+                            <span><i className="fas fa-plus-circle"></i> Crear Nueva Agrupación</span>
+                        )}
+                    </h3>
+
                     <form onSubmit={handleSubmit} className="admin-form">
                         <div className="form-row">
                             <div className="form-group">
@@ -288,11 +283,7 @@ const AdminAgrupaciones = () => {
                                 <button
                                     type="button"
                                     className="btn btn-secondary"
-                                    onClick={() => {
-                                        setEditingId(null);
-                                        setActiveTab('edit');
-                                        setMessage({ type: '', text: '' });
-                                    }}
+                                    onClick={handleCancelEdit}
                                 >
                                     Cancelar Edición
                                 </button>
@@ -302,7 +293,7 @@ const AdminAgrupaciones = () => {
                             </button>
                         </div>
                     </form>
-                )}
+                </div>
             </div>
         </div>
     );

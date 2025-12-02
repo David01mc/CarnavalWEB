@@ -1,0 +1,703 @@
+/* ============================================
+   TASK MANAGER - KANBAN BOARD STYLES
+   ============================================ */
+
+/* Main Container */
+.task-manager {
+    max-width: 95%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem 3rem;
+    color: var(--text-color);
+}
+
+/* Header */
+.task-manager-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.header-left h1 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-left h1 i {
+    -webkit-text-fill-color: #667eea;
+}
+
+.header-left p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Filters */
+.task-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.filter-item {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    border-radius: 12px;
+    padding: 0 1rem;
+    transition: all 0.3s ease;
+}
+
+.filter-item:focus-within {
+    border-color: var(--admin-purple);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.filter-item i {
+    color: var(--admin-purple);
+    margin-right: 0.75rem;
+}
+
+.filter-item input,
+.filter-item select {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    padding: 1rem 0;
+    font-size: 1rem;
+}
+
+.filter-item input:focus,
+.filter-item select:focus {
+    outline: none;
+}
+
+.filter-item select {
+    cursor: pointer;
+}
+
+/* ============================================
+   KANBAN BOARD
+   ============================================ */
+.kanban-board {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Kanban Column */
+.kanban-column {
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease-out;
+    transition: all 0.3s ease;
+}
+
+.kanban-column:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.column-header {
+    padding: 1.5rem;
+    border-bottom: 2px solid;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.column-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.column-title i {
+    font-size: 1.3rem;
+}
+
+.column-title h3 {
+    flex: 1;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.task-count {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.column-content {
+    padding: 1rem;
+    min-height: 400px;
+    max-height: calc(100vh - 400px);
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar */
+.column-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.column-content::- webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.column-content::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.3);
+    border-radius: 10px;
+}
+
+.column-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.5);
+}
+
+/* Empty Column State */
+.empty-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+.empty-column i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+/* ============================================
+   TASK CARD
+   ============================================ */
+.task-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    cursor: grab;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.task-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border-color: rgba(102, 126, 234, 0.4);
+}
+
+.task-card:active {
+    cursor: grabbing;
+}
+
+.task-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.task-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.priority-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.priority-badge i {
+    font-size: 0.75rem;
+}
+
+.task-delete-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+}
+
+.task-delete-btn:hover {
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff4444;
+    transform: scale(1.1);
+}
+
+.task-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+    line-height: 1.4;
+}
+
+.task-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0 0 0.75rem 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Task Tags */
+.task-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.task-tag {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    color: var(--admin-purple-light);
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+/* Task Footer */
+.task-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.task-due-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.task-due-date.urgent {
+    color: #f7b733;
+}
+
+.task-due-date.overdue {
+    color: #fc4a1a;
+    font-weight: 600;
+}
+
+.task-due-date.overdue i.fa-exclamation-triangle {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.task-creator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.creator-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.creator-name {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* ============================================
+   TASK MODAL
+   ============================================ */
+.task-modal {
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.task-modal .modal-header {
+    position: relative;
+}
+
+.task-modal .close-button {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-secondary);
+    z-index: 10;
+}
+
+.task-modal .close-button:hover {
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff4444;
+    transform: rotate(90deg) scale(1.1);
+}
+
+.task-modal .close-button:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
+.task-modal .modal-body {
+    padding: 2rem;
+}
+
+.tag-input-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tag-input-container input {
+    flex: 1;
+}
+
+.add-tag-btn {
+    background: var(--admin-purple);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-tag-btn:hover {
+    background: var(--admin-purple-light);
+    transform: scale(1.05);
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.tag-chip {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    color: var(--admin-purple-light);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+.tag-chip button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.tag-chip button:hover {
+    transform: scale(1.2);
+}
+
+/* Subtasks List Styles */
+.subtasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.subtask-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(102, 126, 234, 0.2);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.subtask-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.subtask-text {
+    flex: 1;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.remove-subtask-btn {
+    background: rgba(255, 0, 0, 0.1);
+    border: none;
+    color: #ff4444;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+. remove-subtask-btn:hover {
+    background: rgba(255, 0, 0, 0.2);
+    transform: scale(1.1);
+}
+
+/* Modal Actions Separated */
+.modal-actions-separated {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.modal-actions-separated .btn {
+    flex: 1;
+    padding: 1rem 2rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.modal-actions-separated .btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-actions-separated .btn-primary {
+    background: var(--admin-primary-gradient);
+    border: none;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* Task Subtasks in Cards */
+.task-subtasks {
+    margin: 0.75rem 0;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border-left: 3px solid rgba(102, 126, 234, 0.5);
+}
+
+.task-subtask-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+}
+
+.task-subtask-item input[type='checkbox'] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--admin-purple);
+}
+
+.task-subtask-item label {
+    flex: 1;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.task-subtask-item label.completed {
+    text-decoration: line-through;
+    opacity: 0.6;
+    color: var(--text-secondary);
+}
+
+/* Fix for select dropdowns in modal */
+.task-modal select {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-color);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.task-modal select:hover {
+    border-color: rgba(102, 126, 234, 0.5);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.task-modal select:focus {
+    outline: none;
+    border-color: var(--admin-purple);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.task-modal select option {
+    background: #1a1a2e;
+    color: var(--text-color);
+    padding: 0.75rem;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablets and smaller laptops - 3 columns */
+@media (max-width: 1400px) and (min-width: 1025px) {
+    .kanban-board {
+        grid-template-columns: repeat(3, minmax(280px, 1fr));
+    }
+}
+
+/* Tablets - 2 columns */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .kanban-board {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile - 1 column */
+@media (max-width: 768px) {
+    .task-manager {
+        padding: 1rem;
+    }
+
+    .task-manager-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .header-left h1 {
+        font-size: 2rem;
+    }
+
+    .kanban-board {
+        grid-template-columns: 1fr;
+    }
+
+    .task-filters {
+        flex-direction: column;
+    }
+
+    .filter-item {
+        min-width: 100%;
+    }
+
+    .column-content {
+        max-height: 500px;
+    }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

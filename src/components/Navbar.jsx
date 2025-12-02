@@ -76,13 +76,22 @@ function Navbar({ onViewChange, onLoginClick, currentView }) {
                     {user ? (
                         <>
                             {user.role === 'admin' && (
-                                <button
-                                    className={`dropdown-item ${currentView === 'admin-agrupaciones' ? 'active' : ''}`}
-                                    onClick={() => handleNavigation('admin-agrupaciones')}
-                                >
-                                    <i className="fas fa-crown"></i>
-                                    <span>Gestionar Agrupaciones</span>
-                                </button>
+                                <>
+                                    <button
+                                        className={`dropdown-item ${currentView === 'task-manager' ? 'active' : ''}`}
+                                        onClick={() => handleNavigation('task-manager')}
+                                    >
+                                        <i className="fas fa-tasks"></i>
+                                        <span>Gestor de Tareas</span>
+                                    </button>
+                                    <button
+                                        className={`dropdown-item ${currentView === 'admin-agrupaciones' ? 'active' : ''}`}
+                                        onClick={() => handleNavigation('admin-agrupaciones')}
+                                    >
+                                        <i className="fas fa-crown"></i>
+                                        <span>Gestionar Agrupaciones</span>
+                                    </button>
+                                </>
                             )}
                             <button
                                 className={`dropdown-item ${currentView === 'profile' ? 'active' : ''}`}

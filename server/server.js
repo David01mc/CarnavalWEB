@@ -4,7 +4,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import forumRoutes from './routes/forum.js';
+import taskRoutes, { setDb as setTaskDb } from './routes/tasks.js';
 import auth from './middleware/auth.js';
+import { createTaskIndexes } from './models/Task.js';
 
 dotenv.config();
 
@@ -49,7 +51,13 @@ async function connectDB() {
     await db.collection('agrupaciones').createIndex({ 'authors.name': 1 });
     await db.collection('agrupaciones').createIndex({ category: 1 });
     await db.collection('agrupaciones').createIndex({ year: 1 });
-    console.log('⚡ Indexes created/verified');
+    console.log('⚡ Agrupaciones indexes created/verified');
+
+    // Create task indexes
+    await createTaskIndexes(db);
+
+    // Inject db into task routes
+    setTaskDb(db);
   } catch (error) {
     console.error('❌ MongoDB connection error:', error);
     process.exit(1);
@@ -59,6 +67,7 @@ async function connectDB() {
 // Auth routes (public)
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // GET all entries (public)
 app.get('/api/agrupaciones', async (req, res) => {
