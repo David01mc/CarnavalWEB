@@ -8,6 +8,7 @@ import Home from './components/Home';
 import Navbar from './components/Navbar';
 import ForumList from './components/Forum/ForumList';
 import ForumTopic from './components/Forum/ForumTopic';
+import Profile from './components/Profile';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -216,6 +217,8 @@ function AppContent() {
             onTopicSelect={setSelectedTopicId}
           />
         )
+      ) : currentView === 'profile' ? (
+        <Profile />
       ) : (
         <div className="collection-layout">
           {/* Floating Toggle Button (Visible when sidebar is collapsed) */}

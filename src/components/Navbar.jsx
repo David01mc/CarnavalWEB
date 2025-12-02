@@ -74,16 +74,26 @@ function Navbar({ onViewChange, onLoginClick, currentView }) {
                     <div className="dropdown-divider"></div>
 
                     {user ? (
-                        <button
-                            className="dropdown-item logout-item"
-                            onClick={() => {
-                                logout();
-                                setMenuOpen(false);
-                            }}
-                        >
-                            <i className="fas fa-sign-out-alt"></i>
-                            <span>Cerrar Sesión</span>
-                        </button>
+                        <>
+                            <button
+                                className={`dropdown-item ${currentView === 'profile' ? 'active' : ''}`}
+                                onClick={() => handleNavigation('profile')}
+                            >
+                                <i className="fas fa-user-circle"></i>
+                                <span>Mi Perfil</span>
+                            </button>
+
+                            <button
+                                className="dropdown-item logout-item"
+                                onClick={() => {
+                                    logout();
+                                    setMenuOpen(false);
+                                }}
+                            >
+                                <i className="fas fa-sign-out-alt"></i>
+                                <span>Cerrar Sesión</span>
+                            </button>
+                        </>
                     ) : (
                         <button
                             className="dropdown-item"

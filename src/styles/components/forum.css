@@ -120,6 +120,7 @@
     justify-content: center;
     font-size: 1.5rem;
     margin: 0 auto 1rem;
+    overflow: hidden;
 }
 
 .author-name {

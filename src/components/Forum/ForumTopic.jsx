@@ -119,7 +119,15 @@ const ForumTopic = ({ topicId, onBack }) => {
                         <div key={post._id} className="post-card" id={`post-${post._id}`}>
                             <div className="post-author">
                                 <div className="author-avatar">
-                                    {post.author.username.charAt(0).toUpperCase()}
+                                    {post.author.avatarUrl ? (
+                                        <img
+                                            src={post.author.avatarUrl}
+                                            alt={post.author.username}
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        />
+                                    ) : (
+                                        post.author.username.charAt(0).toUpperCase()
+                                    )}
                                 </div>
                                 <span className="author-name">{post.author.username}</span>
                                 {index === 0 && <span className="badge badge-primary">OP</span>}

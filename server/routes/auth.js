@@ -183,11 +183,60 @@ router.get('/user', auth, async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
+        console.log('User fetched:', user);
         res.json(user);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
     }
 });
+
+import upload from '../config/cloudinary.js';
+
+// ... (existing imports)
+
+// @route   PUT /api/auth/profile
+// @desc    Update user profile (including avatar)
+// @access  Private
+router.put(
+    '/profile',
+    [
+        auth,
+        upload.single('avatar')
+    ],
+    async (req, res) => {
+        try {
+            await connectDB();
+
+            const updateData = {};
+
+            // If file uploaded, update avatarUrl
+            if (req.file) {
+                updateData.avatarUrl = req.file.path;
+            }
+
+            // Update other fields if provided
+            if (req.body.username) updateData.username = req.body.username;
+            if (req.body.email) updateData.email = req.body.email;
+            if (req.body.bio) updateData.bio = req.body.bio;
+
+            if (Object.keys(updateData).length === 0) {
+                return res.status(400).json({ msg: 'No data to update' });
+            }
+
+            const result = await usersCollection.findOneAndUpdate(
+                { _id: new ObjectId(req.user.id) },
+                { $set: updateData },
+                { returnDocument: 'after', projection: { password: 0 } }
+            );
+
+            console.log('User updated:', result);
+            res.json(result);
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).send('Server error');
+        }
+    }
+);
 
 export default router;

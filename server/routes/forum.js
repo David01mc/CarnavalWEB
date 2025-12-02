@@ -32,7 +32,40 @@ async function connectDB() {
 router.get('/topics', async (req, res) => {
     try {
         await connectDB();
-        const topics = await topicsCollection.find().sort({ createdAt: -1 }).toArray();
+        const topics = await topicsCollection.aggregate([
+            { $sort: { createdAt: -1 } },
+            {
+                $addFields: {
+                    authorIdObj: { $toObjectId: "$author.id" }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'authorIdObj',
+                    foreignField: '_id',
+                    as: 'authorDetails'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$authorDetails',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $addFields: {
+                    'author.avatarUrl': '$authorDetails.avatarUrl',
+                    'author.username': '$authorDetails.username'
+                }
+            },
+            {
+                $project: {
+                    authorDetails: 0,
+                    authorIdObj: 0
+                }
+            }
+        ]).toArray();
         res.json(topics);
     } catch (err) {
         console.error(err.message);
@@ -107,7 +140,42 @@ router.post(
 router.get('/topics/:id', async (req, res) => {
     try {
         await connectDB();
-        const topic = await topicsCollection.findOne({ _id: new ObjectId(req.params.id) });
+        const topics = await topicsCollection.aggregate([
+            { $match: { _id: new ObjectId(req.params.id) } },
+            {
+                $addFields: {
+                    authorIdObj: { $toObjectId: "$author.id" }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'authorIdObj',
+                    foreignField: '_id',
+                    as: 'authorDetails'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$authorDetails',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $addFields: {
+                    'author.avatarUrl': '$authorDetails.avatarUrl',
+                    'author.username': '$authorDetails.username'
+                }
+            },
+            {
+                $project: {
+                    authorDetails: 0,
+                    authorIdObj: 0
+                }
+            }
+        ]).toArray();
+
+        const topic = topics[0];
 
         if (!topic) {
             return res.status(404).json({ msg: 'Topic not found' });
@@ -135,10 +203,41 @@ router.get('/topics/:id', async (req, res) => {
 router.get('/topics/:id/posts', async (req, res) => {
     try {
         await connectDB();
-        const posts = await postsCollection
-            .find({ topicId: new ObjectId(req.params.id) })
-            .sort({ createdAt: 1 })
-            .toArray();
+        const posts = await postsCollection.aggregate([
+            { $match: { topicId: new ObjectId(req.params.id) } },
+            { $sort: { createdAt: 1 } },
+            {
+                $addFields: {
+                    authorIdObj: { $toObjectId: "$author.id" }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'authorIdObj',
+                    foreignField: '_id',
+                    as: 'authorDetails'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$authorDetails',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $addFields: {
+                    'author.avatarUrl': '$authorDetails.avatarUrl',
+                    'author.username': '$authorDetails.username'
+                }
+            },
+            {
+                $project: {
+                    authorDetails: 0,
+                    authorIdObj: 0
+                }
+            }
+        ]).toArray();
         res.json(posts);
     } catch (err) {
         console.error(err.message);
