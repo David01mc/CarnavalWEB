@@ -6,6 +6,8 @@ import DeleteConfirmModal from './components/DeleteConfirmModal';
 import Login from './components/Login';
 import Home from './components/Home';
 import Navbar from './components/Navbar';
+import ForumList from './components/Forum/ForumList';
+import ForumTopic from './components/Forum/ForumTopic';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -31,6 +33,7 @@ function useDebounce(value, delay) {
 function AppContent() {
   const { user, logout, loading: authLoading } = useAuth();
   const [currentView, setCurrentView] = useState('home');
+  const [selectedTopicId, setSelectedTopicId] = useState(null);
   const [agrupaciones, setAgrupaciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -201,6 +204,18 @@ function AppContent() {
 
       {currentView === 'home' ? (
         <Home onViewChange={setCurrentView} />
+      ) : currentView === 'forum' ? (
+        selectedTopicId ? (
+          <ForumTopic
+            topicId={selectedTopicId}
+            onBack={() => setSelectedTopicId(null)}
+          />
+        ) : (
+          <ForumList
+            onViewChange={setCurrentView}
+            onTopicSelect={setSelectedTopicId}
+          />
+        )
       ) : (
         <div className="collection-layout">
           {/* Floating Toggle Button (Visible when sidebar is collapsed) */}

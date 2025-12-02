@@ -63,6 +63,14 @@ function Navbar({ onViewChange, onLoginClick, currentView }) {
                         <span>Colección de Datos</span>
                     </button>
 
+                    <button
+                        className={`dropdown-item ${currentView === 'forum' ? 'active' : ''}`}
+                        onClick={() => handleNavigation('forum')}
+                    >
+                        <i className="fas fa-comments"></i>
+                        <span>Foro</span>
+                    </button>
+
                     <div className="dropdown-divider"></div>
 
                     {user ? (

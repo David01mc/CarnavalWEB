@@ -1,22 +1,3 @@
-import express from 'express';
-import { MongoClient, ObjectId } from 'mongodb';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import authRoutes from './routes/auth.js';
-import auth from './middleware/auth.js';
-
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3001;
-
-// CORS configuration for production
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  process.env.FRONTEND_URL,
-  'https://carnaval-web.onrender.com' // Update this with your actual Render frontend URL
-].filter(Boolean);
 
 // Middleware
 app.use(cors({
