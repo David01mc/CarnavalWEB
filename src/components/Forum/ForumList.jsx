@@ -48,9 +48,26 @@ const ForumList = ({ onViewChange, onTopicSelect }) => {
             setTopics([createdTopic, ...topics]);
             setShowCreateForm(false);
             setNewTopic({ title: '', content: '' });
-
             // Navigate to the new topic
             onTopicSelect(createdTopic._id);
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const handleDeleteTopic = async (topicId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/api/forum/topics/${topicId}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-auth-token': token
+                }
+            });
+
+            if (!response.ok) throw new Error('Error al borrar tema');
+
+            setTopics(topics.filter(t => t._id !== topicId));
         } catch (err) {
             setError(err.message);
         }
@@ -131,7 +148,23 @@ const ForumList = ({ onViewChange, onTopicSelect }) => {
                             onClick={() => onTopicSelect(topic._id)}
                         >
                             <div className="topic-main-info">
-                                <h3>{topic.title}</h3>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <h3>{topic.title}</h3>
+                                    {user && (user.role === 'admin' || user._id === topic.author.id) && (
+                                        <button
+                                            className="btn btn-danger btn-small"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (window.confirm('¿Estás seguro de que quieres borrar este tema?')) {
+                                                    handleDeleteTopic(topic._id);
+                                                }
+                                            }}
+                                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', marginLeft: '1rem' }}
+                                        >
+                                            <i className="fas fa-trash"></i>
+                                        </button>
+                                    )}
+                                </div>
                                 <div className="topic-meta">
                                     <span>
                                         <i className="fas fa-user"></i> {topic.author.username}

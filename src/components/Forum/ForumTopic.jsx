@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import confetti from 'canvas-confetti';
 import '../../styles/components/forum.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -62,8 +63,25 @@ const ForumTopic = ({ topicId, onBack }) => {
         }
     };
 
+
+
     const handleReaction = async (postId, type) => {
         if (!user) return;
+
+        // Trigger confetti for likes
+        if (type === 'like') {
+            const post = posts.find(p => p._id === postId);
+            const alreadyLiked = post.reactions?.likes?.includes(user._id);
+
+            if (!alreadyLiked) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#FFD700', '#FFA500', '#FF4500', '#8A2BE2', '#FF00FF'] // Carnaval colors
+                });
+            }
+        }
 
         try {
             const token = localStorage.getItem('token');
@@ -90,6 +108,26 @@ const ForumTopic = ({ topicId, onBack }) => {
         }
     };
 
+    const handleDeletePost = async (postId) => {
+        if (!window.confirm('¿Estás seguro de que quieres borrar este mensaje?')) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/api/forum/posts/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-auth-token': token
+                }
+            });
+
+            if (!response.ok) throw new Error('Error al borrar mensaje');
+
+            setPosts(posts.filter(p => p._id !== postId));
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
     if (loading) return <div className="loading">Cargando conversación...</div>;
     if (!topic) return <div className="error-message">Tema no encontrado</div>;
 
@@ -112,8 +150,8 @@ const ForumTopic = ({ topicId, onBack }) => {
                 {posts.map((post, index) => {
                     const likesCount = post.reactions?.likes?.length || 0;
                     const dislikesCount = post.reactions?.dislikes?.length || 0;
-                    const userLiked = user && post.reactions?.likes?.includes(user.id);
-                    const userDisliked = user && post.reactions?.dislikes?.includes(user.id);
+                    const userLiked = user && post.reactions?.likes?.includes(user._id);
+                    const userDisliked = user && post.reactions?.dislikes?.includes(user._id);
 
                     return (
                         <div key={post._id} className="post-card" id={`post-${post._id}`}>
@@ -137,6 +175,16 @@ const ForumTopic = ({ topicId, onBack }) => {
                                 <div className="post-header">
                                     <span>Publicado el {new Date(post.createdAt).toLocaleString()}</span>
                                     <span>#{index + 1}</span>
+                                    {user && (user.role === 'admin' || user._id === post.author.id) && (
+                                        <button
+                                            className="btn btn-danger btn-small"
+                                            onClick={() => handleDeletePost(post._id)}
+                                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', marginLeft: '1rem', border: 'none', background: 'none', color: '#dc3545', cursor: 'pointer' }}
+                                            title="Borrar mensaje"
+                                        >
+                                            <i className="fas fa-trash"></i>
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className="post-body">

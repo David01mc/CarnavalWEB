@@ -9,6 +9,7 @@ import Navbar from './components/Navbar';
 import ForumList from './components/Forum/ForumList';
 import ForumTopic from './components/Forum/ForumTopic';
 import Profile from './components/Profile';
+import AdminAgrupaciones from './components/Admin/AdminAgrupaciones';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -219,6 +220,8 @@ function AppContent() {
         )
       ) : currentView === 'profile' ? (
         <Profile />
+      ) : currentView === 'admin-agrupaciones' ? (
+        <AdminAgrupaciones />
       ) : (
         <div className="collection-layout">
           {/* Floating Toggle Button (Visible when sidebar is collapsed) */}
@@ -270,10 +273,11 @@ function AppContent() {
                 <label><i className="fas fa-tag"></i> Categoría</label>
                 <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
                   <option value="">Todas</option>
-                  <option value="Comparsa">Comparsa</option>
-                  <option value="Chirigota">Chirigota</option>
-                  <option value="Coro">Coro</option>
-                  <option value="Cuarteto">Cuarteto</option>
+                  <option value="Comparsa Adultos">Comparsa Adultos</option>
+                  <option value="Chirigota Adultos">Chirigota Adultos</option>
+                  <option value="Coro Adultos">Coro Adultos</option>
+                  <option value="Cuarteto Adultos">Cuarteto Adultos</option>
+                  <option value="Murga Adultos">Murga Adultos</option>
                 </select>
               </div>
 

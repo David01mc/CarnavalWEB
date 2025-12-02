@@ -315,23 +315,24 @@ router.post('/posts/:id/react', auth, async (req, res) => {
         }
 
         const userId = req.user.id;
-        const otherType = type === 'like' ? 'dislike' : 'like';
+        const fieldName = type === 'like' ? 'likes' : 'dislikes';
+        const otherFieldName = type === 'like' ? 'dislikes' : 'likes';
 
         // Check if already reacted with same type
-        const hasReacted = post.reactions[type]?.includes(userId);
+        const hasReacted = post.reactions[fieldName]?.includes(userId);
 
         let updateQuery = {};
 
         if (hasReacted) {
             // Remove reaction (toggle off)
             updateQuery = {
-                $pull: { [`reactions.${type}`]: userId }
+                $pull: { [`reactions.${fieldName}`]: userId }
             };
         } else {
             // Add reaction and remove the other type if exists
             updateQuery = {
-                $addToSet: { [`reactions.${type}`]: userId },
-                $pull: { [`reactions.${otherType}`]: userId }
+                $addToSet: { [`reactions.${fieldName}`]: userId },
+                $pull: { [`reactions.${otherFieldName}`]: userId }
             };
         }
 
@@ -343,6 +344,65 @@ router.post('/posts/:id/react', auth, async (req, res) => {
         const updatedPost = await postsCollection.findOne({ _id: new ObjectId(req.params.id) });
         res.json(updatedPost.reactions);
 
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
+// @route   DELETE /api/forum/topics/:id
+// @desc    Delete a topic
+// @access  Private (Admin or Author)
+router.delete('/topics/:id', auth, async (req, res) => {
+    try {
+        await connectDB();
+        const topic = await topicsCollection.findOne({ _id: new ObjectId(req.params.id) });
+
+        if (!topic) {
+            return res.status(404).json({ msg: 'Topic not found' });
+        }
+
+        // Check user
+        if (topic.author.id !== req.user.id && req.user.role !== 'admin') {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        await topicsCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+        await postsCollection.deleteMany({ topicId: new ObjectId(req.params.id) });
+
+        res.json({ msg: 'Topic removed' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
+// @route   DELETE /api/forum/posts/:id
+// @desc    Delete a post
+// @access  Private (Admin or Author)
+router.delete('/posts/:id', auth, async (req, res) => {
+    try {
+        await connectDB();
+        const post = await postsCollection.findOne({ _id: new ObjectId(req.params.id) });
+
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' });
+        }
+
+        // Check user
+        if (post.author.id !== req.user.id && req.user.role !== 'admin') {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        await postsCollection.deleteOne({ _id: new ObjectId(req.params.id) });
+
+        // Decrement replies count in topic
+        await topicsCollection.updateOne(
+            { _id: post.topicId },
+            { $inc: { repliesCount: -1 } }
+        );
+
+        res.json({ msg: 'Post removed' });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
