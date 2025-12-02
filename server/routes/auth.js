@@ -183,7 +183,6 @@ router.get('/user', auth, async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        console.log('User fetched:', user);
         res.json(user);
     } catch (err) {
         console.error(err.message);
@@ -230,7 +229,6 @@ router.put(
                 { returnDocument: 'after', projection: { password: 0 } }
             );
 
-            console.log('User updated:', result);
             res.json(result);
         } catch (err) {
             console.error(err.message);
