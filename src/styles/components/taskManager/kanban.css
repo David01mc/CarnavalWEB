@@ -9,6 +9,10 @@
     margin: 0 auto;
     padding: 2rem 3rem;
     color: var(--text-color);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
@@ -18,6 +22,7 @@
     align-items: center;
     margin-bottom: 2rem;
     animation: fadeInDown 0.6s ease-out;
+    flex-shrink: 0;
 }
 
 .header-left h1 {
@@ -49,6 +54,7 @@
     margin-bottom: 2rem;
     flex-wrap: wrap;
     animation: fadeIn 0.6s ease-out;
+    flex-shrink: 0;
 }
 
 .filter-item {
@@ -99,9 +105,9 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(280px, 1fr));
     gap: 1.5rem;
-    margin-top: 2rem;
-    height: calc(100vh - 250px);
-    /* Fixed height to enable column scrolling */
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
 }
 
 /* Kanban Column */
@@ -114,8 +120,8 @@
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    /* Take full height of grid cell */
+    height: 85%;
+    max-height: 85vh;
 }
 
 .kanban-column:hover {
@@ -128,7 +134,6 @@
     border-bottom: 2px solid;
     background: rgba(255, 255, 255, 0.05);
     flex-shrink: 0;
-    /* Prevent header from shrinking */
 }
 
 .column-title {
@@ -162,7 +167,6 @@
     overflow-y: auto;
     overflow-x: hidden;
     flex: 1;
-    /* Take remaining space */
 }
 
 /* Custom Scrollbar */
