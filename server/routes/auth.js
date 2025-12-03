@@ -5,6 +5,7 @@ import { body, validationResult } from 'express-validator';
 import { MongoClient, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import auth from '../middleware/auth.js';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -26,6 +27,28 @@ async function connectDB() {
     }
 }
 
+// Function to verify reCAPTCHA token
+async function verifyRecaptcha(token) {
+    try {
+        const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+        const response = await axios.post(
+            `https://www.google.com/recaptcha/api/siteverify`,
+            null,
+            {
+                params: {
+                    secret: secretKey,
+                    response: token
+                }
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error('reCAPTCHA verification error:', error);
+        return { success: false };
+    }
+}
+
 // @route   POST /api/auth/register
 // @desc    Registrar nuevo usuario
 // @access  Public (cambiar a Private si solo admins pueden crear usuarios)
@@ -34,7 +57,8 @@ router.post(
     [
         body('username', 'Username is required').notEmpty(),
         body('email', 'Please include a valid email').isEmail(),
-        body('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
+        body('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
+        body('recaptchaToken', 'reCAPTCHA token is required').notEmpty()
     ],
     async (req, res) => {
         const errors = validationResult(req);
@@ -42,9 +66,26 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { username, email, password, role } = req.body;
+        const { username, email, password, role, recaptchaToken } = req.body;
 
         try {
+            // Verify reCAPTCHA token
+            const recaptchaResult = await verifyRecaptcha(recaptchaToken);
+
+            if (!recaptchaResult.success) {
+                return res.status(400).json({
+                    msg: 'reCAPTCHA verification failed. Please try again.'
+                });
+            }
+
+            // Optional: Check score for v3 (0.0 to 1.0, higher is better)
+            // Uncomment if using reCAPTCHA v3 and you want to enforce a minimum score
+            // if (recaptchaResult.score && recaptchaResult.score < 0.5) {
+            //     return res.status(400).json({ 
+            //         msg: 'reCAPTCHA score too low. Please try again.' 
+            //     });
+            // }
+
             await connectDB();
 
             // Verificar si el usuario ya existe

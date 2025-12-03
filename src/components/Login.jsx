@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-function Login({ onClose }) {
+function Login({ onClose, onRegisterClick }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const { login } = useAuth();
 
     const handleSubmit = async (e) => {
@@ -24,77 +25,88 @@ function Login({ onClose }) {
     };
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                    <h2><i className="fas fa-lock"></i> Iniciar Sesión</h2>
-                    <button className="close-btn" onClick={onClose}>
-                        <i className="fas fa-times"></i>
-                    </button>
+        <div className="modal-overlay login-overlay" onClick={onClose}>
+            <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="login-close-btn" onClick={onClose}>
+                    <i className="fas fa-times"></i>
+                </button>
+
+                <div className="login-header">
+                    <div className="login-icon">
+                        <i className="fas fa-theater-masks"></i>
+                    </div>
+                    <h2>Bienvenido</h2>
+                    <p>Inicia sesión en tu cuenta</p>
                 </div>
 
                 {error && (
-                    <div className="alert alert-error">
-                        <i className="fas fa-exclamation-circle"></i> {error}
+                    <div className="login-alert">
+                        <i className="fas fa-exclamation-circle"></i>
+                        <span>{error}</span>
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="username">
-                            <i className="fas fa-user"></i> Usuario
-                        </label>
+                <form onSubmit={handleSubmit} className="login-form">
+                    <div className="login-input-group">
+                        <div className="input-icon">
+                            <i className="fas fa-user"></i>
+                        </div>
                         <input
                             id="username"
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Ingresa tu usuario"
+                            placeholder="Usuario"
                             required
                             autoFocus
+                            className="login-input"
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="password">
-                            <i className="fas fa-key"></i> Contraseña
-                        </label>
+                    <div className="login-input-group">
+                        <div className="input-icon">
+                            <i className="fas fa-lock"></i>
+                        </div>
                         <input
                             id="password"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Ingresa tu contraseña"
+                            placeholder="Contraseña"
                             required
+                            className="login-input"
                         />
-                    </div>
-
-                    <div className="modal-actions">
                         <button
                             type="button"
-                            className="btn btn-secondary"
-                            onClick={onClose}
-                            disabled={loading}
+                            className="toggle-password"
+                            onClick={() => setShowPassword(!showPassword)}
                         >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            className="btn btn-primary"
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <>
-                                    <i className="fas fa-spinner fa-spin"></i> Iniciando...
-                                </>
-                            ) : (
-                                <>
-                                    <i className="fas fa-sign-in-alt"></i> Entrar
-                                </>
-                            )}
+                            <i className={`fas fa-eye${showPassword ? '-slash' : ''}`}></i>
                         </button>
                     </div>
+
+                    <button
+                        type="submit"
+                        className="login-btn"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <i className="fas fa-spinner fa-spin"></i>
+                                <span>Iniciando sesión...</span>
+                            </>
+                        ) : (
+                            <>
+                                <i className="fas fa-sign-in-alt"></i>
+                                <span>Iniciar Sesión</span>
+                            </>
+                        )}
+                    </button>
                 </form>
+
+                <div className="login-footer">
+                    <p>¿No tienes cuenta? <button onClick={() => { onClose(); onRegisterClick(); }}>Regístrate</button></p>
+                </div>
             </div>
         </div>
     );

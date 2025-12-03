@@ -59,6 +59,26 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const register = async (username, email, password, recaptchaToken) => {
+        try {
+            const res = await axios.post(`${API_URL}/api/auth/register`, {
+                username,
+                email,
+                password,
+                recaptchaToken
+            });
+            setToken(res.data.token);
+            setUser(res.data.user);
+            localStorage.setItem('token', res.data.token);
+            return { success: true };
+        } catch (err) {
+            return {
+                success: false,
+                error: err.response?.data?.msg || err.response?.data?.errors?.[0]?.msg || 'Error al registrar usuario'
+            };
+        }
+    };
+
     const logout = () => {
         setToken(null);
         setUser(null);
@@ -71,6 +91,7 @@ export const AuthProvider = ({ children }) => {
         token,
         loading,
         login,
+        register,
         logout,
         isAuthenticated: !!user
     };

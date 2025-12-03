@@ -34,13 +34,6 @@ function Home() {
     <div className="home-container">
       {/* Featured Agrupación of the Day - FIRST */}
       <section className="featured-section-main">
-        <div className="section-header">
-          <h2>
-            <i className="fas fa-star"></i> Agrupación del Día
-          </h2>
-          <p className="section-subtitle">Descubre cada día una nueva agrupación destacada</p>
-        </div>
-
         {loading ? (
           <div className="loading">
             <i className="fas fa-spinner fa-spin"></i> Cargando agrupación del día...

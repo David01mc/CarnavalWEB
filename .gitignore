@@ -13,6 +13,7 @@ dist-ssr
 *.local
 .env
 src\index.css.backup
+.env.production
 
 # Editor directories and files
 .vscode/*

@@ -21,6 +21,8 @@
 @import './components/dropdown.css';
 @import './components/featured.css';
 @import './components/instagram.css';
+@import './components/adminUsers.css';
+@import './components/login.css';
 
 /* 6. Layouts */
 @import './layouts/collection.css';

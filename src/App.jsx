@@ -4,12 +4,14 @@ import AgrupacionCard from './components/AgrupacionCard';
 import AgrupacionForm from './components/AgrupacionForm';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import Login from './components/Login';
+import Register from './components/Register';
 import Home from './components/Home';
 import Navbar from './components/Navbar';
 import ForumList from './components/Forum/ForumList';
 import ForumTopic from './components/Forum/ForumTopic';
 import Profile from './components/Profile';
 import AdminAgrupaciones from './components/Admin/AdminAgrupaciones';
+import AdminUsers from './components/Admin/AdminUsers';
 import TaskManager from './components/Admin/TaskManager';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -52,6 +54,7 @@ function AppContent() {
   const [editingItem, setEditingItem] = useState(null);
   const [deleteItem, setDeleteItem] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Pagination state
@@ -194,6 +197,7 @@ function AppContent() {
         user={user}
         onLogout={logout}
         onLoginClick={() => setShowLogin(true)}
+        onRegisterClick={() => setShowRegister(true)}
         currentView={currentView}
         onViewChange={setCurrentView}
       />
@@ -202,7 +206,24 @@ function AppContent() {
         <Login
           onClose={() => setShowLogin(false)}
           onLoginSuccess={() => setShowLogin(false)}
+          onRegisterClick={() => {
+            setShowLogin(false);
+            setShowRegister(true);
+          }}
         />
+      )}
+
+      {showRegister && (
+        <div className="modal-overlay" onClick={() => setShowRegister(false)}>
+          <div className="modal-content" style={{ maxWidth: '500px' }} onClick={(e) => e.stopPropagation()}>
+            <Register onSuccess={() => {
+              setShowRegister(false);
+            }} />
+            <button className="close-btn" style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--text-secondary)' }} onClick={() => setShowRegister(false)}>
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
       )}
 
       {currentView === 'home' ? (
@@ -225,6 +246,8 @@ function AppContent() {
         <TaskManager />
       ) : currentView === 'admin-agrupaciones' ? (
         <AdminAgrupaciones />
+      ) : currentView === 'admin-users' ? (
+        <AdminUsers />
       ) : (
         <div className="collection-layout">
           {/* Floating Toggle Button (Visible when sidebar is collapsed) */}

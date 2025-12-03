@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-function Navbar({ onViewChange, onLoginClick, currentView }) {
+function Navbar({ onViewChange, onLoginClick, onRegisterClick, currentView }) {
     const { user, logout } = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -91,6 +91,13 @@ function Navbar({ onViewChange, onLoginClick, currentView }) {
                                         <i className="fas fa-crown"></i>
                                         <span>Gestionar Agrupaciones</span>
                                     </button>
+                                    <button
+                                        className={`dropdown-item ${currentView === 'admin-users' ? 'active' : ''}`}
+                                        onClick={() => handleNavigation('admin-users')}
+                                    >
+                                        <i className="fas fa-users-cog"></i>
+                                        <span>Gestionar Usuarios</span>
+                                    </button>
                                 </>
                             )}
                             <button
@@ -113,16 +120,28 @@ function Navbar({ onViewChange, onLoginClick, currentView }) {
                             </button>
                         </>
                     ) : (
-                        <button
-                            className="dropdown-item"
-                            onClick={() => {
-                                onLoginClick();
-                                setMenuOpen(false);
-                            }}
-                        >
-                            <i className="fas fa-sign-in-alt"></i>
-                            <span>Iniciar Sesión</span>
-                        </button>
+                        <>
+                            <button
+                                className="dropdown-item"
+                                onClick={() => {
+                                    onLoginClick();
+                                    setMenuOpen(false);
+                                }}
+                            >
+                                <i className="fas fa-sign-in-alt"></i>
+                                <span>Iniciar Sesión</span>
+                            </button>
+                            <button
+                                className="dropdown-item"
+                                onClick={() => {
+                                    onRegisterClick();
+                                    setMenuOpen(false);
+                                }}
+                            >
+                                <i className="fas fa-user-plus"></i>
+                                <span>Crear Cuenta</span>
+                            </button>
+                        </>
                     )}
                 </div>
             </div>

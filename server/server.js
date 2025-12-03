@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import forumRoutes from './routes/forum.js';
 import taskRoutes, { setDb as setTaskDb } from './routes/tasks.js';
+import usersRoutes from './routes/users.js';
 import auth from './middleware/auth.js';
 import { createTaskIndexes } from './models/Task.js';
 
@@ -68,6 +69,7 @@ async function connectDB() {
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/users', usersRoutes);
 
 // GET all entries (public)
 app.get('/api/agrupaciones', async (req, res) => {
