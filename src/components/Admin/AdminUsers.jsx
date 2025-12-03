@@ -116,11 +116,13 @@ function AdminUsers() {
                         {users.map(user => (
                             <tr key={user._id}>
                                 <td className="username-cell">
-                                    <i className="fas fa-user-circle"></i>
-                                    <span>{user.username}</span>
-                                    {user._id === currentUserId && (
-                                        <span className="you-badge">TÚ</span>
-                                    )}
+                                    <div>
+                                        <i className="fas fa-user-circle"></i>
+                                        <span>{user.username}</span>
+                                        {user._id === currentUserId && (
+                                            <span className="you-badge">TÚ</span>
+                                        )}
+                                    </div>
                                 </td>
                                 <td>{user.email}</td>
                                 <td>
@@ -134,27 +136,29 @@ function AdminUsers() {
                                 </td>
                                 <td>{formatDate(user.createdAt)}</td>
                                 <td>{formatDate(user.lastLogin)}</td>
-                                <td className="actions-cell">
-                                    {user._id !== currentUserId ? (
-                                        <>
-                                            <button
-                                                className="btn-icon btn-role"
-                                                onClick={() => setRoleChangeConfirm(user)}
-                                                title={user.role === 'admin' ? 'Degradar a User' : 'Promover a Admin'}
-                                            >
-                                                <i className="fas fa-exchange-alt"></i>
-                                            </button>
-                                            <button
-                                                className="btn-icon btn-delete"
-                                                onClick={() => setDeleteConfirm(user)}
-                                                title="Eliminar usuario"
-                                            >
-                                                <i className="fas fa-trash-alt"></i>
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <span className="no-actions">—</span>
-                                    )}
+                                <td className="actions-cell-wrapper">
+                                    <div className="actions-cell">
+                                        {user._id !== currentUserId ? (
+                                            <>
+                                                <button
+                                                    className="btn-icon btn-role"
+                                                    onClick={() => setRoleChangeConfirm(user)}
+                                                    title={user.role === 'admin' ? 'Degradar a User' : 'Promover a Admin'}
+                                                >
+                                                    <i className="fas fa-exchange-alt"></i>
+                                                </button>
+                                                <button
+                                                    className="btn-icon btn-delete"
+                                                    onClick={() => setDeleteConfirm(user)}
+                                                    title="Eliminar usuario"
+                                                >
+                                                    <i className="fas fa-trash-alt"></i>
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <span className="no-actions">—</span>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         ))}

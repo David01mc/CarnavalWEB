@@ -65,10 +65,13 @@
 }
 
 .username-cell {
+    font-weight: 500;
+}
+
+.username-cell>div {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-weight: 500;
 }
 
 .username-cell i {
@@ -112,6 +115,7 @@
     gap: 0.5rem;
     justify-content: center;
     align-items: center;
+    width: 100%;
 }
 
 .btn-icon {
