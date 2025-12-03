@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import confetti from 'canvas-confetti';
+import GifPicker from './GifPicker';
 import '../../styles/components/forum.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -11,6 +12,8 @@ const ForumTopic = ({ topicId, onBack }) => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [replyContent, setReplyContent] = useState('');
+    const [showGifPicker, setShowGifPicker] = useState(false);
+    const [selectedGif, setSelectedGif] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -40,7 +43,7 @@ const ForumTopic = ({ topicId, onBack }) => {
 
     const handleReply = async (e) => {
         e.preventDefault();
-        if (!replyContent.trim()) return;
+        if (!replyContent.trim() && !selectedGif) return;
 
         try {
             const token = localStorage.getItem('token');
@@ -50,7 +53,10 @@ const ForumTopic = ({ topicId, onBack }) => {
                     'Content-Type': 'application/json',
                     'x-auth-token': token
                 },
-                body: JSON.stringify({ content: replyContent })
+                body: JSON.stringify({
+                    content: replyContent || 'GIF',
+                    gifUrl: selectedGif
+                })
             });
 
             if (!response.ok) throw new Error('Error al publicar respuesta');
@@ -58,17 +64,20 @@ const ForumTopic = ({ topicId, onBack }) => {
             const newPost = await response.json();
             setPosts([...posts, newPost]);
             setReplyContent('');
+            setSelectedGif(null);
         } catch (err) {
             setError(err.message);
         }
     };
 
-
+    const handleGifSelect = (gifUrl) => {
+        setSelectedGif(gifUrl);
+        setShowGifPicker(false);
+    };
 
     const handleReaction = async (postId, type) => {
         if (!user) return;
 
-        // Trigger confetti for likes
         if (type === 'like') {
             const post = posts.find(p => p._id === postId);
             const alreadyLiked = post.reactions?.likes?.includes(user._id);
@@ -78,7 +87,7 @@ const ForumTopic = ({ topicId, onBack }) => {
                     particleCount: 100,
                     spread: 70,
                     origin: { y: 0.6 },
-                    colors: ['#FFD700', '#FFA500', '#FF4500', '#8A2BE2', '#FF00FF'] // Carnaval colors
+                    colors: ['#FFD700', '#FFA500', '#FF4500', '#8A2BE2', '#FF00FF']
                 });
             }
         }
@@ -189,6 +198,11 @@ const ForumTopic = ({ topicId, onBack }) => {
 
                                 <div className="post-body">
                                     {post.content}
+                                    {post.gifUrl && (
+                                        <div className="post-gif">
+                                            <img src={post.gifUrl} alt="GIF" />
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="post-actions">
@@ -225,10 +239,32 @@ const ForumTopic = ({ topicId, onBack }) => {
                                 value={replyContent}
                                 onChange={(e) => setReplyContent(e.target.value)}
                                 placeholder="Escribe tu respuesta..."
-                                required
+                                required={!selectedGif}
                             />
                         </div>
-                        <div className="form-actions">
+
+                        {selectedGif && (
+                            <div className="gif-preview">
+                                <img src={selectedGif} alt="Selected GIF" />
+                                <button
+                                    type="button"
+                                    className="remove-gif-btn"
+                                    onClick={() => setSelectedGif(null)}
+                                >
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+                        )}
+
+                        <div className="forum-form-actions">
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                onClick={() => setShowGifPicker(true)}
+                                title="Buscar un GIF"
+                            >
+                                <i className="fas fa-film"></i> GIF
+                            </button>
                             <button type="submit" className="btn btn-primary">
                                 <i className="fas fa-paper-plane"></i> Publicar Respuesta
                             </button>
@@ -239,6 +275,13 @@ const ForumTopic = ({ topicId, onBack }) => {
                 <div className="alert alert-info text-center">
                     <p>Debes <button className="btn-link" onClick={() => document.querySelector('.login-btn')?.click()}>iniciar sesión</button> para responder.</p>
                 </div>
+            )}
+
+            {showGifPicker && (
+                <GifPicker
+                    onSelect={handleGifSelect}
+                    onClose={() => setShowGifPicker(false)}
+                />
             )}
         </div>
     );

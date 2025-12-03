@@ -69,6 +69,45 @@ router.post('/', auth, admin, async (req, res) => {
 });
 
 /**
+ * @route   PUT /api/tasks/reorder
+ * @desc    Reorder multiple tasks (batch update for drag-and-drop)
+ * @access  Private (Admin)
+ */
+router.put('/reorder', auth, admin, async (req, res) => {
+    try {
+        const { tasks } = req.body;
+
+        if (!Array.isArray(tasks)) {
+            return res.status(400).json({ error: 'Tasks array is required' });
+        }
+
+        // Batch update all tasks
+        const bulkOps = tasks.map(task => ({
+            updateOne: {
+                filter: { _id: new ObjectId(task.id) },
+                update: {
+                    $set: {
+                        status: task.status,
+                        order: task.order,
+                        updatedAt: new Date()
+                    }
+                }
+            }
+        }));
+
+        const result = await db.collection('tasks').bulkWrite(bulkOps);
+
+        res.json({
+            message: 'Tasks reordered successfully',
+            modifiedCount: result.modifiedCount
+        });
+    } catch (error) {
+        console.error('Error reordering tasks:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
  * @route   PUT /api/tasks/:id
  * @desc    Update task (admin only)
  * @access  Private (Admin)
@@ -146,44 +185,7 @@ router.put('/:id/move', auth, admin, async (req, res) => {
     }
 });
 
-/**
- * @route   PUT /api/tasks/reorder
- * @desc    Reorder multiple tasks (batch update for drag-and-drop)
- * @access  Private (Admin)
- */
-router.put('/reorder', auth, admin, async (req, res) => {
-    try {
-        const { tasks } = req.body;
 
-        if (!Array.isArray(tasks)) {
-            return res.status(400).json({ error: 'Tasks array is required' });
-        }
-
-        // Batch update all tasks
-        const bulkOps = tasks.map(task => ({
-            updateOne: {
-                filter: { _id: new ObjectId(task.id) },
-                update: {
-                    $set: {
-                        status: task.status,
-                        order: task.order,
-                        updatedAt: new Date()
-                    }
-                }
-            }
-        }));
-
-        const result = await db.collection('tasks').bulkWrite(bulkOps);
-
-        res.json({
-            message: 'Tasks reordered successfully',
-            modifiedCount: result.modifiedCount
-        });
-    } catch (error) {
-        console.error('Error reordering tasks:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
 
 /**
  * @route   DELETE /api/tasks/:id

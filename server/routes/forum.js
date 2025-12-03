@@ -266,6 +266,7 @@ router.post(
             const newPost = {
                 topicId: new ObjectId(req.params.id),
                 content: req.body.content,
+                gifUrl: req.body.gifUrl || null, // Add GIF support
                 author: {
                     id: req.user.id,
                     username: req.user.username
