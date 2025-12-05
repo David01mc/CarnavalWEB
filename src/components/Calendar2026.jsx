@@ -8,88 +8,77 @@ const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replac
 
 const WEEKDAYS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
+// Defined range for the calendar
+const CALENDAR_MONTHS = [
+    new Date(2025, 11, 1), // Dec 2025
+    new Date(2026, 0, 1),  // Jan 2026
+    new Date(2026, 1, 1)   // Feb 2026
+];
+
 function Calendar2026() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedDay, setSelectedDay] = useState(null);
     const [months, setMonths] = useState([]);
+    const [currentMonthIndex, setCurrentMonthIndex] = useState(1); // Default to Jan 2026 (Index 1)
 
     useEffect(() => {
         fetchEvents();
     }, []);
 
     const fetchEvents = async () => {
+        let grouped = {};
+
         try {
             setLoading(true);
             const response = await fetch(`${API_URL}/api/preliminares2026`);
-            if (!response.ok) throw new Error('Error al cargar actuaciones');
+            if (response.ok) {
+                const data = await response.json();
+                setEvents(data);
 
-            const data = await response.json();
-            setEvents(data);
+                // Group by date safely
+                grouped = data.reduce((acc, curr) => {
+                    if (!curr.fecha) return acc;
+                    try {
+                        const parsedDate = parse(curr.fecha, 'dd/MM/yyyy', new Date());
+                        if (isNaN(parsedDate)) return acc;
+                        const dateKey = format(parsedDate, 'yyyy-MM-dd');
 
-            // Group by date to easily find events
-            const grouped = data.reduce((acc, curr) => {
-                // Parse date: "11/01/2026"
-                const parsedDate = parse(curr.fecha, 'dd/MM/yyyy', new Date());
-                const dateKey = format(parsedDate, 'yyyy-MM-dd');
-
-                if (!acc[dateKey]) acc[dateKey] = [];
-                acc[dateKey].push(curr);
-                return acc;
-            }, {});
-
-            // Determine date range to generate months
-            // Assuming data contains at least one date.
-            // If empty, default to Jan 2026
-            const dates = data.map(d => parse(d.fecha, 'dd/MM/yyyy', new Date()));
-
-            let startDate = new Date(2026, 0, 1); // Default Jan 1 2026
-            let endDate = new Date(2026, 1, 28); // Default Feb 28 2026
-
-            if (dates.length > 0) {
-                const sortedDates = dates.sort((a, b) => a - b);
-                startDate = startOfMonth(sortedDates[0]);
-                endDate = endOfMonth(sortedDates[sortedDates.length - 1]);
+                        if (!acc[dateKey]) acc[dateKey] = [];
+                        acc[dateKey].push(curr);
+                    } catch (e) {
+                        console.warn('Skipping invalid date:', curr);
+                    }
+                    return acc;
+                }, {});
             }
+        } catch (error) {
+            console.error('Error fetching calendar events:', error);
+        } finally {
+            // Always generate months, even if grouped is empty
+            try {
+                const generatedMonths = CALENDAR_MONTHS.map(monthDate => {
+                    const daysInMonth = eachDayOfInterval({
+                        start: startOfMonth(monthDate),
+                        end: endOfMonth(monthDate)
+                    });
 
-            // Generate months and days
-            // We want to handle Jan, Feb, etc if they exist
-            // Using a simple set to identification
-            const uniqueMonths = [...new Set(dates.map(d => format(d, 'yyyy-MM')))].sort();
+                    let startDay = getDay(daysInMonth[0]); // 0=Sun, 1=Mon...
+                    // Adjust to Mon=0...Sun=6 logic for padding
+                    const paddingCount = startDay === 0 ? 6 : startDay - 1;
+                    const padding = Array(paddingCount).fill(null);
 
-            // If we have dates, map them. Otherwise fallback
-            const generatedMonths = uniqueMonths.map(monthStr => {
-                const [year, month] = monthStr.split('-');
-                const monthDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-                const daysInMonth = eachDayOfInterval({
-                    start: startOfMonth(monthDate),
-                    end: endOfMonth(monthDate)
+                    return {
+                        name: format(monthDate, 'MMMM yyyy', { locale: es }),
+                        days: [...padding, ...daysInMonth],
+                        eventMap: grouped
+                    };
                 });
 
-                // Calculate padding days for start of week (Monday start)
-                // getDay returns 0 for Sunday. We want Mon=0, Sun=6
-                let startDay = getDay(daysInMonth[0]); // 0=Sun, 1=Mon...
-                // Adjust to Mon=0...Sun=6
-                // Standard: Sun=0, Mon=1, Tue=2...
-                // Target: Mon=1...Sun=7 for css grid or Mon=0 logic
-                // Let's use simple empty slots array
-                // If getDay is 1 (Mon) -> 0 padding
-                // If getDay is 0 (Sun) -> 6 padding
-                const paddingCount = startDay === 0 ? 6 : startDay - 1;
-                const padding = Array(paddingCount).fill(null);
-
-                return {
-                    name: format(monthDate, 'MMMM yyyy', { locale: es }),
-                    days: [...padding, ...daysInMonth],
-                    eventMap: grouped
-                };
-            });
-
-            setMonths(generatedMonths);
-
-        } catch (error) {
-            console.error(error);
-        } finally {
+                setMonths(generatedMonths);
+            } catch (genError) {
+                console.error('Error generating calendar grid:', genError);
+            }
             setLoading(false);
         }
     };
@@ -99,34 +88,59 @@ function Calendar2026() {
         show: {
             opacity: 1,
             transition: {
-                staggerChildren: 0.05
+                staggerChildren: 0.03
             }
         }
     };
 
     const item = {
-        hidden: { y: 20, opacity: 0 },
-        show: { y: 0, opacity: 1 }
+        hidden: { scale: 0.9, opacity: 0 },
+        show: { scale: 1, opacity: 1 }
+    };
+
+    const nextMonth = () => {
+        if (currentMonthIndex < months.length - 1) setCurrentMonthIndex(prev => prev + 1);
+    };
+
+    const prevMonth = () => {
+        if (currentMonthIndex > 0) setCurrentMonthIndex(prev => prev - 1);
     };
 
     if (loading) return <div className="loading">Cargando calendario...</div>;
 
+    const currentMonth = months[currentMonthIndex];
+
     return (
         <div className="calendar-container">
-            <header className="calendar-header">
+            <header className="calendar-header compact">
                 <motion.h1
                     className="calendar-title"
-                    initial={{ y: -50, opacity: 0 }}
+                    initial={{ y: -20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                    Preliminares 2026
+                    COAC 2026
                 </motion.h1>
             </header>
 
-            {months.map((month, mIdx) => (
-                <div key={mIdx} className="month-section">
-                    <h2 className="month-title">{month.name}</h2>
+            {currentMonth && (
+                <div className="month-section">
+                    <div className="month-navigation">
+                        <button
+                            className="nav-btn"
+                            onClick={prevMonth}
+                            disabled={currentMonthIndex === 0}
+                        >
+                            <i className="fas fa-chevron-left"></i>
+                        </button>
+                        <h2 className="month-title">{currentMonth.name}</h2>
+                        <button
+                            className="nav-btn"
+                            onClick={nextMonth}
+                            disabled={currentMonthIndex === months.length - 1}
+                        >
+                            <i className="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
 
                     <div className="weekdays-header">
                         {WEEKDAYS.map(day => (
@@ -135,44 +149,46 @@ function Calendar2026() {
                     </div>
 
                     <motion.div
+                        key={currentMonthIndex} // Force re-render animation on month change
                         className="calendar-grid"
                         variants={container}
                         initial="hidden"
                         animate="show"
                     >
-                        {month.days.map((date, idx) => {
+                        {currentMonth.days.map((date, idx) => {
                             if (!date) return <div key={`empty-${idx}`} className="calendar-day-empty"></div>;
 
                             const dateKey = format(date, 'yyyy-MM-dd');
-                            const dayEvents = month.eventMap[dateKey] || [];
+                            const dayEvents = currentMonth.eventMap[dateKey] || [];
                             const dayNumber = format(date, 'd');
                             const hasEvents = dayEvents.length > 0;
-                            const functionName = hasEvents ? (dayEvents[0]?.funcion.split('-')[0].trim()) : '';
+
+                            // Find 'Cabeza de Serie'
+                            const cabezaDeSerie = dayEvents.find(ev => ev.cabeza_serie === true || ev.cabeza_serie === 'true');
 
                             return (
                                 <motion.div
                                     key={dateKey}
-                                    className={`calendar-day-card ${hasEvents ? 'has-events' : ''}`}
+                                    className={`calendar-day-card ${hasEvents ? 'has-events' : ''} ${cabezaDeSerie ? 'is-highlight' : ''}`}
                                     variants={item}
                                     onClick={() => hasEvents && setSelectedDay({ date: format(date, 'dd/MM/yyyy'), events: dayEvents })}
-                                    whileHover={hasEvents ? { y: -5, boxShadow: '0 8px 20px rgba(255,0,204,0.3)' } : {}}
+                                    whileHover={hasEvents ? { scale: 1.05, zIndex: 10 } : {}}
                                 >
-                                    <div className={`date-badge ${hasEvents ? 'active' : ''}`}>
-                                        <span className="date-number">{dayNumber}</span>
+                                    <div className="date-header">
+                                        <span className={`date-number ${cabezaDeSerie ? 'gold-text' : ''}`}>{dayNumber}</span>
+                                        {cabezaDeSerie && <i className="fas fa-crown gold-icon"></i>}
                                     </div>
 
-                                    {hasEvents && (
-                                        <div className="day-content">
-                                            <div className="function-label">{functionName}</div>
-                                            <div className="events-dots">
-                                                {dayEvents.slice(0, 6).map((_, i) => (
-                                                    <div key={i} className="event-dot" title={dayEvents[i].nombre}></div>
-                                                ))}
-                                                {dayEvents.length > 6 && <span className="more-dots">+</span>}
-                                            </div>
-                                            <div className="groups-count">
-                                                {dayEvents.length} agrupaciones
-                                            </div>
+                                    {cabezaDeSerie && (
+                                        <div className="cabeza-serie-preview">
+                                            <span className="cs-name">{cabezaDeSerie.nombre}</span>
+                                            <span className="cs-type">{cabezaDeSerie.tipo}</span>
+                                        </div>
+                                    )}
+
+                                    {!cabezaDeSerie && hasEvents && (
+                                        <div className="day-summary">
+                                            {dayEvents.length} Agrup.
                                         </div>
                                     )}
                                 </motion.div>
@@ -180,7 +196,7 @@ function Calendar2026() {
                         })}
                     </motion.div>
                 </div>
-            ))}
+            )}
 
             <AnimatePresence>
                 {selectedDay && (
@@ -195,9 +211,9 @@ function Calendar2026() {
                             className="day-details-modal"
                             onClick={e => e.stopPropagation()}
                             layoutId={`day-${selectedDay.date}`}
-                            initial={{ scale: 0.9, opacity: 0, y: 50 }}
+                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.9, opacity: 0, y: 50 }}
+                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
                         >
                             <div className="day-details-header">
                                 <div>
@@ -212,24 +228,25 @@ function Calendar2026() {
                                 {selectedDay.events.map((ev, i) => (
                                     <motion.div
                                         key={i}
-                                        className="performance-card"
-                                        initial={{ x: -20, opacity: 0 }}
+                                        className={`performance-card ${ev.cabeza_serie === true || ev.cabeza_serie === 'true' ? 'highlight-row' : ''}`}
+                                        initial={{ x: -10, opacity: 0 }}
                                         animate={{ x: 0, opacity: 1 }}
                                         transition={{ delay: i * 0.05 }}
                                     >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                            <div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <div style={{ flex: 1 }}>
                                                 <span className={`perf-type ${ev.tipo.toLowerCase()}`}>{ev.tipo}</span>
-                                                <h3 className="perf-name">{ev.nombre}</h3>
+                                                <h3 className="perf-name" style={{ marginBottom: '0.2rem' }}>{ev.nombre}</h3>
+                                                <div className="perf-meta-compact">
+                                                    <span><i className="fas fa-map-marker-alt"></i> {ev.localidad}</span>
+                                                    {ev.letra && <span> • <b>L:</b> {ev.letra}</span>}
+                                                </div>
                                             </div>
                                             {(ev.cabeza_serie || ev.cabeza_serie === 'true') && (
-                                                <i className="fas fa-crown" title="Cabeza de serie" style={{ color: '#ffd700' }}></i>
+                                                <div className="crown-badge">
+                                                    <i className="fas fa-crown"></i>
+                                                </div>
                                             )}
-                                        </div>
-                                        <div className="perf-meta">
-                                            <div><i className="fas fa-map-marker-alt"></i> {ev.localidad}</div>
-                                            {ev.letra && <div><i className="fas fa-pen-nib"></i> L: {ev.letra}</div>}
-                                            {ev.musica && <div><i className="fas fa-music"></i> M: {ev.musica}</div>}
                                         </div>
                                     </motion.div>
                                 ))}
