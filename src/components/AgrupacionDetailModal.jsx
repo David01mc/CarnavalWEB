@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
 import '../styles/components/agrupacion-detail.css';
 
 const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthorClick }) => {
@@ -13,23 +14,39 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
         };
         window.addEventListener('keydown', handleEsc);
 
-        // Lock body scroll
+        // Calculate scrollbar width and compensate
+        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+        // Lock body scroll and compensate for scrollbar
         document.body.style.overflow = 'hidden';
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
 
         return () => {
             window.removeEventListener('keydown', handleEsc);
-            // Unlock body scroll
-            document.body.style.overflow = 'unset';
+            // Unlock body scroll and remove padding
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
         };
     }, [onClose]);
 
     if (!agrupacion) return null;
 
     return (
-        <div className="agrupacion-detail-overlay" onClick={onClose}>
-            <div
+        <motion.div
+            className="agrupacion-detail-overlay"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+        >
+            <motion.div
                 className={`agrupacion-detail-modal ${selectedLyric ? 'expanded' : ''}`}
                 onClick={e => e.stopPropagation()}
+                initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 50, scale: 0.95 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
             >
                 <button className="modal-close-btn" onClick={onClose}>
                     <i className="fas fa-times"></i>
@@ -186,8 +203,8 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                         </div>
                     )}
                 </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 };
 

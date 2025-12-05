@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import './styles/index.css';
 import AgrupacionCard from './components/AgrupacionCard';
 import AgrupacionDetailModal from './components/AgrupacionDetailModal';
@@ -357,6 +358,7 @@ function AppContent() {
                           <AgrupacionCard
                             agrupacion={item}
                             onClick={setSelectedAgrupacion}
+                            index={index}
                           />
                         </div>
                       );
@@ -366,6 +368,7 @@ function AppContent() {
                           key={item._id}
                           agrupacion={item}
                           onClick={setSelectedAgrupacion}
+                          index={index}
                         />
                       );
                     }
@@ -391,32 +394,36 @@ function AppContent() {
       )}
 
       {/* Detail Modal */}
-      {selectedAgrupacion && (
-        <AgrupacionDetailModal
-          agrupacion={selectedAgrupacion}
-          onClose={() => setSelectedAgrupacion(null)}
-          onEdit={(item) => {
-            setEditingItem(item);
-            setShowForm(true);
-          }}
-          onDelete={(item) => setDeleteItem(item)}
-          onAuthorClick={(authorName) => {
-            // Find author details from the current agrupacion
-            const author = selectedAgrupacion.authors.find(a => a.name === authorName);
-            if (author) {
-              setSelectedAuthor(author);
-            }
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {selectedAgrupacion && (
+          <AgrupacionDetailModal
+            agrupacion={selectedAgrupacion}
+            onClose={() => setSelectedAgrupacion(null)}
+            onEdit={(item) => {
+              setEditingItem(item);
+              setShowForm(true);
+            }}
+            onDelete={(item) => setDeleteItem(item)}
+            onAuthorClick={(authorName) => {
+              // Find author details from the current agrupacion
+              const author = selectedAgrupacion.authors.find(a => a.name === authorName);
+              if (author) {
+                setSelectedAuthor(author);
+              }
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Author Detail Modal */}
-      {selectedAuthor && (
-        <AuthorDetailModal
-          author={selectedAuthor}
-          onClose={() => setSelectedAuthor(null)}
-        />
-      )}
+      <AnimatePresence>
+        {selectedAuthor && (
+          <AuthorDetailModal
+            author={selectedAuthor}
+            onClose={() => setSelectedAuthor(null)}
+          />
+        )}
+      </AnimatePresence>
 
       {showForm && (
         <AgrupacionForm
