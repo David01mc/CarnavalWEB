@@ -64,6 +64,14 @@ function Navbar({ onViewChange, onLoginClick, onRegisterClick, currentView }) {
                     </button>
 
                     <button
+                        className={`dropdown-item ${currentView === 'calendar-2026' ? 'active' : ''}`}
+                        onClick={() => handleNavigation('calendar-2026')}
+                    >
+                        <i className="fas fa-calendar-alt"></i>
+                        <span>Calendario 2026</span>
+                    </button>
+
+                    <button
                         className={`dropdown-item ${currentView === 'forum' ? 'active' : ''}`}
                         onClick={() => handleNavigation('forum')}
                     >

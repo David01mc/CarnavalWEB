@@ -71,6 +71,16 @@ app.use('/api/forum', forumRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/users', usersRoutes);
 
+// GET all Preliminares 2026 data (public)
+app.get('/api/preliminares2026', async (req, res) => {
+  try {
+    const events = await db.collection('Preliminares2026').find({}).sort({ fecha: 1 }).toArray();
+    res.json(events);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET all entries (public)
 app.get('/api/agrupaciones', async (req, res) => {
   try {
