@@ -1,0 +1,123 @@
+/* Author Detail Modal */
+.author-detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    /* Slightly lighter than main modal to distinguish layers if stacked */
+    backdrop-filter: blur(4px);
+    z-index: 1100;
+    /* Higher z-index than AgrupacionDetailModal (1000) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.author-detail-modal {
+    background: var(--surface);
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+.author-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem 2rem 1.5rem;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.author-banner-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1rem;
+}
+
+.author-banner-placeholder {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: var(--text-secondary);
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 1rem;
+}
+
+.author-header-content {
+    text-align: center;
+}
+
+.author-header-content h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.8rem;
+    color: var(--text);
+}
+
+.author-role-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    background: rgba(var(--primary-rgb), 0.2);
+    color: var(--primary-light);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(var(--primary-rgb), 0.3);
+}
+
+.author-content {
+    padding: 2rem;
+    overflow-y: auto;
+    max-height: 50vh;
+}
+
+.author-section h3 {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.author-section h3 i {
+    color: var(--primary);
+}
+
+.author-section p {
+    line-height: 1.6;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

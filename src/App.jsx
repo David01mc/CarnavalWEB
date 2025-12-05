@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import './styles/index.css';
 import AgrupacionCard from './components/AgrupacionCard';
 import AgrupacionDetailModal from './components/AgrupacionDetailModal';
+import AuthorDetailModal from './components/AuthorDetailModal';
 import AgrupacionForm from './components/AgrupacionForm';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import Login from './components/Login';
@@ -58,6 +59,7 @@ function AppContent() {
   const [showRegister, setShowRegister] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedAgrupacion, setSelectedAgrupacion] = useState(null);
+  const [selectedAuthor, setSelectedAuthor] = useState(null);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -389,15 +391,32 @@ function AppContent() {
       )}
 
       {/* Detail Modal */}
-      <AgrupacionDetailModal
-        agrupacion={selectedAgrupacion}
-        onClose={() => setSelectedAgrupacion(null)}
-        onEdit={(item) => {
-          setEditingItem(item);
-          setShowForm(true);
-        }}
-        onDelete={(item) => setDeleteItem(item)}
-      />
+      {selectedAgrupacion && (
+        <AgrupacionDetailModal
+          agrupacion={selectedAgrupacion}
+          onClose={() => setSelectedAgrupacion(null)}
+          onEdit={(item) => {
+            setEditingItem(item);
+            setShowForm(true);
+          }}
+          onDelete={(item) => setDeleteItem(item)}
+          onAuthorClick={(authorName) => {
+            // Find author details from the current agrupacion
+            const author = selectedAgrupacion.authors.find(a => a.name === authorName);
+            if (author) {
+              setSelectedAuthor(author);
+            }
+          }}
+        />
+      )}
+
+      {/* Author Detail Modal */}
+      {selectedAuthor && (
+        <AuthorDetailModal
+          author={selectedAuthor}
+          onClose={() => setSelectedAuthor(null)}
+        />
+      )}
 
       {showForm && (
         <AgrupacionForm

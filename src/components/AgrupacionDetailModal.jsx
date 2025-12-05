@@ -1,127 +1,191 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/components/agrupacion-detail.css';
 
-const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete }) => {
+const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthorClick }) => {
     const { user } = useAuth();
+    const [selectedLyric, setSelectedLyric] = useState(null);
 
-    // Close on escape key
+    // Close on escape key and lock body scroll
     useEffect(() => {
         const handleEsc = (e) => {
             if (e.key === 'Escape') onClose();
         };
         window.addEventListener('keydown', handleEsc);
-        return () => window.removeEventListener('keydown', handleEsc);
+
+        // Lock body scroll
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            window.removeEventListener('keydown', handleEsc);
+            // Unlock body scroll
+            document.body.style.overflow = 'unset';
+        };
     }, [onClose]);
 
     if (!agrupacion) return null;
 
     return (
         <div className="agrupacion-detail-overlay" onClick={onClose}>
-            <div className="agrupacion-detail-modal" onClick={e => e.stopPropagation()}>
+            <div
+                className={`agrupacion-detail-modal ${selectedLyric ? 'expanded' : ''}`}
+                onClick={e => e.stopPropagation()}
+            >
                 <button className="modal-close-btn" onClick={onClose}>
                     <i className="fas fa-times"></i>
                 </button>
 
-                {/* Header Image & Title */}
-                <div className="detail-header">
-                    {agrupacion.image ? (
-                        <img src={agrupacion.image} alt={agrupacion.name} className="detail-banner" />
-                    ) : (
-                        <div className="detail-banner" style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%)' }} />
-                    )}
-                    <div className="detail-header-overlay">
-                        <div className="detail-title-section">
-                            <h2 className="detail-title">{agrupacion.name}</h2>
-                            <div className="detail-badges">
-                                {agrupacion.category && (
-                                    <span className="detail-badge badge-category">
-                                        <i className="fas fa-masks-theater"></i> {agrupacion.category}
-                                    </span>
-                                )}
-                                {agrupacion.year && (
-                                    <span className="detail-badge badge-year">
-                                        <i className="fas fa-calendar"></i> {agrupacion.year}
-                                    </span>
-                                )}
-                                {agrupacion.posición && (
-                                    <span className="detail-badge badge-position">
-                                        <i className="fas fa-trophy"></i> {agrupacion.posición}º Premio
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Content */}
-                <div className="detail-content">
-                    {/* Description */}
-                    {agrupacion.descripcion && (
-                        <div className="detail-section">
-                            <h3 className="section-title"><i className="fas fa-align-left"></i> Descripción</h3>
-                            <p className="detail-description">{agrupacion.descripcion}</p>
-                        </div>
-                    )}
-
-                    {/* Authors */}
-                    {agrupacion.authors && agrupacion.authors.length > 0 && (
-                        <div className="detail-section">
-                            <h3 className="section-title"><i className="fas fa-pen-nib"></i> Autores</h3>
-                            <div className="authors-grid">
-                                {agrupacion.authors.map((author, idx) => (
-                                    <div key={idx} className="author-card">
-                                        {author.image && (
-                                            <img src={author.image} alt={author.name} className="author-img" />
+                <div className="modal-layout">
+                    {/* Left Panel: Main Details */}
+                    <div className="detail-panel">
+                        {/* Header Image & Title */}
+                        <div className="detail-header">
+                            {agrupacion.image ? (
+                                <img src={agrupacion.image} alt={agrupacion.name} className="detail-banner" />
+                            ) : (
+                                <div className="detail-banner" style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%)' }} />
+                            )}
+                            <div className="detail-header-overlay">
+                                <div className="detail-title-section">
+                                    <h2 className="detail-title">{agrupacion.name}</h2>
+                                    <div className="detail-badges">
+                                        {agrupacion.category && (
+                                            <span className="detail-badge badge-category">
+                                                <i className="fas fa-masks-theater"></i> {agrupacion.category}
+                                            </span>
                                         )}
-                                        <div className="author-info">
-                                            <h4>{author.name}</h4>
-                                            {author.role && <span className="author-role">{author.role}</span>}
-                                            {author.descripcion && <p className="author-desc">{author.descripcion}</p>}
-                                        </div>
+                                        {agrupacion.year && (
+                                            <span className="detail-badge badge-year">
+                                                <i className="fas fa-calendar"></i> {agrupacion.year}
+                                            </span>
+                                        )}
+                                        {agrupacion.posición && (
+                                            <span className="detail-badge badge-position">
+                                                <i className="fas fa-trophy"></i> {agrupacion.posición}º Premio
+                                            </span>
+                                        )}
                                     </div>
-                                ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Content */}
+                        <div className="detail-content">
+                            {/* Description */}
+                            {agrupacion.descripcion && (
+                                <div className="detail-section">
+                                    <h3 className="section-title"><i className="fas fa-align-left"></i> Descripción</h3>
+                                    <p className="detail-description">{agrupacion.descripcion}</p>
+                                </div>
+                            )}
+
+                            {/* Authors */}
+                            {agrupacion.authors && agrupacion.authors.length > 0 && (
+                                <div className="detail-section">
+                                    <h3 className="section-title"><i className="fas fa-pen-nib"></i> Autores</h3>
+                                    <div className="authors-grid">
+                                        {agrupacion.authors.map((author, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="author-card clickable-author"
+                                                onClick={() => {
+                                                    if (onAuthorClick) {
+                                                        onAuthorClick(author.name);
+                                                        // Don't close the main modal, let the author modal stack on top
+                                                    }
+                                                }}
+                                                title="Ver más agrupaciones de este autor"
+                                            >
+                                                {author.image && (
+                                                    <img src={author.image} alt={author.name} className="author-img" />
+                                                )}
+                                                <div className="author-info">
+                                                    <h4>{author.name}</h4>
+                                                    {author.role && <span className="author-role">{author.role}</span>}
+                                                    {author.descripcion && <p className="author-desc">{author.descripcion}</p>}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Lyrics List */}
+                            {agrupacion.lyrics && agrupacion.lyrics.length > 0 && (
+                                <div className="detail-section">
+                                    <h3 className="section-title"><i className="fas fa-music"></i> Letras ({agrupacion.lyrics.length})</h3>
+                                    <div className="lyrics-list">
+                                        {agrupacion.lyrics.map((lyric, idx) => (
+                                            <div
+                                                key={idx}
+                                                className={`lyric-item ${selectedLyric === lyric ? 'active' : ''}`}
+                                                onClick={() => setSelectedLyric(lyric)}
+                                            >
+                                                <i className="fas fa-file-audio"></i>
+                                                <span>{lyric.title || `Letra ${idx + 1}`}</span>
+                                                <i className="fas fa-chevron-right" style={{ marginLeft: 'auto', opacity: 0.5 }}></i>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Components Info */}
+                            <div className="detail-section">
+                                <h3 className="section-title"><i className="fas fa-info-circle"></i> Información Adicional</h3>
+                                <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+                                    {agrupacion.componentes && (
+                                        <div className="components-count">
+                                            <strong><i className="fas fa-users"></i> Componentes:</strong> {agrupacion.componentes.length} miembros
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Admin Actions */}
+                        {user && (user.role === 'admin' || user.isAdmin) && (
+                            <div className="detail-actions">
+                                <button className="btn btn-danger" onClick={() => {
+                                    if (window.confirm('¿Estás seguro de eliminar esta agrupación?')) {
+                                        onDelete(agrupacion);
+                                        onClose();
+                                    }
+                                }}>
+                                    <i className="fas fa-trash"></i> Eliminar
+                                </button>
+                                <button className="btn btn-primary" onClick={() => {
+                                    onEdit(agrupacion);
+                                    onClose();
+                                }}>
+                                    <i className="fas fa-edit"></i> Editar Agrupación
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Right Panel: Lyric Content */}
+                    {selectedLyric && (
+                        <div className="lyric-panel">
+                            <div className="lyric-header">
+                                <h3>{selectedLyric.title || 'Letra'}</h3>
+                                <button className="close-lyric-btn" onClick={() => setSelectedLyric(null)}>
+                                    <i className="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div className="lyric-content">
+                                {selectedLyric.content ? (
+                                    <pre>{selectedLyric.content}</pre>
+                                ) : (
+                                    <div className="empty-lyric">
+                                        <i className="fas fa-music"></i>
+                                        <p>Contenido de la letra no disponible</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
-
-                    {/* Components & Lyrics Info */}
-                    <div className="detail-section">
-                        <h3 className="section-title"><i className="fas fa-info-circle"></i> Información Adicional</h3>
-                        <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-                            {agrupacion.componentes && (
-                                <div className="components-count">
-                                    <strong><i className="fas fa-users"></i> Componentes:</strong> {agrupacion.componentes.length} miembros
-                                </div>
-                            )}
-                            {agrupacion.lyrics && (
-                                <div className="components-count">
-                                    <strong><i className="fas fa-music"></i> Letras disponibles:</strong> {agrupacion.lyrics.length}
-                                </div>
-                            )}
-                        </div>
-                    </div>
                 </div>
-
-                {/* Admin Actions */}
-                {user && (user.role === 'admin' || user.isAdmin) && (
-                    <div className="detail-actions">
-                        <button className="btn btn-danger" onClick={() => {
-                            if (window.confirm('¿Estás seguro de eliminar esta agrupación?')) {
-                                onDelete(agrupacion);
-                                onClose();
-                            }
-                        }}>
-                            <i className="fas fa-trash"></i> Eliminar
-                        </button>
-                        <button className="btn btn-primary" onClick={() => {
-                            onEdit(agrupacion);
-                            onClose();
-                        }}>
-                            <i className="fas fa-edit"></i> Editar Agrupación
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
     );
