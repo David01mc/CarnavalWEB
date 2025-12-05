@@ -72,3 +72,45 @@
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
 }
+/* Clickable Card Styles */
+.clickable-card {
+  cursor: pointer;
+  position: relative;
+}
+
+.clickable-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s ease;
+  z-index: 1;
+}
+
+.clickable-card:hover::after {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.card-hover-indicator {
+  margin-top: 1rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.clickable-card:hover .card-hover-indicator {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.btn-small {
+  z-index: 2; /* Ensure buttons are clickable above the card overlay */
+  position: relative;
+}

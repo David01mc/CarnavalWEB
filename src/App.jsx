@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import './styles/index.css';
 import AgrupacionCard from './components/AgrupacionCard';
+import AgrupacionDetailModal from './components/AgrupacionDetailModal';
 import AgrupacionForm from './components/AgrupacionForm';
 import DeleteConfirmModal from './components/DeleteConfirmModal';
 import Login from './components/Login';
@@ -56,6 +57,7 @@ function AppContent() {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [selectedAgrupacion, setSelectedAgrupacion] = useState(null);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -352,12 +354,7 @@ function AppContent() {
                         <div ref={lastAgrupacionElementRef} key={item._id}>
                           <AgrupacionCard
                             agrupacion={item}
-                            onEdit={() => {
-                              setEditingItem(item);
-                              setShowForm(true);
-                            }}
-                            onDelete={() => setDeleteItem(item)}
-                            isAuthenticated={!!user}
+                            onClick={setSelectedAgrupacion}
                           />
                         </div>
                       );
@@ -366,12 +363,7 @@ function AppContent() {
                         <AgrupacionCard
                           key={item._id}
                           agrupacion={item}
-                          onEdit={() => {
-                            setEditingItem(item);
-                            setShowForm(true);
-                          }}
-                          onDelete={() => setDeleteItem(item)}
-                          isAuthenticated={!!user}
+                          onClick={setSelectedAgrupacion}
                         />
                       );
                     }
@@ -395,6 +387,17 @@ function AppContent() {
           </main>
         </div>
       )}
+
+      {/* Detail Modal */}
+      <AgrupacionDetailModal
+        agrupacion={selectedAgrupacion}
+        onClose={() => setSelectedAgrupacion(null)}
+        onEdit={(item) => {
+          setEditingItem(item);
+          setShowForm(true);
+        }}
+        onDelete={(item) => setDeleteItem(item)}
+      />
 
       {showForm && (
         <AgrupacionForm

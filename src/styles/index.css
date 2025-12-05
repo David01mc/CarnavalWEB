@@ -39,6 +39,8 @@
 @import './components/adminUsers.css';
 @import './components/login.css';
 @import './components/gifPicker.css';
+@import './components/customSelect.css';
+@import './components/agrupacion-detail.css';
 
 /* 6. Layouts */
 @import './layouts/collection.css';

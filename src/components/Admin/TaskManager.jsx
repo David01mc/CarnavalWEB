@@ -18,6 +18,7 @@ import {
 import TaskColumn from './TaskColumn';
 import TaskCard from './TaskCard';
 import TaskModal from './TaskModal';
+import CustomSelect from '../CustomSelect';
 import '../../styles/components/taskManager/index.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -331,17 +332,19 @@ const TaskManager = () => {
                         onChange={(e) => setFilters({ ...filters, search: e.target.value })}
                     />
                 </div>
-                <div className="filter-item">
-                    <i className="fas fa-flag"></i>
-                    <select
+                <div style={{ flex: 1, minWidth: '200px' }}>
+                    <CustomSelect
+                        options={[
+                            { value: '', label: 'Todas las prioridades' },
+                            { value: 'high', label: 'Alta', icon: 'fa-flag', color: '#f44336' },
+                            { value: 'medium', label: 'Media', icon: 'fa-flag', color: '#ff9800' },
+                            { value: 'low', label: 'Baja', icon: 'fa-flag', color: '#4caf50' }
+                        ]}
                         value={filters.priority}
-                        onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
-                    >
-                        <option value="">Todas las prioridades</option>
-                        <option value="high">Alta</option>
-                        <option value="medium">Media</option>
-                        <option value="low">Baja</option>
-                    </select>
+                        onChange={(value) => setFilters({ ...filters, priority: value })}
+                        placeholder="Prioridad"
+                        icon="fa-flag"
+                    />
                 </div>
             </div>
 

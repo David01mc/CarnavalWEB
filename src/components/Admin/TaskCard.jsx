@@ -1,10 +1,10 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const PRIORITY_COLORS = {
-    high: 'linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%)',
-    medium: 'linear-gradient(135deg, #f7b733 0%, #f093fb 100%)',
-    low: 'linear-gradient(135deg, #00d2ff 0%, #38ef7d 100%)',
+const PRIORITY_STYLES = {
+    high: { bg: '#f44336', color: '#ffffff' },
+    medium: { bg: '#ef6c00', color: '#ffffff' }, // Darker orange for white text contrast
+    low: { bg: '#4caf50', color: '#ffffff' },
 };
 
 const PRIORITY_LABELS = {
@@ -60,6 +60,8 @@ const TaskCard = ({ task, onEdit, onDelete, isDragging, onToggleSubtask }) => {
         }
     };
 
+    const priorityStyle = PRIORITY_STYLES[task.priority] || PRIORITY_STYLES.low;
+
     return (
         <div
             ref={setNodeRef}
@@ -72,7 +74,10 @@ const TaskCard = ({ task, onEdit, onDelete, isDragging, onToggleSubtask }) => {
             <div className="task-card-header">
                 <div
                     className="priority-badge"
-                    style={{ background: PRIORITY_COLORS[task.priority] }}
+                    style={{
+                        background: priorityStyle.bg,
+                        color: priorityStyle.color
+                    }}
                 >
                     <i className="fas fa-flag"></i> {PRIORITY_LABELS[task.priority]}
                 </div>
