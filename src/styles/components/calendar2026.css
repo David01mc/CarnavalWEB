@@ -144,6 +144,129 @@
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
 }
 
+/* ========================================
+   PHASE-SPECIFIC STYLES (CONSOLIDATED)
+   ======================================== */
+
+/* Phase Badge Styles */
+.phase-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    display: inline-block;
+    margin: 0 0.3rem;
+}
+
+.phase-badge.phase-preliminares {
+    color: #81c784;
+}
+
+.phase-badge.phase-cuartos,
+.phase-badge.phase-cuartos-de-final {
+    color: #64b5f6;
+}
+
+.phase-badge.phase-semifinales,
+.phase-badge.phase-semis {
+    color: #ba68c8;
+}
+
+.phase-badge.phase-final {
+    color: #ffd700;
+}
+
+/* Phase-specific BORDER colors */
+.calendar-day-card.phase-preliminares.has-events,
+.calendar-day-card.phase-preliminares.is-highlight {
+    border: 2px solid rgba(76, 175, 80, 0.8) !important;
+}
+
+.calendar-day-card.phase-cuartos.has-events,
+.calendar-day-card.phase-cuartos.is-highlight,
+.calendar-day-card.phase-cuartos-de-final.has-events,
+.calendar-day-card.phase-cuartos-de-final.is-highlight {
+    border: 2px solid rgba(33, 150, 243, 0.8) !important;
+}
+
+.calendar-day-card.phase-semifinales.has-events,
+.calendar-day-card.phase-semis.has-events,
+.calendar-day-card.phase-semifinales.is-highlight,
+.calendar-day-card.phase-semis.is-highlight {
+    border: 2px solid rgba(244, 67, 54, 0.8) !important;
+}
+
+.calendar-day-card.phase-final.has-events,
+.calendar-day-card.phase-final.is-highlight {
+    border: 2px solid rgba(255, 215, 0, 0.9) !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+/* Phase-specific DATE NUMBER colors */
+.calendar-day-card.phase-preliminares .date-number {
+    color: #4caf50 !important;
+    font-weight: 700;
+}
+
+.calendar-day-card.phase-cuartos .date-number,
+.calendar-day-card.phase-cuartos-de-final .date-number {
+    color: #2196f3 !important;
+    font-weight: 700;
+}
+
+.calendar-day-card.phase-semifinales .date-number,
+.calendar-day-card.phase-semis .date-number {
+    color: #f44336 !important;
+    font-weight: 700;
+}
+
+.calendar-day-card.phase-final .date-number {
+    color: #ffd700 !important;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Phase badge in modal header */
+.phase-badge-modal {
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    margin-left: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.phase-badge-modal.phase-preliminares {
+    background: rgba(76, 175, 80, 0.3);
+    color: #a5d6a7;
+    border: 1px solid rgba(76, 175, 80, 0.5);
+}
+
+.phase-badge-modal.phase-cuartos,
+.phase-badge-modal.phase-cuartos-de-final {
+    background: rgba(33, 150, 243, 0.3);
+    color: #90caf9;
+    border: 1px solid rgba(33, 150, 243, 0.5);
+}
+
+.phase-badge-modal.phase-semifinales,
+.phase-badge-modal.phase-semis {
+    background: rgba(156, 39, 176, 0.3);
+    color: #ce93d8;
+    border: 1px solid rgba(156, 39, 176, 0.5);
+}
+
+.phase-badge-modal.phase-final {
+    background: rgba(255, 215, 0, 0.3);
+    color: #ffd700;
+    border: 1px solid rgba(255, 215, 0, 0.6);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* ======================================== */
+
 .gold-icon {
     color: #ffd700;
     font-size: 1rem;
@@ -192,6 +315,25 @@
     color: #ffd700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+/* Phase-specific cs-type colors */
+.calendar-day-card.phase-preliminares .cs-type {
+    color: #81c784 !important;
+}
+
+.calendar-day-card.phase-cuartos .cs-type,
+.calendar-day-card.phase-cuartos-de-final .cs-type {
+    color: #64b5f6 !important;
+}
+
+.calendar-day-card.phase-semifinales .cs-type,
+.calendar-day-card.phase-semis .cs-type {
+    color: #f48fb1 !important;
+}
+
+.calendar-day-card.phase-final .cs-type {
+    color: #ffd700 !important;
 }
 
 /* Modal Styling */
