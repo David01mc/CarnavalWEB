@@ -22,6 +22,30 @@ function Calendar2026() {
     const [months, setMonths] = useState([]);
     const [currentMonthIndex, setCurrentMonthIndex] = useState(1); // Default to Jan 2026 (Index 1)
 
+    // Confetti function for Final phase
+    const triggerConfetti = () => {
+        const count = 200;
+        const defaults = {
+            origin: { y: 0.7 }
+        };
+
+        function fire(particleRatio, opts) {
+            const confettiColors = ['#FFD700', '#FFA500', '#FF6347', '#FF1493', '#00CED1'];
+            window.confetti({
+                ...defaults,
+                ...opts,
+                particleCount: Math.floor(count * particleRatio),
+                colors: confettiColors
+            });
+        }
+
+        fire(0.25, { spread: 26, startVelocity: 55 });
+        fire(0.2, { spread: 60 });
+        fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+        fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+        fire(0.1, { spread: 120, startVelocity: 45 });
+    };
+
     useEffect(() => {
         fetchEvents();
     }, []);
@@ -214,7 +238,14 @@ function Calendar2026() {
                                     key={dateKey}
                                     className={`calendar-day-card ${hasEvents ? 'has-events' : ''} ${cabezaDeSerie ? 'is-highlight' : ''} phase-${phaseClass}`}
                                     variants={item}
-                                    onClick={() => hasEvents && setSelectedDay({ date: format(date, 'dd/MM/yyyy'), events: dayEvents })}
+                                    onClick={() => {
+                                        if (hasEvents) {
+                                            if (phase.toLowerCase() === 'final') {
+                                                triggerConfetti();
+                                            }
+                                            setSelectedDay({ date: format(date, 'dd/MM/yyyy'), events: dayEvents });
+                                        }
+                                    }}
                                     whileHover={hasEvents ? { scale: 1.05, zIndex: 10 } : {}}
                                 >
                                     <div className="date-header">

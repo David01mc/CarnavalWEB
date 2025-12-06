@@ -25,27 +25,55 @@
     color: #ffd700;
 }
 
-/* Phase-specific day card border colors (replaces yellow highlight) */
+/* Phase-specific day card border colors */
 .calendar-day-card.phase-preliminares.has-events,
 .calendar-day-card.phase-preliminares.is-highlight {
-    border-color: rgba(76, 175, 80, 0.5) !important;
+    border-color: rgba(76, 175, 80, 0.8) !important;
+    border-width: 2px;
 }
 
 .calendar-day-card.phase-cuartos.has-events,
 .calendar-day-card.phase-cuartos.is-highlight {
-    border-color: rgba(33, 150, 243, 0.5) !important;
+    border-color: rgba(33, 150, 243, 0.8) !important;
+    border-width: 2px;
 }
 
 .calendar-day-card.phase-semifinales.has-events,
 .calendar-day-card.phase-semis.has-events,
 .calendar-day-card.phase-semifinales.is-highlight,
 .calendar-day-card.phase-semis.is-highlight {
-    border-color: rgba(156, 39, 176, 0.5) !important;
+    border-color: rgba(244, 67, 54, 0.8) !important;
+    border-width: 2px;
 }
 
 .calendar-day-card.phase-final.has-events,
 .calendar-day-card.phase-final.is-highlight {
-    border-color: rgba(255, 215, 0, 0.6) !important;
+    border-color: rgba(255, 215, 0, 0.9) !important;
+    border-width: 2px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+/* Phase-specific date number colors */
+.calendar-day-card.phase-preliminares .date-number {
+    color: #4caf50 !important;
+    font-weight: 700;
+}
+
+.calendar-day-card.phase-cuartos .date-number {
+    color: #2196f3 !important;
+    font-weight: 700;
+}
+
+.calendar-day-card.phase-semifinales .date-number,
+.calendar-day-card.phase-semis .date-number {
+    color: #f44336 !important;
+    font-weight: 700;
+}
+
+.calendar-day-card.phase-final .date-number {
+    color: #ffd700 !important;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 /* Phase badge in modal header */
