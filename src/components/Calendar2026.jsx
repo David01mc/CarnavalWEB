@@ -205,16 +205,25 @@ function Calendar2026() {
                             // Find 'Cabeza de Serie'
                             const cabezaDeSerie = dayEvents.find(ev => ev.cabeza_serie === true || ev.cabeza_serie === 'true');
 
+                            // Detect phase (all events on same day should have same phase)
+                            const phase = dayEvents[0]?.fase || 'Preliminares';
+                            const phaseClass = phase.toLowerCase().replace(/\s+/g, '-');
+
                             return (
                                 <motion.div
                                     key={dateKey}
-                                    className={`calendar-day-card ${hasEvents ? 'has-events' : ''} ${cabezaDeSerie ? 'is-highlight' : ''}`}
+                                    className={`calendar-day-card ${hasEvents ? 'has-events' : ''} ${cabezaDeSerie ? 'is-highlight' : ''} phase-${phaseClass}`}
                                     variants={item}
                                     onClick={() => hasEvents && setSelectedDay({ date: format(date, 'dd/MM/yyyy'), events: dayEvents })}
                                     whileHover={hasEvents ? { scale: 1.05, zIndex: 10 } : {}}
                                 >
                                     <div className="date-header">
                                         <span className={`date-number ${cabezaDeSerie ? 'gold-text' : ''}`}>{dayNumber}</span>
+                                        {hasEvents && (
+                                            <div className={`phase-badge phase-${phaseClass}`}>
+                                                {phase}
+                                            </div>
+                                        )}
                                         {cabezaDeSerie && <i className="fas fa-crown gold-icon"></i>}
                                     </div>
 
@@ -257,6 +266,11 @@ function Calendar2026() {
                             <div className="day-details-header">
                                 <div>
                                     <h2>{selectedDay.date}</h2>
+                                    {selectedDay.events[0]?.fase && (
+                                        <span className={`phase-badge-modal phase-${selectedDay.events[0].fase.toLowerCase().replace(/\\s+/g, '-')}`}>
+                                            {selectedDay.events[0].fase}
+                                        </span>
+                                    )}
                                 </div>
                                 <button className="close-modal-btn" onClick={() => setSelectedDay(null)}>
                                     <i className="fas fa-times"></i>

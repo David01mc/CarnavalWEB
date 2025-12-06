@@ -1,55 +1,51 @@
 /* Phase Badge Styles */
 .phase-badge {
-    font-size: 0.6rem;
-    font-weight: 700;
+    font-size: 0.65rem;
+    font-weight: 600;
     text-transform: uppercase;
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
     letter-spacing: 0.3px;
     display: inline-block;
+    margin: 0 0.3rem;
 }
 
 .phase-badge.phase-preliminares {
-    background: rgba(76, 175, 80, 0.2);
     color: #81c784;
-    border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .phase-badge.phase-cuartos {
-    background: rgba(33, 150, 243, 0.2);
     color: #64b5f6;
-    border: 1px solid rgba(33, 150, 243, 0.3);
 }
 
 .phase-badge.phase-semifinales,
 .phase-badge.phase-semis {
-    background: rgba(156, 39, 176, 0.2);
     color: #ba68c8;
-    border: 1px solid rgba(156, 39, 176, 0.3);
 }
 
 .phase-badge.phase-final {
-    background: rgba(255, 215, 0, 0.2);
     color: #ffd700;
-    border: 1px solid rgba(255, 215, 0, 0.4);
 }
 
 /* Phase-specific day card border colors (replaces yellow highlight) */
-.calendar-day-card.phase-preliminares.has-events {
-    border-color: rgba(76, 175, 80, 0.5);
+.calendar-day-card.phase-preliminares.has-events,
+.calendar-day-card.phase-preliminares.is-highlight {
+    border-color: rgba(76, 175, 80, 0.5) !important;
 }
 
-.calendar-day-card.phase-cuartos.has-events {
-    border-color: rgba(33, 150, 243, 0.5);
+.calendar-day-card.phase-cuartos.has-events,
+.calendar-day-card.phase-cuartos.is-highlight {
+    border-color: rgba(33, 150, 243, 0.5) !important;
 }
 
 .calendar-day-card.phase-semifinales.has-events,
-.calendar-day-card.phase-semis.has-events {
-    border-color: rgba(156, 39, 176, 0.5);
+.calendar-day-card.phase-semis.has-events,
+.calendar-day-card.phase-semifinales.is-highlight,
+.calendar-day-card.phase-semis.is-highlight {
+    border-color: rgba(156, 39, 176, 0.5) !important;
 }
 
-.calendar-day-card.phase-final.has-events {
-    border-color: rgba(255, 215, 0, 0.6);
+.calendar-day-card.phase-final.has-events,
+.calendar-day-card.phase-final.is-highlight {
+    border-color: rgba(255, 215, 0, 0.6) !important;
 }
 
 /* Phase badge in modal header */
