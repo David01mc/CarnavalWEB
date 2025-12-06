@@ -81,6 +81,80 @@ app.get('/api/preliminares2026', async (req, res) => {
   }
 });
 
+// GET search Preliminares 2026 by name (for admin editor)
+app.get('/api/preliminares2026/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q || q.trim().length === 0) {
+      return res.json([]);
+    }
+
+    const results = await db.collection('Preliminares2026')
+      .find({
+        nombre: { $regex: q, $options: 'i' }
+      })
+      .limit(10)
+      .toArray();
+
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST add agrupación to a new phase (duplicate record with new date/fase)
+app.post('/api/preliminares2026/add-to-phase', async (req, res) => {
+  try {
+    const { agrupacionId, fecha, fase } = req.body;
+
+    if (!agrupacionId || !fecha || !fase) {
+      return res.status(400).json({ error: 'Missing required fields: agrupacionId, fecha, fase' });
+    }
+
+    // Find the original agrupación
+    const original = await db.collection('Preliminares2026').findOne({
+      _id: new ObjectId(agrupacionId)
+    });
+
+    if (!original) {
+      return res.status(404).json({ error: 'Agrupación not found' });
+    }
+
+    // Create a duplicate with new fecha and fase
+    const { _id, ...agrupacionData } = original;
+    const newAgrupacion = {
+      ...agrupacionData,
+      fecha,
+      fase
+    };
+
+    const result = await db.collection('Preliminares2026').insertOne(newAgrupacion);
+    const created = await db.collection('Preliminares2026').findOne({ _id: result.insertedId });
+
+    res.status(201).json(created);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// DELETE agrupación from a phase
+app.delete('/api/preliminares2026/:id', async (req, res) => {
+  try {
+    const result = await db.collection('Preliminares2026').deleteOne({
+      _id: new ObjectId(req.params.id)
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Agrupación not found' });
+    }
+
+    res.json({ message: 'Agrupación deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // GET all entries (public)
 app.get('/api/agrupaciones', async (req, res) => {
   try {

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, parse, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay } from 'date-fns';
 import { es } from 'date-fns/locale';
+import AdminPhaseEditor from './AdminPhaseEditor';
 import '../styles/components/calendar2026.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -21,6 +22,8 @@ function Calendar2026() {
     const [selectedDay, setSelectedDay] = useState(null);
     const [months, setMonths] = useState([]);
     const [currentMonthIndex, setCurrentMonthIndex] = useState(1); // Default to Jan 2026 (Index 1)
+    const [isAdmin, setIsAdmin] = useState(true); // TODO: Replace with actual auth
+    const [showEditor, setShowEditor] = useState(false);
 
     // Confetti function for Final phase
     const triggerConfetti = () => {
@@ -143,6 +146,32 @@ function Calendar2026() {
                 console.error('Error generating calendar grid:', genError);
             }
             setLoading(false);
+        }
+    };
+
+    const handleAgrupacionAdded = (newAgrupacion) => {
+        // Refresh events to show the new agrupación
+        fetchEvents();
+        setShowEditor(false);
+    };
+
+    const handleDeleteAgrupacion = async (agrupacionId) => {
+        if (!window.confirm('¿Estás seguro de que quieres eliminar esta agrupación?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/api/preliminares2026/${agrupacionId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) throw new Error('Error deleting agrupación');
+
+            // Refresh events
+            fetchEvents();
+        } catch (error) {
+            console.error('Error deleting agrupación:', error);
+            alert('Error al eliminar la agrupación');
         }
     };
 
@@ -303,9 +332,20 @@ function Calendar2026() {
                                         </span>
                                     )}
                                 </div>
-                                <button className="close-modal-btn" onClick={() => setSelectedDay(null)}>
-                                    <i className="fas fa-times"></i>
-                                </button>
+                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                    {isAdmin && (
+                                        <button
+                                            className="add-agrupacion-btn"
+                                            onClick={() => setShowEditor(!showEditor)}
+                                            title="Agregar agrupación"
+                                        >
+                                            <i className="fas fa-plus"></i> Agregar
+                                        </button>
+                                    )}
+                                    <button className="close-modal-btn" onClick={() => { setSelectedDay(null); setShowEditor(false); }}>
+                                        <i className="fas fa-times"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div className="day-performances-horizontal">
                                 {selectedDay.events.map((ev, i) => (
@@ -320,7 +360,7 @@ function Calendar2026() {
                                             {(ev.cabeza_serie === true || ev.cabeza_serie === 'true') && (
                                                 <div className="crown-icon-center"><i className="fas fa-crown"></i></div>
                                             )}
-                                            <span className={`perf-type ${ev.tipo.toLowerCase()}`}>{ev.tipo}</span>
+                                            <span className={`perf-type ${ev.tipo ? ev.tipo.toLowerCase() : ''}`}>{ev.tipo || 'N/A'}</span>
                                             <h3 className="perf-name-vertical">{ev.nombre}</h3>
                                             {ev.año_anterior && ev.año_anterior.nombre && (
                                                 <div className="perf-prev-year">
@@ -347,9 +387,26 @@ function Calendar2026() {
                                                 <span>{ev.direccion || '\u00A0'}</span>
                                             </div>
                                         </div>
+                                        {isAdmin && (
+                                            <button
+                                                className="delete-agrupacion-btn"
+                                                onClick={() => handleDeleteAgrupacion(ev._id)}
+                                                title="Eliminar agrupación"
+                                            >
+                                                <i className="fas fa-trash"></i> Eliminar
+                                            </button>
+                                        )}
                                     </motion.div>
                                 ))}
                             </div>
+                            {isAdmin && showEditor && (
+                                <AdminPhaseEditor
+                                    selectedDate={selectedDay.date}
+                                    selectedPhase={selectedDay.events[0]?.fase || 'Preliminares'}
+                                    onAgrupacionAdded={handleAgrupacionAdded}
+                                    onClose={() => setShowEditor(false)}
+                                />
+                            )}
                         </motion.div>
                     </motion.div>
                 )}
