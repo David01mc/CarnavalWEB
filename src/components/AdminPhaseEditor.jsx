@@ -95,17 +95,13 @@ function AdminPhaseEditor({ selectedDate, selectedPhase, onAgrupacionAdded, onCl
                     <div className="search-results">
                         {searchResults.map((agrupacion) => (
                             <div key={agrupacion._id} className="search-result-item">
-                                <div className="result-info">
-                                    <div className="result-name">{agrupacion.nombre}</div>
-                                    <div className="result-meta">
-                                        <span className={`result-type ${agrupacion.tipo?.toLowerCase()}`}>
-                                            {agrupacion.tipo}
-                                        </span>
-                                        <span className="result-location">
-                                            <i className="fas fa-map-marker-alt"></i> {agrupacion.localidad}
-                                        </span>
-                                    </div>
-                                </div>
+                                <span className={`result-type ${agrupacion.tipo?.toLowerCase()}`}>
+                                    {agrupacion.tipo}
+                                </span>
+                                <div className="result-name">{agrupacion.nombre}</div>
+                                <span className="result-location">
+                                    <i className="fas fa-map-marker-alt"></i> {agrupacion.localidad}
+                                </span>
                                 <button
                                     className="add-btn"
                                     onClick={() => handleAddAgrupacion(agrupacion)}

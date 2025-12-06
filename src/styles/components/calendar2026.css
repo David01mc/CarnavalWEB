@@ -447,6 +447,30 @@
     transform: translateY(-1px);
 }
 
+/* Split View Layout */
+.modal-content-wrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    gap: 1rem;
+}
+
+.modal-content-wrapper.split-view {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+}
+
+.modal-content-wrapper.split-view .day-performances-horizontal {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.editor-panel {
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding-left: 1rem;
+    overflow-y: auto;
+}
+
 /* Horizontal Layout container */
 .day-performances-horizontal {
     padding: 1rem;

@@ -324,7 +324,7 @@ function Calendar2026() {
                             exit={{ scale: 0.95, opacity: 0, y: 20 }}
                         >
                             <div className="day-details-header">
-                                <div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                     <h2>{selectedDay.date}</h2>
                                     {selectedDay.events[0]?.fase && (
                                         <span className={`phase-badge-modal phase-${selectedDay.events[0].fase.toLowerCase().replace(/\\s+/g, '-')}`}>
@@ -347,66 +347,70 @@ function Calendar2026() {
                                     </button>
                                 </div>
                             </div>
-                            <div className="day-performances-horizontal">
-                                {selectedDay.events.map((ev, i) => (
-                                    <motion.div
-                                        key={i}
-                                        className={`performance-card-vertical ${ev.cabeza_serie === true || ev.cabeza_serie === 'true' ? 'highlight-col' : ''}`}
-                                        initial={{ y: 20, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        transition={{ delay: i * 0.05 }}
-                                    >
-                                        <div className="perf-header">
-                                            {(ev.cabeza_serie === true || ev.cabeza_serie === 'true') && (
-                                                <div className="crown-icon-center"><i className="fas fa-crown"></i></div>
-                                            )}
-                                            <span className={`perf-type ${ev.tipo ? ev.tipo.toLowerCase() : ''}`}>{ev.tipo || 'N/A'}</span>
-                                            <h3 className="perf-name-vertical">{ev.nombre}</h3>
-                                            {ev.año_anterior && ev.año_anterior.nombre && (
-                                                <div className="perf-prev-year">
-                                                    <i className="fas fa-history"></i> {ev.año_anterior.nombre}
-                                                </div>
-                                            )}
-                                        </div>
+                            <div className={`modal-content-wrapper ${showEditor ? 'split-view' : ''}`}>
+                                <div className="day-performances-horizontal">
+                                    {selectedDay.events.map((ev, i) => (
+                                        <motion.div
+                                            key={i}
+                                            className={`performance-card-vertical ${ev.cabeza_serie === true || ev.cabeza_serie === 'true' ? 'highlight-col' : ''}`}
+                                            initial={{ y: 20, opacity: 0 }}
+                                            animate={{ y: 0, opacity: 1 }}
+                                            transition={{ delay: i * 0.05 }}
+                                        >
+                                            <div className="perf-header">
+                                                {(ev.cabeza_serie === true || ev.cabeza_serie === 'true') && (
+                                                    <div className="crown-icon-center"><i className="fas fa-crown"></i></div>
+                                                )}
+                                                <span className={`perf-type ${ev.tipo ? ev.tipo.toLowerCase() : ''}`}>{ev.tipo || 'N/A'}</span>
+                                                <h3 className="perf-name-vertical">{ev.nombre}</h3>
+                                                {ev.año_anterior && ev.año_anterior.nombre && (
+                                                    <div className="perf-prev-year">
+                                                        <i className="fas fa-history"></i> {ev.año_anterior.nombre}
+                                                    </div>
+                                                )}
+                                            </div>
 
-                                        <div className="perf-details-vertical">
-                                            <div className="detail-item">
-                                                <i className="fas fa-map-marker-alt icon"></i>
-                                                <span>{ev.localidad || '\u00A0'}</span>
+                                            <div className="perf-details-vertical">
+                                                <div className="detail-item">
+                                                    <i className="fas fa-map-marker-alt icon"></i>
+                                                    <span>{ev.localidad || '\u00A0'}</span>
+                                                </div>
+                                                <div className="detail-item">
+                                                    <i className="fas fa-pen-nib icon"></i>
+                                                    <span>{ev.letra || '\u00A0'}</span>
+                                                </div>
+                                                <div className="detail-item">
+                                                    <i className="fas fa-music icon"></i>
+                                                    <span>{ev.musica || '\u00A0'}</span>
+                                                </div>
+                                                <div className="detail-item">
+                                                    <i className="fas fa-user-tie icon"></i>
+                                                    <span>{ev.direccion || '\u00A0'}</span>
+                                                </div>
                                             </div>
-                                            <div className="detail-item">
-                                                <i className="fas fa-pen-nib icon"></i>
-                                                <span>{ev.letra || '\u00A0'}</span>
-                                            </div>
-                                            <div className="detail-item">
-                                                <i className="fas fa-music icon"></i>
-                                                <span>{ev.musica || '\u00A0'}</span>
-                                            </div>
-                                            <div className="detail-item">
-                                                <i className="fas fa-user-tie icon"></i>
-                                                <span>{ev.direccion || '\u00A0'}</span>
-                                            </div>
-                                        </div>
-                                        {isAdmin && (
-                                            <button
-                                                className="delete-agrupacion-btn"
-                                                onClick={() => handleDeleteAgrupacion(ev._id)}
-                                                title="Eliminar agrupación"
-                                            >
-                                                <i className="fas fa-trash"></i> Eliminar
-                                            </button>
-                                        )}
-                                    </motion.div>
-                                ))}
+                                            {isAdmin && (
+                                                <button
+                                                    className="delete-agrupacion-btn"
+                                                    onClick={() => handleDeleteAgrupacion(ev._id)}
+                                                    title="Eliminar agrupación"
+                                                >
+                                                    <i className="fas fa-trash"></i> Eliminar
+                                                </button>
+                                            )}
+                                        </motion.div>
+                                    ))}
+                                </div>
+                                {isAdmin && showEditor && (
+                                    <div className="editor-panel">
+                                        <AdminPhaseEditor
+                                            selectedDate={selectedDay.date}
+                                            selectedPhase={selectedDay.events[0]?.fase || 'Preliminares'}
+                                            onAgrupacionAdded={handleAgrupacionAdded}
+                                            onClose={() => setShowEditor(false)}
+                                        />
+                                    </div>
+                                )}
                             </div>
-                            {isAdmin && showEditor && (
-                                <AdminPhaseEditor
-                                    selectedDate={selectedDay.date}
-                                    selectedPhase={selectedDay.events[0]?.fase || 'Preliminares'}
-                                    onAgrupacionAdded={handleAgrupacionAdded}
-                                    onClose={() => setShowEditor(false)}
-                                />
-                            )}
                         </motion.div>
                     </motion.div>
                 )}
