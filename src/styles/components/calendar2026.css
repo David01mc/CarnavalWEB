@@ -468,7 +468,10 @@
 .editor-panel {
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     padding-left: 1rem;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 /* Horizontal Layout container */
