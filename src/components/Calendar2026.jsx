@@ -26,6 +26,45 @@ function Calendar2026() {
         fetchEvents();
     }, []);
 
+    // Align detail rows across all cards
+    useEffect(() => {
+        if (!selectedDay) return;
+
+        // Wait for DOM to render
+        const timer = setTimeout(() => {
+            const cards = document.querySelectorAll('.performance-card-vertical');
+            if (cards.length === 0) return;
+
+            // Reset heights first
+            document.querySelectorAll('.detail-item').forEach(item => {
+                item.style.height = 'auto';
+            });
+
+            // Calculate max height for each row index (0-3)
+            const maxHeights = [0, 0, 0, 0];
+
+            cards.forEach(card => {
+                const items = card.querySelectorAll('.detail-item');
+                items.forEach((item, index) => {
+                    const height = item.offsetHeight;
+                    if (height > maxHeights[index]) {
+                        maxHeights[index] = height;
+                    }
+                });
+            });
+
+            // Apply max heights to all cards
+            cards.forEach(card => {
+                const items = card.querySelectorAll('.detail-item');
+                items.forEach((item, index) => {
+                    item.style.height = `${maxHeights[index]}px`;
+                });
+            });
+        }, 100);
+
+        return () => clearTimeout(timer);
+    }, [selectedDay]);
+
     const fetchEvents = async () => {
         let grouped = {};
 
@@ -218,35 +257,50 @@ function Calendar2026() {
                             <div className="day-details-header">
                                 <div>
                                     <h2>{selectedDay.date}</h2>
-                                    <span style={{ opacity: 0.7 }}>{selectedDay.events[0]?.funcion}</span>
                                 </div>
                                 <button className="close-modal-btn" onClick={() => setSelectedDay(null)}>
                                     <i className="fas fa-times"></i>
                                 </button>
                             </div>
-                            <div className="day-performances">
+                            <div className="day-performances-horizontal">
                                 {selectedDay.events.map((ev, i) => (
                                     <motion.div
                                         key={i}
-                                        className={`performance-card ${ev.cabeza_serie === true || ev.cabeza_serie === 'true' ? 'highlight-row' : ''}`}
-                                        initial={{ x: -10, opacity: 0 }}
-                                        animate={{ x: 0, opacity: 1 }}
+                                        className={`performance-card-vertical ${ev.cabeza_serie === true || ev.cabeza_serie === 'true' ? 'highlight-col' : ''}`}
+                                        initial={{ y: 20, opacity: 0 }}
+                                        animate={{ y: 0, opacity: 1 }}
                                         transition={{ delay: i * 0.05 }}
                                     >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <div style={{ flex: 1 }}>
-                                                <span className={`perf-type ${ev.tipo.toLowerCase()}`}>{ev.tipo}</span>
-                                                <h3 className="perf-name" style={{ marginBottom: '0.2rem' }}>{ev.nombre}</h3>
-                                                <div className="perf-meta-compact">
-                                                    <span><i className="fas fa-map-marker-alt"></i> {ev.localidad}</span>
-                                                    {ev.letra && <span> • <b>L:</b> {ev.letra}</span>}
-                                                </div>
-                                            </div>
-                                            {(ev.cabeza_serie || ev.cabeza_serie === 'true') && (
-                                                <div className="crown-badge">
-                                                    <i className="fas fa-crown"></i>
+                                        <div className="perf-header">
+                                            {(ev.cabeza_serie === true || ev.cabeza_serie === 'true') && (
+                                                <div className="crown-icon-center"><i className="fas fa-crown"></i></div>
+                                            )}
+                                            <span className={`perf-type ${ev.tipo.toLowerCase()}`}>{ev.tipo}</span>
+                                            <h3 className="perf-name-vertical">{ev.nombre}</h3>
+                                            {ev.año_anterior && ev.año_anterior.nombre && (
+                                                <div className="perf-prev-year">
+                                                    <i className="fas fa-history"></i> {ev.año_anterior.nombre}
                                                 </div>
                                             )}
+                                        </div>
+
+                                        <div className="perf-details-vertical">
+                                            <div className="detail-item">
+                                                <i className="fas fa-map-marker-alt icon"></i>
+                                                <span>{ev.localidad || '\u00A0'}</span>
+                                            </div>
+                                            <div className="detail-item">
+                                                <i className="fas fa-pen-nib icon"></i>
+                                                <span>{ev.letra || '\u00A0'}</span>
+                                            </div>
+                                            <div className="detail-item">
+                                                <i className="fas fa-music icon"></i>
+                                                <span>{ev.musica || '\u00A0'}</span>
+                                            </div>
+                                            <div className="detail-item">
+                                                <i className="fas fa-user-tie icon"></i>
+                                                <span>{ev.direccion || '\u00A0'}</span>
+                                            </div>
                                         </div>
                                     </motion.div>
                                 ))}
