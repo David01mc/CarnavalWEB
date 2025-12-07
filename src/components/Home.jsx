@@ -122,8 +122,8 @@ function Home() {
         </div>
       </section>
 
-      {/* Instagram Feed Section - Temporarily disabled due to React error */}
-      {/* <InstagramFeed /> */}
+      {/* Instagram Feed Section */}
+      <InstagramFeed />
     </div>
   );
 }
