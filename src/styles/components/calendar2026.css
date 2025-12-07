@@ -666,26 +666,51 @@
     margin-top: 0.2rem;
 }
 
-/* Responsive adjustment */
-@media (max-width: 1024px) {
-    .calendar-grid {
-        height: auto;
-    }
-
-    .calendar-day-card {
-        height: 100px;
-    }
+/* Empty State Message */
+.empty-state-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    min-height: 300px;
 }
 
-@media (max-width: 768px) {
+.empty-state-message i {
+    font-size: 4rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    opacity: 0.6;
+}
 
-    .weekdays-header,
-    .calendar-grid {
-        grid-template-columns: repeat(4, 1fr);
+.empty-state-message h3 {
+    font-size: 1.5rem;
+    color: white;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+.empty-state-message p {
+    font-size: 1rem;
+    margin: 0;
+    max-width: 400px;
+    line-height: 1.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .day-details-modal {
+        width: 95vw;
+        height: 85vh;
     }
 
-    .calendar-day-card {
-        height: auto;
-        min-height: 100px;
+    .day-performances-horizontal {
+        grid-template-columns: 1fr;
+    }
+
+    .performance-card-vertical {
+        min-width: 100%;
     }
 }

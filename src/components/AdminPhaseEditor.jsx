@@ -6,13 +6,35 @@ const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replac
 function AdminPhaseEditor({ selectedDate, selectedPhase, onAgrupacionAdded, onClose }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [allAgrupaciones, setAllAgrupaciones] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // Load all agrupaciones on mount for preview
+    useEffect(() => {
+        const loadAllAgrupaciones = async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/preliminares2026`);
+                if (!response.ok) throw new Error('Error loading agrupaciones');
+                const data = await response.json();
+                // Filter only Preliminares with valid tipo and sort alphabetically
+                const preliminares = data
+                    .filter(ag => ag.fase === 'Preliminares' && ag.tipo && ag.tipo !== 'N/A')
+                    .sort((a, b) => a.nombre.localeCompare(b.nombre));
+                setAllAgrupaciones(preliminares);
+                setSearchResults(preliminares.slice(0, 20)); // Show first 20
+            } catch (err) {
+                console.error('Error loading agrupaciones:', err);
+            }
+        };
+        loadAllAgrupaciones();
+    }, []);
 
     // Debounced search
     useEffect(() => {
         if (searchQuery.trim().length < 2) {
-            setSearchResults([]);
+            // Show alphabetical preview when no search
+            setSearchResults(allAgrupaciones.slice(0, 20));
             return;
         }
 
@@ -33,7 +55,7 @@ function AdminPhaseEditor({ selectedDate, selectedPhase, onAgrupacionAdded, onCl
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [searchQuery]);
+    }, [searchQuery, allAgrupaciones]);
 
     const handleAddAgrupacion = async (agrupacion) => {
         setLoading(true);

@@ -150,9 +150,18 @@ function Calendar2026() {
     };
 
     const handleAgrupacionAdded = (newAgrupacion) => {
-        // Refresh events to show the new agrupación
+        // Add the new agrupación to the selected day immediately
+        if (selectedDay) {
+            setSelectedDay({
+                ...selectedDay,
+                events: [...selectedDay.events, newAgrupacion]
+            });
+        }
+
+        // Update the calendar in background
         fetchEvents();
-        setShowEditor(false);
+
+        // Keep editor open - don't close it
     };
 
     const handleDeleteAgrupacion = async (agrupacionId) => {
@@ -167,7 +176,15 @@ function Calendar2026() {
 
             if (!response.ok) throw new Error('Error deleting agrupación');
 
-            // Refresh events
+            // Remove the agrupación from selected day immediately
+            if (selectedDay) {
+                setSelectedDay({
+                    ...selectedDay,
+                    events: selectedDay.events.filter(ev => ev._id !== agrupacionId)
+                });
+            }
+
+            // Update the calendar in background
             fetchEvents();
         } catch (error) {
             console.error('Error deleting agrupación:', error);
@@ -349,56 +366,70 @@ function Calendar2026() {
                             </div>
                             <div className={`modal-content-wrapper ${showEditor ? 'split-view' : ''}`}>
                                 <div className="day-performances-horizontal">
-                                    {selectedDay.events.map((ev, i) => (
-                                        <motion.div
-                                            key={i}
-                                            className={`performance-card-vertical ${ev.cabeza_serie === true || ev.cabeza_serie === 'true' ? 'highlight-col' : ''}`}
-                                            initial={{ y: 20, opacity: 0 }}
-                                            animate={{ y: 0, opacity: 1 }}
-                                            transition={{ delay: i * 0.05 }}
-                                        >
-                                            <div className="perf-header">
-                                                {(ev.cabeza_serie === true || ev.cabeza_serie === 'true') && (
-                                                    <div className="crown-icon-center"><i className="fas fa-crown"></i></div>
-                                                )}
-                                                <span className={`perf-type ${ev.tipo ? ev.tipo.toLowerCase() : ''}`}>{ev.tipo || 'N/A'}</span>
-                                                <h3 className="perf-name-vertical">{ev.nombre}</h3>
-                                                {ev.año_anterior && ev.año_anterior.nombre && (
-                                                    <div className="perf-prev-year">
-                                                        <i className="fas fa-history"></i> {ev.año_anterior.nombre}
-                                                    </div>
-                                                )}
-                                            </div>
+                                    {(() => {
+                                        const validEvents = selectedDay.events.filter(ev => ev.tipo && ev.tipo !== 'N/A');
 
-                                            <div className="perf-details-vertical">
-                                                <div className="detail-item">
-                                                    <i className="fas fa-map-marker-alt icon"></i>
-                                                    <span>{ev.localidad || '\u00A0'}</span>
+                                        if (validEvents.length === 0) {
+                                            return (
+                                                <div className="empty-state-message">
+                                                    <i className="fas fa-info-circle"></i>
+                                                    <h3>Todavía no hay orden de actuación</h3>
+                                                    <p>La información de las agrupaciones para este día aún no está disponible.</p>
                                                 </div>
-                                                <div className="detail-item">
-                                                    <i className="fas fa-pen-nib icon"></i>
-                                                    <span>{ev.letra || '\u00A0'}</span>
+                                            );
+                                        }
+
+                                        return validEvents.map((ev, i) => (
+                                            <motion.div
+                                                key={i}
+                                                className={`performance-card-vertical ${ev.cabeza_serie === true || ev.cabeza_serie === 'true' ? 'highlight-col' : ''}`}
+                                                initial={{ y: 20, opacity: 0 }}
+                                                animate={{ y: 0, opacity: 1 }}
+                                                transition={{ delay: i * 0.05 }}
+                                            >
+                                                <div className="perf-header">
+                                                    {(ev.cabeza_serie === true || ev.cabeza_serie === 'true') && (
+                                                        <div className="crown-icon-center"><i className="fas fa-crown"></i></div>
+                                                    )}
+                                                    <span className={`perf-type ${ev.tipo ? ev.tipo.toLowerCase() : ''}`}>{ev.tipo || 'N/A'}</span>
+                                                    <h3 className="perf-name-vertical">{ev.nombre}</h3>
+                                                    {ev.año_anterior && ev.año_anterior.nombre && (
+                                                        <div className="perf-prev-year">
+                                                            <i className="fas fa-history"></i> {ev.año_anterior.nombre}
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                <div className="detail-item">
-                                                    <i className="fas fa-music icon"></i>
-                                                    <span>{ev.musica || '\u00A0'}</span>
+
+                                                <div className="perf-details-vertical">
+                                                    <div className="detail-item">
+                                                        <i className="fas fa-map-marker-alt icon"></i>
+                                                        <span>{ev.localidad || '\u00A0'}</span>
+                                                    </div>
+                                                    <div className="detail-item">
+                                                        <i className="fas fa-pen-nib icon"></i>
+                                                        <span>{ev.letra || '\u00A0'}</span>
+                                                    </div>
+                                                    <div className="detail-item">
+                                                        <i className="fas fa-music icon"></i>
+                                                        <span>{ev.musica || '\u00A0'}</span>
+                                                    </div>
+                                                    <div className="detail-item">
+                                                        <i className="fas fa-user-tie icon"></i>
+                                                        <span>{ev.direccion || '\u00A0'}</span>
+                                                    </div>
                                                 </div>
-                                                <div className="detail-item">
-                                                    <i className="fas fa-user-tie icon"></i>
-                                                    <span>{ev.direccion || '\u00A0'}</span>
-                                                </div>
-                                            </div>
-                                            {isAdmin && (
-                                                <button
-                                                    className="delete-agrupacion-btn"
-                                                    onClick={() => handleDeleteAgrupacion(ev._id)}
-                                                    title="Eliminar agrupación"
-                                                >
-                                                    <i className="fas fa-trash"></i> Eliminar
-                                                </button>
-                                            )}
-                                        </motion.div>
-                                    ))}
+                                                {isAdmin && (
+                                                    <button
+                                                        className="delete-agrupacion-btn"
+                                                        onClick={() => handleDeleteAgrupacion(ev._id)}
+                                                        title="Eliminar agrupación"
+                                                    >
+                                                        <i className="fas fa-trash"></i> Eliminar
+                                                    </button>
+                                                )}
+                                            </motion.div>
+                                        ));
+                                    })()}
                                 </div>
                                 {isAdmin && showEditor && (
                                     <div className="editor-panel">
