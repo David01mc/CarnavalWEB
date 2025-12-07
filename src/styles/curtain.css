@@ -12,26 +12,29 @@ body::before {
     z-index: -2;
 }
 
-/* Left Curtain */
-body::after {
+/* Left Curtain - Only show when body has show-curtains class */
+body.show-curtains::after {
     content: '';
     position: fixed;
     top: 0;
     left: 0;
-    width: 15%;
+    width: 10%;
     height: 100%;
-    background: linear-gradient(to right,
-            #8B0000 0%,
-            #A52A2A 20%,
-            #DC143C 40%,
-            #8B0000 60%,
-            #A52A2A 80%,
-            #DC143C 100%);
+    background:
+        url('/src/assets/cfg-logo.png') center center / 80px auto no-repeat,
+        linear-gradient(to right,
+            #5A0000 0%,
+            #6B0000 20%,
+            #8B0000 40%,
+            #5A0000 60%,
+            #6B0000 80%,
+            #8B0000 100%);
     box-shadow:
         inset -20px 0 40px rgba(0, 0, 0, 0.5),
         20px 0 30px rgba(0, 0, 0, 0.3);
-    z-index: -1;
+    z-index: 1000;
     border-right: 3px solid #FFD700;
+    filter: brightness(0.8);
 }
 
 /* Right Curtain - using a dedicated class */
@@ -40,20 +43,23 @@ body::after {
     position: fixed;
     top: 0;
     right: 0;
-    width: 15%;
+    width: 10%;
     height: 100%;
-    background: linear-gradient(to left,
-            #8B0000 0%,
-            #A52A2A 20%,
-            #DC143C 40%,
-            #8B0000 60%,
-            #A52A2A 80%,
-            #DC143C 100%);
+    background:
+        url('/src/assets/cfg-logo.png') center center / 80px auto no-repeat,
+        linear-gradient(to left,
+            #5A0000 0%,
+            #6B0000 20%,
+            #8B0000 40%,
+            #5A0000 60%,
+            #6B0000 80%,
+            #8B0000 100%);
     box-shadow:
         inset 20px 0 40px rgba(0, 0, 0, 0.5),
         -20px 0 30px rgba(0, 0, 0, 0.3);
-    z-index: -1;
+    z-index: 1000;
     border-left: 3px solid #FFD700;
+    filter: brightness(0.8);
 }
 
 /* Top Valance */
@@ -64,53 +70,46 @@ body::after {
     width: 100%;
     height: 60px;
     background: linear-gradient(to bottom,
-            #8B0000 0%,
-            #DC143C 50%,
-            #8B0000 100%);
+            #5A0000 0%,
+            #8B0000 50%,
+            #5A0000 100%);
     box-shadow:
         inset 0 -20px 40px rgba(0, 0, 0, 0.5),
         0 10px 30px rgba(0, 0, 0, 0.4);
-    z-index: 0;
+    z-index: 1001;
     border-bottom: 5px solid #FFD700;
 }
 
+/* Curtain Opening Animation - Start CLOSED (center), open to SIDES */
+@keyframes curtainOpenLeft {
+    0% {
+        left: 0;
+        width: 50%;
+    }
 
-/* Tassels on curtains */
-.curtain-tassel-left,
-.curtain-tassel-right {
-    position: fixed;
-    width: 40px;
-    height: 100px;
-    background: linear-gradient(to bottom, #FFD700, #DAA520);
-    border-radius: 0 0 20px 20px;
-    z-index: 0;
+    100% {
+        left: 0;
+        width: 10%;
+    }
 }
 
-.curtain-tassel-left {
-    left: 14%;
-    top: 30%;
-    transform: translateX(-50%);
+@keyframes curtainOpenRight {
+    0% {
+        right: 0;
+        width: 50%;
+    }
+
+    100% {
+        right: 0;
+        width: 10%;
+    }
 }
 
-.curtain-tassel-right {
-    right: 14%;
-    top: 30%;
-    transform: translateX(50%);
+/* Apply opening animation */
+body.curtain-opening::after {
+    animation: curtainOpenLeft 1s ease-out forwards;
 }
 
-/* Tassel fringe */
-.curtain-tassel-left::after,
-.curtain-tassel-right::after {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 20px;
-    background: repeating-linear-gradient(90deg,
-            #FFD700 0px,
-            #FFD700 2px,
-            transparent 2px,
-            transparent 4px);
+.curtain-right.opening {
+    animation: curtainOpenRight 1s ease-out forwards;
 }

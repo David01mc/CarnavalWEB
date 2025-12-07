@@ -195,15 +195,41 @@ function AppContent() {
     setShowForm(true);
   };
 
+  // State for curtain animation
+  const [curtainAnimating, setCurtainAnimating] = useState(false);
+
+  // Toggle curtains based on current view
+  useEffect(() => {
+    const showCurtainViews = ['home', 'calendar-2026', 'profile', 'admin-users'];
+
+    if (showCurtainViews.includes(currentView)) {
+      // Trigger opening animation when entering profile
+      if (currentView === 'profile') {
+        setCurtainAnimating(true);
+        document.body.classList.add('curtain-opening');
+        setTimeout(() => {
+          setCurtainAnimating(false);
+          document.body.classList.remove('curtain-opening');
+        }, 1000); // Animation duration
+      }
+      document.body.classList.add('show-curtains');
+    } else {
+      document.body.classList.remove('show-curtains');
+      document.body.classList.remove('curtain-opening');
+    }
+  }, [currentView]);
+
   if (authLoading) return <div className="loading">Cargando...</div>;
 
   return (
     <div className="app">
-      {/* Theater Curtain Elements */}
-      <div className="curtain-right"></div>
-      <div className="curtain-valance"></div>
-      <div className="curtain-tassel-left"></div>
-      <div className="curtain-tassel-right"></div>
+      {/* Theater Curtain Elements - Show on Home, Calendar, Profile, and Admin Users */}
+      {(['home', 'calendar-2026', 'profile', 'admin-users'].includes(currentView)) && (
+        <>
+          <div className={`curtain-right ${curtainAnimating ? 'opening' : ''}`}></div>
+          <div className="curtain-valance"></div>
+        </>
+      )}
 
       <Navbar
         user={user}
