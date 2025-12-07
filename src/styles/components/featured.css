@@ -5,7 +5,7 @@
   border-radius: 20px;
   border: 2px solid var(--border);
   overflow: hidden;
-  box-shadow: 0 15px 50px rgba(233, 30, 99, 0.2);
+  box-shadow: 0 15px 50px rgba(139, 0, 0, 0.2);
 }
 
 /* Large Featured Image */
@@ -26,16 +26,18 @@
   position: absolute;
   top: 2rem;
   left: 2rem;
-  background: linear-gradient(135deg, var(--warning) 0%, #ff6f00 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+  color: #000;
+  /* Black text on gold for better contrast */
   padding: 1rem 2rem;
   border-radius: 30px;
   font-weight: 700;
   font-size: 1.2rem;
-  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.6);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  border: 1px solid var(--secondary);
 }
 
 .featured-badge-large i {
@@ -79,9 +81,10 @@
 }
 
 .meta-badge-large.highlight {
-  background: linear-gradient(135deg, var(--warning) 0%, #ff6f00 100%);
-  border-color: var(--warning);
-  color: white;
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+  border-color: var(--secondary);
+  color: #000;
+  font-weight: 800;
 }
 
 .featured-section {
@@ -180,7 +183,7 @@
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid var(--primary);
-  box-shadow: 0 8px 25px rgba(233, 30, 99, 0.3);
+  box-shadow: 0 8px 25px rgba(139, 0, 0, 0.3);
 }
 
 .author-description,
@@ -367,13 +370,30 @@
 
 .featured-agrupacion .lyric-content {
   border-top: 2px solid var(--border);
-  padding: 1.5rem;
-  background: var(--background);
+  padding: 0;
+  /* Remove padding from container to let image fill */
+  background: url('/src/assets/paper-texture.png');
+  background-size: cover;
+  background-position: center;
   animation: slideDown 0.3s ease;
   grid-column: 1;
   grid-row: 2;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+/* Semi-transparent overlay to ensure text readability if texture is too strong */
+.featured-agrupacion .lyric-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  /* Increased opacity for better contrast */
+  pointer-events: none;
 }
 
 .featured-agrupacion .lyric-item.expanded .lyric-content {
@@ -385,40 +405,28 @@
 }
 
 .featured-agrupacion .lyric-text {
-  font-family: 'Courier New', monospace;
-  font-size: 0.95rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  /* Bolder text */
   line-height: 1.8;
-  color: var(--text);
+  color: #000000;
+  /* Pure black */
+  /* Dark text for paper background */
+  text-shadow: none;
+  /* Remove shadow for cleaner look */
+  /* Subtle relief effect */
   white-space: pre-wrap;
   margin-bottom: 1.5rem;
   overflow-y: auto;
-  padding-right: 1rem;
-  flex: 1;
+  padding: 2rem;
+  text-align: center;
+  /* Center the text */
+  /* Add padding here instead */
+  position: relative;
+  z-index: 1;
 }
 
-.lyric-text p {
-  margin: 0;
-}
-
-.lyric-footer {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
-}
-
-.lyric-date {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Multimedia Links */
 .multimedia-links {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));

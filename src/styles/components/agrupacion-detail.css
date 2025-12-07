@@ -120,18 +120,40 @@
 }
 
 .lyric-content {
-    padding: 2rem;
+    padding: 0;
+    /* Remove padding to let image fill */
     overflow-y: auto;
     flex: 1;
+    background: url('/src/assets/paper-texture.png');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.lyric-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.85);
+    pointer-events: none;
 }
 
 .lyric-content pre {
     white-space: pre-wrap;
-    font-family: inherit;
-    font-size: 1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
     line-height: 1.8;
-    color: var(--text-secondary);
+    color: #000000;
+    text-shadow: none;
     margin: 0;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+    text-align: center;
 }
 
 .empty-lyric {
@@ -207,15 +229,15 @@
 }
 
 .badge-category {
-    background: rgba(233, 30, 99, 0.2);
-    color: #ff80ab;
-    border: 1px solid rgba(233, 30, 99, 0.3);
+    background: rgba(139, 0, 0, 0.2);
+    color: var(--primary-light);
+    border: 1px solid rgba(139, 0, 0, 0.3);
 }
 
 .badge-year {
-    background: rgba(103, 58, 183, 0.2);
-    color: #b39ddb;
-    border: 1px solid rgba(103, 58, 183, 0.3);
+    background: rgba(255, 215, 0, 0.1);
+    color: var(--secondary);
+    border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 .badge-position {

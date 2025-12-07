@@ -1,13 +1,15 @@
 /* CSS Variables - Design Tokens */
 :root {
-    /* Primary Colors */
-    --primary: #e91e63;
-    --primary-dark: #c2185b;
-    --primary-light: #f8bbd0;
+    /* Primary Colors - Theater Red */
+    --primary: #8B0000;
+    --primary-rgb: 139, 0, 0;
+    --primary-dark: #5A0000;
+    --primary-light: #A52A2A;
 
-    /* Secondary Colors */
-    --secondary: #673ab7;
-    --secondary-dark: #512da8;
+    /* Secondary Colors - Theater Gold */
+    --secondary: #FFD700;
+    --secondary-rgb: 255, 215, 0;
+    --secondary-dark: #B8860B;
 
     /* Background Colors */
     --background: #0a0a0a;
