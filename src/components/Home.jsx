@@ -32,6 +32,19 @@ function Home() {
 
   return (
     <div className="home-container">
+      {/* Confetti Effect on Laterals - Only on page load */}
+      <div className="confetti-container">
+        {/* Left side confetti - 3 pieces */}
+        <div className="confetti confetti-left-1"></div>
+        <div className="confetti confetti-left-2"></div>
+        <div className="confetti confetti-left-3"></div>
+
+        {/* Right side confetti - 3 pieces */}
+        <div className="confetti confetti-right-1"></div>
+        <div className="confetti confetti-right-2"></div>
+        <div className="confetti confetti-right-3"></div>
+      </div>
+
       {/* Featured Agrupación of the Day - FIRST */}
       <section className="featured-section-main">
         {loading ? (

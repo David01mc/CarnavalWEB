@@ -15,6 +15,9 @@
 /* 4.5. Theater Curtain Effect */
 @import './curtain.css';
 
+/* 4.6. Confetti Effect */
+@import './confetti.css';
+
 /* 5. Components */
 /* Main CSS Entry Point - Imports all modular stylesheets */
 
