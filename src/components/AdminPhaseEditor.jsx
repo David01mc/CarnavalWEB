@@ -1,14 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import '../styles/components/admin-phase-editor.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
 
-function AdminPhaseEditor({ selectedDate, selectedPhase, onAgrupacionAdded, onClose }) {
+function AdminPhaseEditor({ selectedDate, selectedPhase, allEvents, onAgrupacionAdded, onClose }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [allAgrupaciones, setAllAgrupaciones] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // Get IDs of already assigned agrupaciones IN THE SAME PHASE
+    const assignedIds = useMemo(() => {
+        // Only filter agrupaciones that are already in the current phase
+        const samePhaseEvents = allEvents?.filter(ev => ev.fase === selectedPhase) || [];
+        return new Set(samePhaseEvents.map(ev => ev.nombre));
+    }, [allEvents, selectedPhase]);
 
     // Load all agrupaciones on mount for preview
     useEffect(() => {
@@ -17,24 +24,48 @@ function AdminPhaseEditor({ selectedDate, selectedPhase, onAgrupacionAdded, onCl
                 const response = await fetch(`${API_URL}/api/preliminares2026`);
                 if (!response.ok) throw new Error('Error loading agrupaciones');
                 const data = await response.json();
-                // Filter only Preliminares with valid tipo and sort alphabetically
-                const preliminares = data
-                    .filter(ag => ag.fase === 'Preliminares' && ag.tipo && ag.tipo !== 'N/A')
+
+                // Determine which phase to load from based on current phase
+                let sourcePhase;
+                if (selectedPhase === 'Cuartos de Final') {
+                    sourcePhase = 'Preliminares';
+                } else if (selectedPhase === 'Semifinales') {
+                    sourcePhase = 'Cuartos de Final';
+                } else if (selectedPhase === 'Final') {
+                    sourcePhase = 'Semifinales';
+                } else {
+                    sourcePhase = 'Preliminares'; // Default
+                }
+
+                // Filter agrupaciones from source phase with valid tipo (don't filter by assignedIds here)
+                const available = data
+                    .filter(ag =>
+                        ag.fase === sourcePhase &&
+                        ag.tipo &&
+                        ag.tipo !== 'N/A'
+                    )
                     .sort((a, b) => a.nombre.localeCompare(b.nombre));
-                setAllAgrupaciones(preliminares);
-                setSearchResults(preliminares.slice(0, 20)); // Show first 20
+                setAllAgrupaciones(available);
             } catch (err) {
                 console.error('Error loading agrupaciones:', err);
             }
         };
         loadAllAgrupaciones();
-    }, []);
+    }, [selectedPhase]); // Only reload when phase changes
+
+    // Update search results when allAgrupaciones or assignedIds change
+    useEffect(() => {
+        if (searchQuery.trim().length < 2) {
+            // Filter out assigned and show preview
+            const filtered = allAgrupaciones.filter(ag => !assignedIds.has(ag.nombre));
+            setSearchResults(filtered.slice(0, 20));
+        }
+    }, [allAgrupaciones, assignedIds]); // Don't include searchQuery here!
 
     // Debounced search
     useEffect(() => {
+        // Skip if we just updated from assignedIds change
         if (searchQuery.trim().length < 2) {
-            // Show alphabetical preview when no search
-            setSearchResults(allAgrupaciones.slice(0, 20));
             return;
         }
 
@@ -45,7 +76,9 @@ function AdminPhaseEditor({ selectedDate, selectedPhase, onAgrupacionAdded, onCl
                 const response = await fetch(`${API_URL}/api/preliminares2026/search?q=${encodeURIComponent(searchQuery)}`);
                 if (!response.ok) throw new Error('Error searching agrupaciones');
                 const data = await response.json();
-                setSearchResults(data);
+                // Filter out already assigned agrupaciones
+                const filtered = data.filter(ag => !assignedIds.has(ag.nombre));
+                setSearchResults(filtered);
             } catch (err) {
                 setError(err.message);
                 setSearchResults([]);
@@ -55,7 +88,7 @@ function AdminPhaseEditor({ selectedDate, selectedPhase, onAgrupacionAdded, onCl
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [searchQuery, allAgrupaciones]);
+    }, [searchQuery, allAgrupaciones, assignedIds]);
 
     const handleAddAgrupacion = async (agrupacion) => {
         setLoading(true);

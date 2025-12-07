@@ -158,9 +158,6 @@ function Calendar2026() {
             });
         }
 
-        // Update the calendar in background
-        fetchEvents();
-
         // Keep editor open - don't close it
     };
 
@@ -183,13 +180,61 @@ function Calendar2026() {
                     events: selectedDay.events.filter(ev => ev._id !== agrupacionId)
                 });
             }
-
-            // Update the calendar in background
-            fetchEvents();
         } catch (error) {
             console.error('Error deleting agrupación:', error);
             alert('Error al eliminar la agrupación');
         }
+    };
+
+    // Get all days with events sorted chronologically
+    const getDaysWithEvents = () => {
+        const currentMonth = months[currentMonthIndex];
+        if (!currentMonth) return [];
+
+        return Object.keys(currentMonth.eventMap)
+            .filter(dateKey => currentMonth.eventMap[dateKey].length > 0)
+            .sort()
+            .map(dateKey => {
+                const date = parse(dateKey, 'yyyy-MM-dd', new Date());
+                return {
+                    dateKey,
+                    date: format(date, 'dd/MM/yyyy'),
+                    events: currentMonth.eventMap[dateKey]
+                };
+            });
+    };
+
+    // Navigate to previous day with events
+    const goToPreviousDay = () => {
+        const daysWithEvents = getDaysWithEvents();
+        const currentIndex = daysWithEvents.findIndex(d => d.date === selectedDay.date);
+        if (currentIndex > 0) {
+            setSelectedDay(daysWithEvents[currentIndex - 1]);
+            setShowEditor(false);
+        }
+    };
+
+    // Navigate to next day with events
+    const goToNextDay = () => {
+        const daysWithEvents = getDaysWithEvents();
+        const currentIndex = daysWithEvents.findIndex(d => d.date === selectedDay.date);
+        if (currentIndex < daysWithEvents.length - 1) {
+            setSelectedDay(daysWithEvents[currentIndex + 1]);
+            setShowEditor(false);
+        }
+    };
+
+    // Check if navigation is available
+    const canGoToPrevious = () => {
+        const daysWithEvents = getDaysWithEvents();
+        const currentIndex = daysWithEvents.findIndex(d => d.date === selectedDay?.date);
+        return currentIndex > 0;
+    };
+
+    const canGoToNext = () => {
+        const daysWithEvents = getDaysWithEvents();
+        const currentIndex = daysWithEvents.findIndex(d => d.date === selectedDay?.date);
+        return currentIndex >= 0 && currentIndex < daysWithEvents.length - 1;
     };
 
     const container = {
@@ -342,12 +387,28 @@ function Calendar2026() {
                         >
                             <div className="day-details-header">
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <button
+                                        className="modal-nav-btn"
+                                        onClick={goToPreviousDay}
+                                        disabled={!canGoToPrevious()}
+                                        title="Día anterior"
+                                    >
+                                        <i className="fas fa-chevron-left"></i>
+                                    </button>
                                     <h2>{selectedDay.date}</h2>
                                     {selectedDay.events[0]?.fase && (
                                         <span className={`phase-badge-modal phase-${selectedDay.events[0].fase.toLowerCase().replace(/\\s+/g, '-')}`}>
                                             {selectedDay.events[0].fase}
                                         </span>
                                     )}
+                                    <button
+                                        className="modal-nav-btn"
+                                        onClick={goToNextDay}
+                                        disabled={!canGoToNext()}
+                                        title="Día siguiente"
+                                    >
+                                        <i className="fas fa-chevron-right"></i>
+                                    </button>
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                     {isAdmin && (
@@ -385,7 +446,7 @@ function Calendar2026() {
                                                 className={`performance-card-vertical ${ev.cabeza_serie === true || ev.cabeza_serie === 'true' ? 'highlight-col' : ''}`}
                                                 initial={{ y: 20, opacity: 0 }}
                                                 animate={{ y: 0, opacity: 1 }}
-                                                transition={{ delay: i * 0.05 }}
+                                                transition={{ delay: i * 0.03 }}
                                             >
                                                 <div className="perf-header">
                                                     {(ev.cabeza_serie === true || ev.cabeza_serie === 'true') && (
@@ -436,6 +497,7 @@ function Calendar2026() {
                                         <AdminPhaseEditor
                                             selectedDate={selectedDay.date}
                                             selectedPhase={selectedDay.events[0]?.fase || 'Preliminares'}
+                                            allEvents={events}
                                             onAgrupacionAdded={handleAgrupacionAdded}
                                             onClose={() => setShowEditor(false)}
                                         />
