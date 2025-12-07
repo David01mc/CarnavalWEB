@@ -103,6 +103,30 @@
     transition: color 0.2s;
 }
 
+.lyric-content {
+    background: var(--paper-texture-url) center / cover;
+    background-color: var(--paper-background-color);
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    padding: 0;
+}
+
+.lyric-content pre {
+    white-space: pre-wrap;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.8;
+    color: #000000;
+    text-shadow: none;
+    margin: 0;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
 .empty-lyric {
     display: flex;
     flex-direction: column;

@@ -9,7 +9,11 @@
     /* Secondary Colors - Theater Gold */
     --secondary: #FFD700;
     --secondary-rgb: 255, 215, 0;
-    --secondary-dark: #B8860B;
+    /* Paper Texture (Programmatic) */
+    --paper-background-color: #fdfbf7;
+    /* Creamy white base */
+    --paper-texture-url: url("data:image/svg+xml,%3Csvg viewBox='0 0 500 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='crumple'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02' numOctaves='5' result='noise'/%3E%3CfeDiffuseLighting in='noise' lighting-color='%23fdfbf7' surfaceScale='2' result='light'%3E%3CfeDistantLight azimuth='45' elevation='60'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23crumple)'/%3E%3C/svg%3E");
+
 
     /* Background Colors */
     --background: #0a0a0a;
