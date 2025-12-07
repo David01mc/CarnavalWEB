@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import confetti from 'canvas-confetti';
 import FeaturedAgrupacion from './FeaturedAgrupacion';
 import InstagramFeed from './InstagramFeed';
 
@@ -11,6 +12,52 @@ function Home() {
 
   useEffect(() => {
     fetchFeaturedAgrupacion();
+
+    // Trigger confetti falling from both sides
+    const duration = 6 * 1000; // 6 seconds
+    const animationEnd = Date.now() + duration;
+
+    const interval = setInterval(function () {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 5;
+
+      // Left side confetti - falling down
+      confetti({
+        particleCount,
+        startVelocity: 15,
+        spread: 45,
+        angle: 270, // Straight down
+        origin: { x: 0.05, y: 0 }, // Top left
+        colors: ['#FFD700', '#FF1493', '#00CED1', '#FF6347', '#32CD32', '#FFA500', '#9370DB', '#FF69B4'],
+        ticks: 300, // Longer life to reach bottom
+        gravity: 0.8,
+        scalar: 1.2,
+        drift: 0.2,
+        zIndex: 1003
+      });
+
+      // Right side confetti - falling down
+      confetti({
+        particleCount,
+        startVelocity: 15,
+        spread: 45,
+        angle: 270, // Straight down
+        origin: { x: 0.95, y: 0 }, // Top right
+        colors: ['#FFD700', '#FF1493', '#00CED1', '#FF6347', '#32CD32', '#FFA500', '#9370DB', '#FF69B4'],
+        ticks: 300, // Longer life to reach bottom
+        gravity: 0.8,
+        scalar: 1.2,
+        drift: 0.2,
+        zIndex: 1003
+      });
+    }, 200);
+
+    return () => clearInterval(interval);
   }, []);
 
   const fetchFeaturedAgrupacion = async () => {
@@ -32,25 +79,6 @@ function Home() {
 
   return (
     <div className="home-container">
-      {/* Confetti Effect on Laterals - Only on page load */}
-      <div className="confetti-container">
-        {/* Left side confetti - 6 pieces */}
-        <div className="confetti confetti-left-1"></div>
-        <div className="confetti confetti-left-2"></div>
-        <div className="confetti confetti-left-3"></div>
-        <div className="confetti confetti-left-4"></div>
-        <div className="confetti confetti-left-5"></div>
-        <div className="confetti confetti-left-6"></div>
-
-        {/* Right side confetti - 6 pieces */}
-        <div className="confetti confetti-right-1"></div>
-        <div className="confetti confetti-right-2"></div>
-        <div className="confetti confetti-right-3"></div>
-        <div className="confetti confetti-right-4"></div>
-        <div className="confetti confetti-right-5"></div>
-        <div className="confetti confetti-right-6"></div>
-      </div>
-
       {/* Featured Agrupación of the Day - FIRST */}
       <section className="featured-section-main">
         {loading ? (

@@ -1,4 +1,4 @@
-/* Dropdown Component Styles */
+/* Dropdown Component Styles - Theater Curtain Theme */
 
 .dropdown-menu {
   position: fixed;
@@ -6,12 +6,36 @@
   right: -350px;
   width: 350px;
   height: 100vh;
-  background: var(--surface);
-  box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to bottom,
+      #5A0000 0%,
+      #6B0000 30%,
+      #8B0000 50%,
+      #6B0000 70%,
+      #5A0000 100%);
+  box-shadow: -5px 0 30px rgba(0, 0, 0, 0.8);
   transition: right 0.3s ease;
   z-index: 1001;
   display: flex;
   flex-direction: column;
+  border-left: 5px solid #FFD700;
+}
+
+/* Velvet texture overlay */
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    repeating-linear-gradient(90deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px);
+  pointer-events: none;
+  opacity: 0.3;
 }
 
 .dropdown-menu.open {
@@ -20,22 +44,30 @@
 
 .dropdown-header {
   padding: 1.5rem;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(to bottom,
+      #4A0000 0%,
+      #6B0000 100%);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 3px solid #FFD700;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 1;
 }
 
 .dropdown-header h3 {
   font-size: 1.5rem;
   margin: 0;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-weight: 700;
 }
 
 .close-dropdown {
-  background: rgba(255, 255, 255, 0.15);
-  border: none;
-  color: white;
+  background: rgba(255, 215, 0, 0.2);
+  border: 2px solid #FFD700;
+  color: #FFD700;
   font-size: 1.5rem;
   width: 40px;
   height: 40px;
@@ -45,25 +77,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .close-dropdown:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: rotate(90deg);
+  background: rgba(255, 215, 0, 0.35);
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
 }
 
 .dropdown-content {
   padding: 1rem;
   flex: 1;
   overflow-y: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .dropdown-item {
   width: 100%;
   padding: 1rem 1.5rem;
-  background: transparent;
-  border: none;
-  color: var(--text);
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid transparent;
+  color: #FFD700;
   font-size: 1.1rem;
   font-weight: 500;
   text-align: left;
@@ -74,36 +110,52 @@
   align-items: center;
   gap: 1rem;
   transition: all 0.3s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .dropdown-item i {
   font-size: 1.2rem;
   width: 24px;
-  color: var(--primary-light);
+  color: #FFD700;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.5));
 }
 
 .dropdown-item:hover {
-  background: var(--surface-light);
-  transform: translateX(5px);
+  background: rgba(255, 215, 0, 0.15);
+  border-color: rgba(255, 215, 0, 0.3);
+  transform: translateX(-5px);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
 }
 
 .dropdown-item.active {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+  background: linear-gradient(135deg,
+      rgba(255, 215, 0, 0.3) 0%,
+      rgba(255, 165, 0, 0.3) 100%);
+  border-color: #FFD700;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
 }
 
 .dropdown-divider {
   height: 2px;
-  background: var(--border);
+  background: linear-gradient(to right,
+      transparent 0%,
+      #FFD700 50%,
+      transparent 100%);
   margin: 1rem 0;
+  box-shadow: 0 1px 3px rgba(255, 215, 0, 0.3);
 }
 
 .logout-item {
-  color: var(--error);
+  color: #FF6B6B;
 }
 
 .logout-item i {
-  color: var(--error);
+  color: #FF6B6B;
+}
+
+.logout-item:hover {
+  background: rgba(255, 107, 107, 0.15);
+  border-color: rgba(255, 107, 107, 0.3);
 }
 
 .menu-overlay {
@@ -112,8 +164,18 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
   z-index: 1000;
   animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
