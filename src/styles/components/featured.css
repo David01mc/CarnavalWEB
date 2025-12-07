@@ -273,6 +273,15 @@
   border: 2px solid var(--border);
   overflow: hidden;
   transition: all 0.3s ease;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+}
+
+.lyric-item.expanded {
+  grid-template-columns: 400px 1fr;
+  grid-template-rows: 1fr;
+  min-height: 600px;
 }
 
 .lyric-item:hover {
@@ -287,6 +296,14 @@
   align-items: center;
   gap: 1rem;
   transition: all 0.3s ease;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.lyric-item.expanded .lyric-header {
+  flex-direction: column;
+  align-items: flex-start;
+  border-right: 2px solid var(--border);
 }
 
 .lyric-header:hover {
@@ -349,6 +366,18 @@
   padding: 1.5rem;
   background: var(--background);
   animation: slideDown 0.3s ease;
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.lyric-item.expanded .lyric-content {
+  grid-column: 2;
+  grid-row: 1;
+  border-top: none;
+  border-left: 2px solid var(--border);
+  height: 100%;
 }
 
 .lyric-text {
@@ -358,9 +387,9 @@
   color: var(--text);
   white-space: pre-wrap;
   margin-bottom: 1.5rem;
-  max-height: 500px;
   overflow-y: auto;
   padding-right: 1rem;
+  flex: 1;
 }
 
 .lyric-text p {

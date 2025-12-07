@@ -135,7 +135,7 @@ function FeaturedAgrupacion({ agrupacion }) {
                     </h3>
                     <div className="lyrics-list">
                         {agrupacion.lyrics.map((lyric, idx) => (
-                            <div key={idx} className="lyric-item">
+                            <div key={idx} className={`lyric-item ${expandedLyric === idx ? 'expanded' : ''}`}>
                                 <div
                                     className="lyric-header"
                                     onClick={() => toggleLyric(idx)}
