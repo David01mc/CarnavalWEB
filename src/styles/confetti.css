@@ -34,46 +34,88 @@
     }
 }
 
-/* Left side confetti - only 3 pieces */
+/* Left side confetti - 6 pieces */
 .confetti-left-1 {
-    left: 2%;
+    left: 1%;
     background: #FFD700;
     animation: confetti-fall 7s ease-in forwards;
     animation-delay: 0.5s;
 }
 
 .confetti-left-2 {
-    left: 5%;
+    left: 3%;
     background: #FF1493;
     animation: confetti-fall 8s ease-in forwards;
     animation-delay: 1.5s;
 }
 
 .confetti-left-3 {
-    left: 8%;
+    left: 5%;
     background: #00CED1;
     animation: confetti-fall 7.5s ease-in forwards;
     animation-delay: 2.5s;
 }
 
-/* Right side confetti - only 3 pieces */
-.confetti-right-1 {
-    right: 2%;
+.confetti-left-4 {
+    left: 7%;
+    background: #FF6347;
+    animation: confetti-fall 8.2s ease-in forwards;
+    animation-delay: 0.8s;
+}
+
+.confetti-left-5 {
+    left: 2%;
     background: #32CD32;
+    animation: confetti-fall 7.8s ease-in forwards;
+    animation-delay: 2s;
+}
+
+.confetti-left-6 {
+    left: 9%;
+    background: #FFA500;
+    animation: confetti-fall 7.3s ease-in forwards;
+    animation-delay: 3.5s;
+}
+
+/* Right side confetti - 6 pieces */
+.confetti-right-1 {
+    right: 1%;
+    background: #9370DB;
     animation: confetti-fall 7.2s ease-in forwards;
     animation-delay: 1s;
 }
 
 .confetti-right-2 {
-    right: 5%;
+    right: 3%;
     background: #FF69B4;
     animation: confetti-fall 8.5s ease-in forwards;
     animation-delay: 2s;
 }
 
 .confetti-right-3 {
-    right: 8%;
-    background: #9370DB;
+    right: 5%;
+    background: #00FA9A;
     animation: confetti-fall 7.8s ease-in forwards;
     animation-delay: 3s;
+}
+
+.confetti-right-4 {
+    right: 7%;
+    background: #FFD700;
+    animation: confetti-fall 8.1s ease-in forwards;
+    animation-delay: 1.2s;
+}
+
+.confetti-right-5 {
+    right: 2%;
+    background: #FF1493;
+    animation: confetti-fall 7.6s ease-in forwards;
+    animation-delay: 2.8s;
+}
+
+.confetti-right-6 {
+    right: 9%;
+    background: #00CED1;
+    animation: confetti-fall 7.4s ease-in forwards;
+    animation-delay: 4s;
 }

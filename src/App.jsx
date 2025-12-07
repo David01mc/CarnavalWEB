@@ -203,8 +203,8 @@ function AppContent() {
     const showCurtainViews = ['home', 'calendar-2026', 'profile', 'admin-users'];
 
     if (showCurtainViews.includes(currentView)) {
-      // Trigger opening animation when entering profile
-      if (currentView === 'profile') {
+      // Trigger opening animation when entering profile or home
+      if (currentView === 'profile' || currentView === 'home') {
         setCurtainAnimating(true);
         document.body.classList.add('curtain-opening');
         setTimeout(() => {
