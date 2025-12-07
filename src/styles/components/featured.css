@@ -260,14 +260,14 @@
   }
 }
 
-/* Lyrics List */
-.lyrics-list {
+/* Lyrics List - SIMPLIFIED VERSION */
+.featured-agrupacion .lyrics-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.lyric-item {
+.featured-agrupacion .lyric-item {
   background: var(--surface-light);
   border-radius: 12px;
   border: 2px solid var(--border);
@@ -278,17 +278,17 @@
   grid-template-rows: auto auto;
 }
 
-.lyric-item.expanded {
-  grid-template-columns: 400px 1fr;
+.featured-agrupacion .lyric-item.expanded {
+  grid-template-columns: 350px 1fr;
   grid-template-rows: 1fr;
-  min-height: 600px;
+  min-height: 500px;
 }
 
-.lyric-item:hover {
+.featured-agrupacion .lyric-item:hover {
   border-color: var(--primary);
 }
 
-.lyric-header {
+.featured-agrupacion .lyric-header {
   padding: 1.25rem;
   cursor: pointer;
   display: flex;
@@ -298,15 +298,19 @@
   transition: all 0.3s ease;
   grid-column: 1;
   grid-row: 1;
+  width: 100%;
+  /* Ensure full width */
 }
 
-.lyric-item.expanded .lyric-header {
+.featured-agrupacion .lyric-item.expanded .lyric-header {
   flex-direction: column;
   align-items: flex-start;
   border-right: 2px solid var(--border);
+  background: var(--surface);
+  height: 100%;
 }
 
-.lyric-header:hover {
+.featured-agrupacion .lyric-header:hover {
   background: var(--surface);
 }
 
@@ -361,7 +365,7 @@
   transform: scale(1.1);
 }
 
-.lyric-content {
+.featured-agrupacion .lyric-content {
   border-top: 2px solid var(--border);
   padding: 1.5rem;
   background: var(--background);
@@ -372,7 +376,7 @@
   flex-direction: column;
 }
 
-.lyric-item.expanded .lyric-content {
+.featured-agrupacion .lyric-item.expanded .lyric-content {
   grid-column: 2;
   grid-row: 1;
   border-top: none;
@@ -380,7 +384,7 @@
   height: 100%;
 }
 
-.lyric-text {
+.featured-agrupacion .lyric-text {
   font-family: 'Courier New', monospace;
   font-size: 0.95rem;
   line-height: 1.8;

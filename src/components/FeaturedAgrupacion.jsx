@@ -5,7 +5,11 @@ function FeaturedAgrupacion({ agrupacion }) {
     const [expandedAuthor, setExpandedAuthor] = useState(null);
 
     const toggleLyric = (index) => {
-        setExpandedLyric(expandedLyric === index ? null : index);
+        console.log('toggleLyric called with index:', index);
+        console.log('current expandedLyric:', expandedLyric);
+        const newValue = expandedLyric === index ? null : index;
+        console.log('setting expandedLyric to:', newValue);
+        setExpandedLyric(newValue);
     };
 
     const toggleAuthor = (index) => {
