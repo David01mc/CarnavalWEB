@@ -199,6 +199,12 @@ function AppContent() {
 
   return (
     <div className="app">
+      {/* Theater Curtain Elements */}
+      <div className="curtain-right"></div>
+      <div className="curtain-valance"></div>
+      <div className="curtain-tassel-left"></div>
+      <div className="curtain-tassel-right"></div>
+
       <Navbar
         user={user}
         onLogout={logout}

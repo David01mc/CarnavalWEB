@@ -152,9 +152,35 @@ function Calendar2026() {
     const handleAgrupacionAdded = (newAgrupacion) => {
         // Add the new agrupación to the selected day immediately
         if (selectedDay) {
+            const updatedEvents = [...selectedDay.events, newAgrupacion];
             setSelectedDay({
                 ...selectedDay,
-                events: [...selectedDay.events, newAgrupacion]
+                events: updatedEvents
+            });
+
+            // Also update the calendar's eventMap
+            setMonths(prevMonths => {
+                return prevMonths.map(month => {
+                    // Parse the date to find which month it belongs to
+                    try {
+                        const parsedDate = parse(newAgrupacion.fecha, 'dd/MM/yyyy', new Date());
+                        const dateKey = format(parsedDate, 'yyyy-MM-dd');
+
+                        // Update the eventMap for this month
+                        const updatedEventMap = { ...month.eventMap };
+                        if (!updatedEventMap[dateKey]) {
+                            updatedEventMap[dateKey] = [];
+                        }
+                        updatedEventMap[dateKey] = [...updatedEventMap[dateKey], newAgrupacion];
+
+                        return {
+                            ...month,
+                            eventMap: updatedEventMap
+                        };
+                    } catch (e) {
+                        return month;
+                    }
+                });
             });
         }
 
@@ -175,10 +201,38 @@ function Calendar2026() {
 
             // Remove the agrupación from selected day immediately
             if (selectedDay) {
+                const updatedEvents = selectedDay.events.filter(ev => ev._id !== agrupacionId);
+                const deletedAgrupacion = selectedDay.events.find(ev => ev._id === agrupacionId);
+
                 setSelectedDay({
                     ...selectedDay,
-                    events: selectedDay.events.filter(ev => ev._id !== agrupacionId)
+                    events: updatedEvents
                 });
+
+                // Also update the calendar's eventMap
+                if (deletedAgrupacion) {
+                    setMonths(prevMonths => {
+                        return prevMonths.map(month => {
+                            try {
+                                const parsedDate = parse(deletedAgrupacion.fecha, 'dd/MM/yyyy', new Date());
+                                const dateKey = format(parsedDate, 'yyyy-MM-dd');
+
+                                // Update the eventMap for this month
+                                const updatedEventMap = { ...month.eventMap };
+                                if (updatedEventMap[dateKey]) {
+                                    updatedEventMap[dateKey] = updatedEventMap[dateKey].filter(ev => ev._id !== agrupacionId);
+                                }
+
+                                return {
+                                    ...month,
+                                    eventMap: updatedEventMap
+                                };
+                            } catch (e) {
+                                return month;
+                            }
+                        });
+                    });
+                }
             }
         } catch (error) {
             console.error('Error deleting agrupación:', error);
@@ -356,11 +410,14 @@ function Calendar2026() {
                                         </div>
                                     )}
 
-                                    {!cabezaDeSerie && hasEvents && (
-                                        <div className="day-summary">
-                                            {dayEvents.length} Agrup.
-                                        </div>
-                                    )}
+                                    {!cabezaDeSerie && hasEvents && (() => {
+                                        const validCount = dayEvents.filter(ev => ev.tipo && ev.tipo !== 'N/A').length;
+                                        return validCount > 0 ? (
+                                            <div className="day-summary">
+                                                {validCount} Agrup.
+                                            </div>
+                                        ) : null;
+                                    })()}
                                 </motion.div>
                             );
                         })}

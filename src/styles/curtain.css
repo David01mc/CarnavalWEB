@@ -1,0 +1,116 @@
+/* Theater Curtain Effect */
+
+/* Background - dark stage */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1a1a1a;
+    z-index: -2;
+}
+
+/* Left Curtain */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 15%;
+    height: 100%;
+    background: linear-gradient(to right,
+            #8B0000 0%,
+            #A52A2A 20%,
+            #DC143C 40%,
+            #8B0000 60%,
+            #A52A2A 80%,
+            #DC143C 100%);
+    box-shadow:
+        inset -20px 0 40px rgba(0, 0, 0, 0.5),
+        20px 0 30px rgba(0, 0, 0, 0.3);
+    z-index: -1;
+    border-right: 3px solid #FFD700;
+}
+
+/* Right Curtain - using a dedicated class */
+.curtain-right {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 15%;
+    height: 100%;
+    background: linear-gradient(to left,
+            #8B0000 0%,
+            #A52A2A 20%,
+            #DC143C 40%,
+            #8B0000 60%,
+            #A52A2A 80%,
+            #DC143C 100%);
+    box-shadow:
+        inset 20px 0 40px rgba(0, 0, 0, 0.5),
+        -20px 0 30px rgba(0, 0, 0, 0.3);
+    z-index: -1;
+    border-left: 3px solid #FFD700;
+}
+
+/* Top Valance */
+.curtain-valance {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(to bottom,
+            #8B0000 0%,
+            #DC143C 50%,
+            #8B0000 100%);
+    box-shadow:
+        inset 0 -20px 40px rgba(0, 0, 0, 0.5),
+        0 10px 30px rgba(0, 0, 0, 0.4);
+    z-index: 0;
+    border-bottom: 5px solid #FFD700;
+}
+
+
+/* Tassels on curtains */
+.curtain-tassel-left,
+.curtain-tassel-right {
+    position: fixed;
+    width: 40px;
+    height: 100px;
+    background: linear-gradient(to bottom, #FFD700, #DAA520);
+    border-radius: 0 0 20px 20px;
+    z-index: 0;
+}
+
+.curtain-tassel-left {
+    left: 14%;
+    top: 30%;
+    transform: translateX(-50%);
+}
+
+.curtain-tassel-right {
+    right: 14%;
+    top: 30%;
+    transform: translateX(50%);
+}
+
+/* Tassel fringe */
+.curtain-tassel-left::after,
+.curtain-tassel-right::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 20px;
+    background: repeating-linear-gradient(90deg,
+            #FFD700 0px,
+            #FFD700 2px,
+            transparent 2px,
+            transparent 4px);
+}

@@ -46,21 +46,16 @@ function AdminPhaseEditor({ selectedDate, selectedPhase, allEvents, onAgrupacion
                     )
                     .sort((a, b) => a.nombre.localeCompare(b.nombre));
                 setAllAgrupaciones(available);
+
+                // Set initial preview (first 20)
+                const filtered = available.filter(ag => !assignedIds.has(ag.nombre));
+                setSearchResults(filtered.slice(0, 20));
             } catch (err) {
                 console.error('Error loading agrupaciones:', err);
             }
         };
         loadAllAgrupaciones();
     }, [selectedPhase]); // Only reload when phase changes
-
-    // Update search results when allAgrupaciones or assignedIds change
-    useEffect(() => {
-        if (searchQuery.trim().length < 2) {
-            // Filter out assigned and show preview
-            const filtered = allAgrupaciones.filter(ag => !assignedIds.has(ag.nombre));
-            setSearchResults(filtered.slice(0, 20));
-        }
-    }, [allAgrupaciones, assignedIds]); // Don't include searchQuery here!
 
     // Debounced search
     useEffect(() => {
@@ -88,7 +83,7 @@ function AdminPhaseEditor({ selectedDate, selectedPhase, allEvents, onAgrupacion
         }, 300);
 
         return () => clearTimeout(timer);
-    }, [searchQuery, allAgrupaciones, assignedIds]);
+    }, [searchQuery, allAgrupaciones.length, assignedIds.size]);
 
     const handleAddAgrupacion = async (agrupacion) => {
         setLoading(true);
@@ -108,8 +103,10 @@ function AdminPhaseEditor({ selectedDate, selectedPhase, allEvents, onAgrupacion
 
             const newAgrupacion = await response.json();
             onAgrupacionAdded(newAgrupacion);
-            setSearchQuery('');
-            setSearchResults([]);
+
+            // Remove the added agrupación from search results but keep the rest
+            setSearchResults(prev => prev.filter(ag => ag._id !== agrupacion._id));
+            setSearchQuery(''); // Clear search query
         } catch (err) {
             setError(err.message);
         } finally {

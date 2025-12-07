@@ -12,6 +12,9 @@
 /* 4. Animations */
 @import './animations.css';
 
+/* 4.5. Theater Curtain Effect */
+@import './curtain.css';
+
 /* 5. Components */
 /* Main CSS Entry Point - Imports all modular stylesheets */
 
