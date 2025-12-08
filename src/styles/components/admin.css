@@ -549,14 +549,15 @@
 }
 
 .btn-primary {
-    background: var(--admin-primary-gradient);
-    color: white;
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: var(--secondary);
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.4);
+    border: 1px solid var(--secondary);
 }
 
 .btn-primary:hover {
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 28px rgba(102, 126, 234, 0.6);
+    box-shadow: 0 8px 28px rgba(139, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.3);
 }
 
 .btn-primary:active {

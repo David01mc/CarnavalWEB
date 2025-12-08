@@ -12,10 +12,10 @@
 .task-modal .modal-header {
     position: sticky;
     top: 0;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
     z-index: 100;
     padding: 1.5rem 2rem;
-    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    border-bottom: 2px solid var(--secondary);
     margin: 0;
 }
 
@@ -63,9 +63,9 @@
 }
 
 .add-tag-btn {
-    background: var(--admin-purple);
-    color: white;
-    border: none;
+    background: var(--primary);
+    color: var(--secondary);
+    border: 1px solid var(--secondary);
     padding: 0.75rem 1rem;
     border-radius: 8px;
     cursor: pointer;
@@ -73,7 +73,7 @@
 }
 
 .add-tag-btn:hover {
-    background: var(--admin-purple-light);
+    background: var(--primary-dark);
     transform: scale(1.05);
 }
 
@@ -85,15 +85,15 @@
 }
 
 .tag-chip {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-    color: var(--admin-purple-light);
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(139, 0, 0, 0.1));
+    color: var(--secondary);
     padding: 0.5rem 0.75rem;
     border-radius: 8px;
     font-size: 0.9rem;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    border: 1px solid rgba(102, 126, 234, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 .tag-chip button {
@@ -124,7 +124,7 @@
 
 .subtask-item {
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(102, 126, 234, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.2);
     padding: 0.75rem 1rem;
     border-radius: 8px;
     display: flex;
@@ -135,7 +135,7 @@
 
 .subtask-item:hover {
     background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: var(--secondary);
 }
 
 .subtask-text {
@@ -173,9 +173,9 @@
     gap: 2rem;
     margin-top: 2rem;
     padding: 1.5rem 2rem;
-    background: linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, #1a1a2e 20%);
+    background: linear-gradient(180deg, rgba(26, 26, 46, 0.8) 0%, var(--surface) 20%);
     backdrop-filter: blur(10px);
-    border-top: 2px solid rgba(102, 126, 234, 0.2);
+    border-top: 2px solid var(--secondary);
     z-index: 100;
 }
 
@@ -196,16 +196,17 @@
 }
 
 .modal-actions-separated .btn-primary {
-    background: var(--admin-primary-gradient);
-    border: none;
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border: 1px solid var(--secondary);
+    color: var(--secondary);
+    box-shadow: 0 4px 16px rgba(139, 0, 0, 0.4);
 }
 
 /* Select Dropdowns */
 .task-modal select {
     background: rgba(255, 255, 255, 0.08);
     color: var(--text-color);
-    border: 2px solid rgba(102, 126, 234, 0.3);
+    border: 2px solid rgba(255, 215, 0, 0.3);
     padding: 0.75rem 1rem;
     border-radius: 8px;
     cursor: pointer;
@@ -213,15 +214,15 @@
 }
 
 .task-modal select:hover {
-    border-color: rgba(102, 126, 234, 0.5);
+    border-color: var(--secondary);
     background: rgba(255, 255, 255, 0.12);
 }
 
 .task-modal select:focus {
     outline: none;
-    border-color: var(--admin-purple);
+    border-color: var(--secondary);
     background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1);
 }
 
 .task-modal select option {

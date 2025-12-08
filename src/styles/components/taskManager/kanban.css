@@ -26,7 +26,7 @@
 }
 
 .header-left h1 {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -39,7 +39,7 @@
 }
 
 .header-left h1 i {
-    -webkit-text-fill-color: #667eea;
+    -webkit-text-fill-color: var(--secondary);
 }
 
 .header-left p {
@@ -64,20 +64,20 @@
     display: flex;
     align-items: center;
     background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(102, 126, 234, 0.2);
+    border: 2px solid rgba(255, 215, 0, 0.2);
     border-radius: 12px;
     padding: 0 1rem;
     transition: all 0.3s ease;
 }
 
 .filter-item:focus-within {
-    border-color: var(--admin-purple);
+    border-color: var(--secondary);
     background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.1);
 }
 
 .filter-item i {
-    color: var(--admin-purple);
+    color: var(--secondary);
     margin-right: 0.75rem;
 }
 
@@ -121,11 +121,10 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-
 }
 
 .kanban-column:hover {
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--secondary);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
@@ -155,11 +154,12 @@
 }
 
 .task-count {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 215, 0, 0.15);
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
     font-size: 0.9rem;
     font-weight: 600;
+    color: var(--secondary);
 }
 
 .column-content {
@@ -180,12 +180,12 @@
 }
 
 .column-content::-webkit-scrollbar-thumb {
-    background: rgba(102, 126, 234, 0.3);
+    background: rgba(255, 215, 0, 0.3);
     border-radius: 10px;
 }
 
 .column-content::-webkit-scrollbar-thumb:hover {
-    background: rgba(102, 126, 234, 0.5);
+    background: var(--secondary);
 }
 
 /* Empty Column State */
@@ -203,6 +203,7 @@
     font-size: 3rem;
     margin-bottom: 1rem;
 }
+
 /* Dropdown Options Visibility */
 .filter-item select option {
     background-color: #1a1a1a;

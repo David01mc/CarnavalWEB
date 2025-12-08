@@ -17,7 +17,7 @@
 .task-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    border-color: rgba(102, 126, 234, 0.4);
+    border-color: var(--secondary);
 }
 
 .task-card:active {
@@ -100,13 +100,13 @@
 }
 
 .task-tag {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-    color: var(--admin-purple-light);
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(139, 0, 0, 0.1));
+    color: var(--secondary);
     padding: 0.3rem 0.7rem;
     border-radius: 6px;
     font-size: 0.8rem;
     font-weight: 500;
-    border: 1px solid rgba(102, 126, 234, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 /* Task Footer */
@@ -150,14 +150,14 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.75rem;
     font-weight: 700;
-    color: white;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    color: var(--secondary);
+    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.3);
 }
 
 .creator-name {
@@ -172,7 +172,7 @@
     padding: 0.75rem;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 8px;
-    border-left: 3px solid rgba(102, 126, 234, 0.5);
+    border-left: 3px solid var(--secondary);
 }
 
 .task-subtask-item {
@@ -188,7 +188,7 @@
     width: 18px;
     height: 18px;
     cursor: pointer;
-    border: 2px solid rgba(102, 126, 234, 0.4);
+    border: 2px solid rgba(255, 215, 0, 0.4);
     border-radius: 4px;
     background: rgba(255, 255, 255, 0.05);
     position: relative;
@@ -197,15 +197,15 @@
 }
 
 .task-subtask-item input[type='checkbox']:hover {
-    border-color: rgba(102, 126, 234, 0.6);
+    border-color: var(--secondary);
     background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.2);
 }
 
 .task-subtask-item input[type='checkbox']:checked {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: #667eea;
-    box-shadow: 0 0 12px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-color: var(--secondary);
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
 }
 
 .task-subtask-item input[type='checkbox']:checked::after {
