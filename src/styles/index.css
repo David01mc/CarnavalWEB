@@ -45,6 +45,7 @@
 @import './components/customSelect.css';
 @import './components/agrupacion-detail.css';
 @import './components/author-detail.css';
+@import './components/lyric-editor.css';
 
 /* 6. Layouts */
 @import './layouts/collection.css';

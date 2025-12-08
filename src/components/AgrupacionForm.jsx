@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import LyricEditorModal from './LyricEditorModal';
 
 function AgrupacionForm({ initialData, onSave, onCancel }) {
     const [formData, setFormData] = useState(() => {
@@ -39,6 +40,9 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
 
         return defaults;
     });
+
+    // State for Lyric Editor Modal
+    const [showLyricEditor, setShowLyricEditor] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -421,120 +425,56 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
 
                         {/* Lyrics */}
                         <h3 style={{ marginTop: '2rem', marginBottom: '1rem', color: 'var(--primary-light)' }}>
-                            <i className="fas fa-music"></i> Letras
+                            <i className="fas fa-music"></i> Letras ({formData.lyrics.length})
                         </h3>
 
                         <div className="array-field">
-                            {formData.lyrics.map((lyric, index) => (
-                                <div key={index} className="array-item">
-                                    <button
-                                        type="button"
-                                        className="remove-item-btn"
-                                        onClick={() => removeLyric(index)}
-                                    >
-                                        ×
-                                    </button>
-
-                                    <div className="form-row">
-                                        <div className="form-group">
-                                            <label>Título</label>
-                                            <input
-                                                type="text"
-                                                value={lyric.title}
-                                                onChange={(e) => updateLyric(index, 'title', e.target.value)}
-                                            />
+                            {/* Summary of existing lyrics */}
+                            {formData.lyrics.length > 0 && (
+                                <div style={{ marginBottom: '1rem' }}>
+                                    {formData.lyrics.map((lyric, index) => (
+                                        <div key={index} style={{
+                                            padding: '0.5rem 1rem',
+                                            background: 'var(--background)',
+                                            borderRadius: '6px',
+                                            marginBottom: '0.5rem',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center'
+                                        }}>
+                                            <span>
+                                                <strong>{lyric.title || `Letra ${index + 1}`}</strong>
+                                                {lyric.type && <span style={{ marginLeft: '0.5rem', opacity: 0.7 }}>({lyric.type})</span>}
+                                            </span>
+                                            <span style={{ fontSize: '0.85rem', opacity: 0.6 }}>
+                                                <i className="fas fa-eye"></i> {lyric.views || 0}
+                                            </span>
                                         </div>
-
-                                        <div className="form-group">
-                                            <label>Tipo</label>
-                                            <input
-                                                type="text"
-                                                value={lyric.type}
-                                                onChange={(e) => updateLyric(index, 'type', e.target.value)}
-                                                placeholder="Ej: Pasodoble"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="form-row">
-                                        <div className="form-group">
-                                            <label>Vistas</label>
-                                            <input
-                                                type="text"
-                                                value={lyric.views}
-                                                onChange={(e) => updateLyric(index, 'views', e.target.value)}
-                                            />
-                                        </div>
-
-                                        <div className="form-group">
-                                            <label>URL</label>
-                                            <input
-                                                type="url"
-                                                value={lyric.url}
-                                                onChange={(e) => updateLyric(index, 'url', e.target.value)}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label>Contenido</label>
-                                        <textarea
-                                            value={lyric.content}
-                                            onChange={(e) => updateLyric(index, 'content', e.target.value)}
-                                            rows="6"
-                                        />
-                                    </div>
-
-                                    {/* Features de la letra */}
-                                    <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--background)', borderRadius: '8px' }}>
-                                        <h5 style={{ marginBottom: '0.5rem', color: 'var(--text)', fontSize: '0.95rem' }}>
-                                            <i className="fas fa-tags"></i> Features/Palabras Clave
-                                        </h5>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                                            {(lyric.features || []).map((feature, fIndex) => (
-                                                <div key={fIndex} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                                    <input
-                                                        type="text"
-                                                        value={feature}
-                                                        onChange={(e) => updateLyricFeature(index, fIndex, e.target.value)}
-                                                        placeholder={`Palabra ${fIndex + 1}`}
-                                                        style={{ width: '120px', padding: '0.4rem', fontSize: '0.9rem' }}
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => removeLyricFeature(index, fIndex)}
-                                                        style={{
-                                                            background: 'var(--error)',
-                                                            color: 'white',
-                                                            border: 'none',
-                                                            borderRadius: '4px',
-                                                            width: '24px',
-                                                            height: '24px',
-                                                            cursor: 'pointer',
-                                                            fontSize: '0.9rem'
-                                                        }}
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <button
-                                            type="button"
-                                            className="btn btn-secondary btn-small"
-                                            onClick={() => addLyricFeature(index)}
-                                            style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}
-                                        >
-                                            <i className="fas fa-plus"></i> Añadir Feature
-                                        </button>
-                                    </div>
+                                    ))}
                                 </div>
-                            ))}
+                            )}
 
-                            <button type="button" className="btn btn-secondary" onClick={addLyric}>
-                                <i className="fas fa-plus"></i> Añadir Letra
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                onClick={() => setShowLyricEditor(true)}
+                                style={{ width: '100%', padding: '1rem' }}
+                            >
+                                <i className="fab fa-youtube"></i> Abrir Editor de Letras con YouTube
                             </button>
                         </div>
+
+                        {/* Lyric Editor Modal */}
+                        {showLyricEditor && (
+                            <LyricEditorModal
+                                lyrics={formData.lyrics}
+                                onSave={(updatedLyrics) => {
+                                    setFormData(prev => ({ ...prev, lyrics: updatedLyrics }));
+                                    setShowLyricEditor(false);
+                                }}
+                                onCancel={() => setShowLyricEditor(false)}
+                            />
+                        )}
 
                         {/* YouTube Links */}
                         <h3 style={{ marginTop: '2rem', marginBottom: '1rem', color: 'var(--primary-light)' }}>
