@@ -72,6 +72,55 @@
     transform: scale(1.1);
 }
 
+/* Header Actions Container */
+.task-header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.task-collapse-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+}
+
+.task-collapse-btn:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: var(--secondary);
+    transform: scale(1.1);
+}
+
+/* Collapsed State */
+.task-card.collapsed {
+    padding: 1rem 1.25rem;
+}
+
+.task-card.collapsed .task-title {
+    margin-bottom: 0;
+}
+
+.task-collapsed-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.task-collapsed-info i {
+    color: var(--secondary);
+}
+
 .task-title {
     font-size: 1.1rem;
     font-weight: 600;

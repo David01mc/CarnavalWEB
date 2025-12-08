@@ -24,6 +24,7 @@ function Calendar2026() {
     const [currentMonthIndex, setCurrentMonthIndex] = useState(1); // Default to Jan 2026 (Index 1)
     const [isAdmin, setIsAdmin] = useState(true); // TODO: Replace with actual auth
     const [showEditor, setShowEditor] = useState(false);
+    const [showExportMenu, setShowExportMenu] = useState(false);
 
     // Confetti function for Final phase
     const triggerConfetti = () => {
@@ -278,6 +279,127 @@ function Calendar2026() {
         }
     };
 
+    // Export calendar to iCalendar format (.ics)
+    const exportToICS = () => {
+        // Collect all events from all months
+        const allEvents = [];
+
+        months.forEach(month => {
+            Object.entries(month.eventMap).forEach(([dateKey, dayEvents]) => {
+                dayEvents.forEach(event => {
+                    allEvents.push({
+                        ...event,
+                        dateKey
+                    });
+                });
+            });
+        });
+
+        if (allEvents.length === 0) {
+            alert('No hay eventos para exportar');
+            return;
+        }
+
+        // Generate iCalendar content
+        let icsContent = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//Carnaval de Cádiz//Calendar 2026//ES',
+            'CALSCALE:GREGORIAN',
+            'METHOD:PUBLISH',
+            'X-WR-CALNAME:Carnaval de Cádiz 2026',
+            'X-WR-TIMEZONE:Europe/Madrid'
+        ];
+
+        allEvents.forEach((event, index) => {
+            // Parse date (formato: yyyy-MM-dd)
+            const dateParts = event.dateKey.split('-');
+            const year = dateParts[0];
+            const month = dateParts[1];
+            const day = dateParts[2];
+
+            // Parse time if available (formato: HH:mm)
+            let startHour = '21';
+            let startMinute = '00';
+            if (event.hora) {
+                const timeParts = event.hora.split(':');
+                startHour = timeParts[0].padStart(2, '0');
+                startMinute = (timeParts[1] || '00').padStart(2, '0');
+            }
+
+            // Format date for iCal: YYYYMMDDTHHMMSS
+            const startDate = `${year}${month}${day}T${startHour}${startMinute}00`;
+            // End time: +3 hours later
+            const endHour = String((parseInt(startHour) + 3) % 24).padStart(2, '0');
+            const endDate = `${year}${month}${day}T${endHour}${startMinute}00`;
+
+            const uid = `carnaval-2026-${index}-${Date.now()}@carnavaldecadiz.com`;
+            const summary = event.nombre || event.name || 'Evento Carnaval';
+            const description = `${event.fase || ''} - ${event.categoria || ''} - Carnaval de Cádiz 2026`;
+            const location = 'Teatro Falla, Cádiz, España';
+
+            icsContent.push('BEGIN:VEVENT');
+            icsContent.push(`UID:${uid}`);
+            icsContent.push(`DTSTAMP:${year}${month}${day}T000000Z`);
+            icsContent.push(`DTSTART;TZID=Europe/Madrid:${startDate}`);
+            icsContent.push(`DTEND;TZID=Europe/Madrid:${endDate}`);
+            icsContent.push(`SUMMARY:${summary}`);
+            icsContent.push(`DESCRIPTION:${description}`);
+            icsContent.push(`LOCATION:${location}`);
+            icsContent.push('END:VEVENT');
+        });
+
+        icsContent.push('END:VCALENDAR');
+
+        // Create and download file
+        const blob = new Blob([icsContent.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'carnaval-cadiz-2026.ics';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        setShowExportMenu(false);
+    };
+
+    // Export to Google Calendar (opens web page with first event, downloads .ics for all)
+    const exportToGoogleCalendar = () => {
+        // Collect all events
+        const allEvents = [];
+        months.forEach(month => {
+            Object.entries(month.eventMap).forEach(([dateKey, dayEvents]) => {
+                dayEvents.forEach(event => {
+                    allEvents.push({ ...event, dateKey });
+                });
+            });
+        });
+
+        if (allEvents.length === 0) {
+            alert('No hay eventos para exportar');
+            return;
+        }
+
+        // For Google Calendar, we'll download the ICS since bulk import is easier
+        // But also open Google Calendar for convenience
+        exportToICS();
+
+        // Open Google Calendar import page
+        window.open('https://calendar.google.com/calendar/r/settings/export', '_blank');
+        setShowExportMenu(false);
+    };
+
+    // Export to Outlook (opens Outlook Calendar import)
+    const exportToOutlook = () => {
+        // Download ICS file first
+        exportToICS();
+
+        // Open Outlook Calendar
+        window.open('https://outlook.live.com/calendar/0/view/month', '_blank');
+        setShowExportMenu(false);
+    };
+
     // Check if navigation is available
     const canGoToPrevious = () => {
         const daysWithEvents = getDaysWithEvents();
@@ -328,6 +450,37 @@ function Calendar2026() {
                 >
                     COAC 2026
                 </motion.h1>
+                <div className="export-dropdown-container">
+                    <button
+                        className="export-calendar-btn"
+                        onClick={() => setShowExportMenu(!showExportMenu)}
+                        title="Exportar a Google Calendar / iCalendar"
+                    >
+                        <i className="fas fa-calendar-plus"></i>
+                        <span>Exportar Calendario</span>
+                        <i className={`fas fa-chevron-${showExportMenu ? 'up' : 'down'}`} style={{ marginLeft: '0.5rem', fontSize: '0.8rem' }}></i>
+                    </button>
+
+                    {showExportMenu && (
+                        <div className="export-dropdown-menu">
+                            <button className="export-option" onClick={exportToICS}>
+                                <i className="fab fa-apple"></i>
+                                <span>Apple Calendar</span>
+                                <small>Descarga .ics</small>
+                            </button>
+                            <button className="export-option" onClick={exportToGoogleCalendar}>
+                                <i className="fab fa-google"></i>
+                                <span>Google Calendar</span>
+                                <small>Descarga .ics + abre web</small>
+                            </button>
+                            <button className="export-option" onClick={exportToOutlook}>
+                                <i className="fab fa-microsoft"></i>
+                                <span>Outlook</span>
+                                <small>Descarga .ics + abre web</small>
+                            </button>
+                        </div>
+                    )}
+                </div>
             </header>
 
             {currentMonth && (
@@ -357,7 +510,7 @@ function Calendar2026() {
                     </div>
 
                     <motion.div
-                        key={currentMonthIndex} // Force re-render animation on month change
+                        key={currentMonthIndex}
                         className="calendar-grid"
                         variants={container}
                         initial="hidden"
@@ -371,10 +524,7 @@ function Calendar2026() {
                             const dayNumber = format(date, 'd');
                             const hasEvents = dayEvents.length > 0;
 
-                            // Find 'Cabeza de Serie'
                             const cabezaDeSerie = dayEvents.find(ev => ev.cabeza_serie === true || ev.cabeza_serie === 'true');
-
-                            // Detect phase (all events on same day should have same phase)
                             const phase = dayEvents[0]?.fase || 'Preliminares';
                             const phaseClass = phase.toLowerCase().replace(/\s+/g, '-');
 
@@ -565,7 +715,7 @@ function Calendar2026() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 }
 
