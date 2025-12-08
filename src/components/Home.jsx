@@ -123,7 +123,7 @@ function Home() {
       </section>
 
       {/* Instagram Feed Section */}
-      <InstagramFeed />
+      {/* <InstagramFeed /> */}
     </div>
   );
 }
