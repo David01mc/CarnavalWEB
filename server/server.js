@@ -263,6 +263,47 @@ app.get('/api/agrupaciones/:id', async (req, res) => {
   }
 });
 
+// POST increment lyric view count (public)
+app.post('/api/agrupaciones/:id/lyrics/:lyricIndex/view', async (req, res) => {
+  try {
+    const { id, lyricIndex } = req.params;
+    const idx = parseInt(lyricIndex);
+
+    if (isNaN(idx) || idx < 0) {
+      return res.status(400).json({ error: 'Invalid lyric index' });
+    }
+
+    // Fetch the document
+    const agrupacion = await db.collection('agrupaciones').findOne({
+      _id: new ObjectId(id)
+    });
+
+    if (!agrupacion) {
+      return res.status(404).json({ error: 'Agrupación not found' });
+    }
+
+    if (!agrupacion.lyrics || !agrupacion.lyrics[idx]) {
+      return res.status(404).json({ error: 'Lyric not found' });
+    }
+
+    // Get current views (handle string or number), increment by 1
+    const currentViews = parseInt(agrupacion.lyrics[idx].views || 0, 10);
+    const newViews = currentViews + 1;
+
+    // Update the specific lyric's views as a number
+    const viewsField = `lyrics.${idx}.views`;
+    await db.collection('agrupaciones').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { [viewsField]: newViews } }
+    );
+
+    res.json({ success: true, views: newViews });
+  } catch (error) {
+    console.error('Lyric view increment error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // POST create new entry (protected)
 app.post('/api/agrupaciones', auth, async (req, res) => {
   try {

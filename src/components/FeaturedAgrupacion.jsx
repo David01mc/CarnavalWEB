@@ -2,12 +2,29 @@ import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import QRModal from './QRModal';
 
+const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
+
 function FeaturedAgrupacion({ agrupacion }) {
     const [expandedLyric, setExpandedLyric] = useState(null);
     const [expandedAuthor, setExpandedAuthor] = useState(null);
     const [qrData, setQrData] = useState(null);
+    const [localLyrics, setLocalLyrics] = useState(agrupacion.lyrics || []);
 
-    const toggleLyric = (index) => {
+    const toggleLyric = async (index) => {
+        if (expandedLyric !== index) {
+            // Expanding - increment view count
+            try {
+                await fetch(`${API_URL}/api/agrupaciones/${agrupacion._id}/lyrics/${index}/view`, {
+                    method: 'POST'
+                });
+                // Update local view count
+                setLocalLyrics(prev => prev.map((lyric, i) =>
+                    i === index ? { ...lyric, views: parseInt(lyric.views || 0, 10) + 1 } : lyric
+                ));
+            } catch (err) {
+                console.error('Error incrementing lyric view:', err);
+            }
+        }
         setExpandedLyric(expandedLyric === index ? null : index);
     };
 
@@ -17,7 +34,7 @@ function FeaturedAgrupacion({ agrupacion }) {
 
     const handleShareQR = (e, lyric) => {
         e.stopPropagation();
-        const lyricIndex = agrupacion.lyrics.findIndex(l => l === lyric);
+        const lyricIndex = localLyrics.findIndex(l => l === lyric);
         const url = `${window.location.origin}/?view=agrupacion&id=${agrupacion._id}&lyricIndex=${lyricIndex}`;
         setQrData({
             value: url,
@@ -141,13 +158,13 @@ function FeaturedAgrupacion({ agrupacion }) {
             )}
 
             {/* Lyrics Section */}
-            {agrupacion.lyrics && agrupacion.lyrics.length > 0 && (
+            {localLyrics && localLyrics.length > 0 && (
                 <div className="featured-section">
                     <h3 className="section-title">
-                        <i className="fas fa-music"></i> Letras ({agrupacion.lyrics.length})
+                        <i className="fas fa-music"></i> Letras ({localLyrics.length})
                     </h3>
                     <div className="lyrics-list">
-                        {agrupacion.lyrics.map((lyric, idx) => (
+                        {localLyrics.map((lyric, idx) => (
                             <div key={idx} className={`lyric-item ${expandedLyric === idx ? 'expanded' : ''}`}>
                                 <div
                                     className="lyric-header"
