@@ -10,10 +10,12 @@ function AdminUsers() {
     const [currentUserId, setCurrentUserId] = useState(null);
     const [deleteConfirm, setDeleteConfirm] = useState(null);
     const [roleChangeConfirm, setRoleChangeConfirm] = useState(null);
+    const [registrationCode, setRegistrationCode] = useState(null);
 
     useEffect(() => {
         fetchUsers();
         fetchCurrentUser();
+        fetchRegistrationCode();
     }, []);
 
     const fetchCurrentUser = async () => {
@@ -38,6 +40,18 @@ function AdminUsers() {
             setError(err.response?.data?.msg || 'Error al cargar usuarios');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchRegistrationCode = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get(`${API_URL}/api/auth/registration-code`, {
+                headers: { 'x-auth-token': token }
+            });
+            setRegistrationCode(res.data);
+        } catch (err) {
+            console.error('Error fetching registration code:', err);
         }
     };
 
@@ -99,6 +113,48 @@ function AdminUsers() {
                     <i className="fas fa-exclamation-circle"></i> {error}
                 </div>
             )}
+
+            {/* Registration Code Panel */}
+            {registrationCode && (
+                <div className="registration-code-panel" style={{
+                    background: 'linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%)',
+                    border: '2px solid var(--secondary)',
+                    borderRadius: '16px',
+                    padding: '1.5rem 2rem',
+                    marginBottom: '2rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '1rem'
+                }}>
+                    <div>
+                        <h3 style={{ margin: 0, color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <i className="fas fa-key"></i> Código de Registro del Día
+                        </h3>
+                        <p style={{ margin: '0.5rem 0 0', color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>
+                            <i className="fas fa-clock"></i> Válido hasta medianoche (UTC)
+                        </p>
+                    </div>
+                    <div style={{
+                        background: 'rgba(0,0,0,0.3)',
+                        padding: '1rem 2rem',
+                        borderRadius: '12px',
+                        border: '2px dashed var(--secondary)'
+                    }}>
+                        <span style={{
+                            fontSize: '2.5rem',
+                            fontWeight: 'bold',
+                            color: 'var(--secondary)',
+                            letterSpacing: '0.5em',
+                            fontFamily: 'monospace'
+                        }}>
+                            {registrationCode.code}
+                        </span>
+                    </div>
+                </div>
+            )}
+
 
             <div className="users-table-container">
                 <table className="users-table">
