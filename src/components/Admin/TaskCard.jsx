@@ -15,7 +15,7 @@ const PRIORITY_LABELS = {
 };
 
 const TaskCard = ({ task, onEdit, onDelete, isDragging, onToggleSubtask }) => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(true);
 
     const {
         attributes,
