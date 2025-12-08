@@ -1,4 +1,9 @@
-/* Forum Layout */
+/* =================================================
+   FORUM - THEATER THEME STYLES
+   Inspired by classic theater aesthetics
+   ================================================= */
+
+/* Main Container - The Stage */
 .forum-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -21,6 +26,7 @@
 .forum-curtain-left {
     left: 0;
     background:
+        url('/src/assets/cfg-logo.png') center 50px / 50px auto no-repeat,
         linear-gradient(to right,
             #5A0000 0%,
             #6B0000 20%,
@@ -37,6 +43,7 @@
 .forum-curtain-right {
     right: 0;
     background:
+        url('/src/assets/cfg-logo.png') center 50px / 50px auto no-repeat,
         linear-gradient(to left,
             #5A0000 0%,
             #6B0000 20%,
@@ -50,57 +57,156 @@
     border-left: 3px solid #FFD700;
 }
 
+/* =================================================
+   FORUM HEADER - MARQUEE STYLE
+   ================================================= */
+
 .forum-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    padding: 1.5rem 2rem;
+    background: linear-gradient(135deg, #2a0a0a 0%, #1a0505 100%);
+    border: 3px solid #FFD700;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Marquee lights effect */
+.forum-header::before {
+    content: '💡 💡 💡 💡 💡 💡 💡 💡 💡 💡 💡 💡 💡 💡 💡';
+    position: absolute;
+    top: -5px;
+    left: 0;
+    right: 0;
+    font-size: 0.8rem;
+    text-align: center;
+    animation: marquee-lights 2s ease-in-out infinite;
+    letter-spacing: 15px;
+}
+
+@keyframes marquee-lights {
+
+    0%,
+    100% {
+        opacity: 1;
+        filter: brightness(1.2);
+    }
+
+    50% {
+        opacity: 0.6;
+        filter: brightness(0.8);
+    }
 }
 
 .forum-header h1 {
     font-size: 2.5rem;
-    color: var(--primary-color);
+    color: #FFD700;
     margin: 0;
+    text-shadow:
+        0 0 10px rgba(255, 215, 0, 0.5),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
+    font-family: 'Georgia', serif;
+    letter-spacing: 2px;
 }
 
-/* Topic List */
+.forum-header h1::before {
+    content: '🎭 ';
+}
+
+.forum-header p {
+    color: #ccc;
+    margin: 0.5rem 0 0 0;
+    font-style: italic;
+}
+
+/* =================================================
+   TOPIC CARDS - THEATER TICKET STYLE
+   ================================================= */
+
 .topics-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .topic-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 1.5rem;
-    transition: transform 0.2s, box-shadow 0.2s;
+    background: linear-gradient(135deg, #1a0a0a 0%, #2a1010 50%, #1a0a0a 100%);
+    border: 2px solid #8B4513;
+    border-radius: 0;
+    padding: 0;
+    transition: all 0.3s ease;
     cursor: pointer;
     text-decoration: none;
     color: inherit;
-    display: block;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Perforated edge left */
+.topic-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background:
+        radial-gradient(circle at 0 10px, transparent 8px, #8B4513 8px, #8B4513 10px, transparent 10px),
+        radial-gradient(circle at 0 30px, transparent 8px, #8B4513 8px, #8B4513 10px, transparent 10px),
+        radial-gradient(circle at 0 50px, transparent 8px, #8B4513 8px, #8B4513 10px, transparent 10px),
+        radial-gradient(circle at 0 70px, transparent 8px, #8B4513 8px, #8B4513 10px, transparent 10px),
+        radial-gradient(circle at 0 90px, transparent 8px, #8B4513 8px, #8B4513 10px, transparent 10px),
+        radial-gradient(circle at 0 110px, transparent 8px, #8B4513 8px, #8B4513 10px, transparent 10px);
+    background-size: 20px 20px;
+    background-repeat: repeat-y;
+}
+
+/* Ticket stub separator */
+.topic-card::after {
+    content: '';
+    position: absolute;
+    right: 100px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    border-left: 2px dashed rgba(139, 69, 19, 0.5);
 }
 
 .topic-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: var(--primary-color);
+    transform: translateY(-3px) scale(1.01);
+    box-shadow:
+        0 8px 25px rgba(255, 215, 0, 0.2),
+        0 0 0 2px #FFD700;
+    border-color: #FFD700;
+}
+
+/* Spotlight effect on hover */
+.topic-card:hover::after {
+    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+}
+
+.topic-main-info {
+    flex: 1;
+    padding: 1.5rem 1.5rem 1.5rem 2.5rem;
 }
 
 .topic-main-info h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.25rem;
-    color: var(--text-color);
+    margin: 0 0 0.75rem 0;
+    font-size: 1.3rem;
+    color: #FFD700;
+    font-family: 'Georgia', serif;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .topic-meta {
     display: flex;
     gap: 1.5rem;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: #999;
 }
 
 .topic-meta span {
@@ -109,25 +215,68 @@
     gap: 0.5rem;
 }
 
-.topic-stats {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    gap: 2rem;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
+.topic-meta i {
+    color: #8B4513;
 }
 
-/* Topic Detail */
+/* Ticket stub - stats section */
+.topic-stats {
+    width: 100px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: #FFD700;
+    background: linear-gradient(135deg, #3a1a1a 0%, #2a0a0a 100%);
+    border-left: none;
+    margin: 0;
+}
+
+.topic-stats span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    text-align: center;
+}
+
+.topic-stats i {
+    font-size: 1.2rem;
+    color: #FFD700;
+}
+
+/* =================================================
+   POST CARDS - PLAYBILL STYLE
+   ================================================= */
+
 .topic-detail-header {
     margin-bottom: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #2a0a0a 0%, #1a0505 100%);
+    border: 3px solid #FFD700;
+    border-radius: 12px;
+    text-align: center;
 }
 
 .topic-title {
-    font-size: 2rem;
+    font-size: 2.2rem;
     margin-bottom: 0.5rem;
-    color: var(--primary-color);
+    color: #FFD700;
+    font-family: 'Georgia', serif;
+    text-shadow:
+        0 0 10px rgba(255, 215, 0, 0.3),
+        2px 2px 0 #8B4513;
+}
+
+.topic-title::before {
+    content: '🎭 ';
+}
+
+.topic-title::after {
+    content: ' 🎭';
 }
 
 .posts-list {
@@ -138,105 +287,229 @@
 }
 
 .post-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 1.5rem;
+    background: linear-gradient(180deg, #1a0808 0%, #120505 100%);
+    border: 2px solid #8B4513;
+    border-radius: 8px;
+    padding: 0;
     display: flex;
-    gap: 1.5rem;
+    gap: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Gold corner decorations */
+.post-card::before {
+    content: '◆';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    color: #FFD700;
+    font-size: 1.2rem;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.post-card::after {
+    content: '◆';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    color: #FFD700;
+    font-size: 1.2rem;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.post-card:hover {
+    border-color: #FFD700;
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.15);
 }
 
 .post-author {
     flex: 0 0 150px;
     text-align: center;
-    padding-right: 1.5rem;
-    border-right: 1px solid var(--border-color);
+    padding: 1.5rem;
+    background: linear-gradient(180deg, #2a0a0a 0%, #1a0505 100%);
+    border-right: 2px solid #8B4513;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
+/* Theater mask avatars */
 .author-avatar {
-    width: 64px;
-    height: 64px;
-    background: var(--primary-color);
-    color: white;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #8B0000 0%, #5A0000 100%);
+    color: #FFD700;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    margin: 0 auto 1rem;
+    font-size: 1.8rem;
+    margin: 0 auto 0.75rem;
     overflow: hidden;
+    border: 3px solid #FFD700;
+    box-shadow:
+        0 0 10px rgba(255, 215, 0, 0.3),
+        inset 0 -5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .author-name {
     font-weight: bold;
-    color: var(--text-color);
+    color: #FFD700;
     display: block;
+    font-size: 0.95rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* OP Badge */
+.badge-primary {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #1a0505;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .post-content-wrapper {
     flex: 1;
     display: flex;
     flex-direction: column;
+    padding: 1.5rem;
 }
 
 .post-header {
     display: flex;
     justify-content: space-between;
     margin-bottom: 1rem;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
+    color: #888;
+    font-size: 0.85rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(139, 69, 19, 0.3);
 }
 
 .post-body {
     flex: 1;
-    line-height: 1.6;
+    line-height: 1.7;
     margin-bottom: 1.5rem;
     white-space: pre-wrap;
+    color: #ddd;
 }
+
+.post-gif {
+    margin-top: 1rem;
+}
+
+.post-gif img {
+    max-width: 300px;
+    border-radius: 8px;
+    border: 2px solid #8B4513;
+}
+
+/* =================================================
+   REACTION BUTTONS - APPLAUSE STYLE
+   ================================================= */
 
 .post-actions {
     display: flex;
     gap: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid rgba(139, 69, 19, 0.3);
 }
 
 .reaction-btn {
-    background: none;
-    border: 1px solid var(--border-color);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+    background: linear-gradient(180deg, #2a1010 0%, #1a0808 100%);
+    border: 2px solid #8B4513;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--text-secondary);
-    transition: all 0.2s;
+    color: #999;
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
 .reaction-btn:hover:not(:disabled) {
-    background: var(--bg-secondary);
-    color: var(--primary-color);
+    background: linear-gradient(180deg, #3a1a1a 0%, #2a0a0a 100%);
+    border-color: #FFD700;
+    color: #FFD700;
+    transform: scale(1.05);
 }
 
 .reaction-btn.active {
-    background: var(--primary-color-alpha);
-    color: var(--primary-color);
-    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #1a0505;
+    border-color: #FFD700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.reaction-btn.active i {
+    animation: applause 0.5s ease;
+}
+
+@keyframes applause {
+    0% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.3) rotate(-10deg);
+    }
+
+    50% {
+        transform: scale(1.5) rotate(10deg);
+    }
+
+    75% {
+        transform: scale(1.3) rotate(-5deg);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .reaction-btn:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
-/* Forms */
+/* =================================================
+   FORUM FORM - BACKSTAGE STYLE
+   ================================================= */
+
 .forum-form {
-    background: var(--card-bg);
+    background: linear-gradient(180deg, #1a0808 0%, #120505 100%);
     padding: 2rem;
     border-radius: 12px;
-    border: 1px solid var(--border-color);
+    border: 2px solid #8B4513;
     margin-top: 2rem;
+    position: relative;
+}
+
+.forum-form::before {
+    content: '✍️ Backstage';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: #1a0808;
+    padding: 0 10px;
+    color: #FFD700;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.forum-form h3 {
+    color: #FFD700;
+    margin-top: 0;
+    font-family: 'Georgia', serif;
 }
 
 .form-group {
@@ -247,17 +520,73 @@
     display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
+    color: #FFD700;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 0.8rem;
-    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border: 2px solid #8B4513;
     border-radius: 8px;
-    background: var(--bg-primary);
-    color: var(--text-color);
+    background: #0a0404;
+    color: #ddd;
+    transition: all 0.3s ease;
 }
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #FFD700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.forum-form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* =================================================
+   EMPTY STATE - DARK STAGE
+   ================================================= */
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(180deg, #1a0808 0%, #0a0404 100%);
+    border: 2px dashed #8B4513;
+    border-radius: 12px;
+}
+
+.empty-state i {
+    color: #8B4513;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #FFD700;
+    font-family: 'Georgia', serif;
+}
+
+.empty-state p {
+    color: #888;
+}
+
+/* =================================================
+   GIF PREVIEW
+   ================================================= */
 
 .gif-preview {
     position: relative;
@@ -269,52 +598,92 @@
 .gif-preview img {
     width: 100%;
     border-radius: 8px;
-    border: 2px solid var(--primary);
+    border: 2px solid #FFD700;
 }
 
 .remove-gif-btn {
     position: absolute;
     top: -10px;
     right: -10px;
-    background: var(--danger);
+    background: #dc3545;
     color: white;
     border: none;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    font-size: 0.9rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease;
 }
 
-/* Responsive */
+.remove-gif-btn:hover {
+    transform: scale(1.1);
+}
+
+/* =================================================
+   RESPONSIVE
+   ================================================= */
+
 @media (max-width: 768px) {
+    .topic-card {
+        flex-direction: column;
+    }
+
+    .topic-card::after {
+        display: none;
+    }
+
+    .topic-stats {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        border-left: none;
+        border-top: 2px dashed rgba(139, 69, 19, 0.5);
+    }
+
+    .topic-stats span {
+        flex-direction: row;
+    }
+
     .post-card {
         flex-direction: column;
     }
 
     .post-author {
         border-right: none;
-        border-bottom: 1px solid var(--border-color);
-        padding-right: 0;
-        padding-bottom: 1rem;
-        display: flex;
-        align-items: center;
+        border-bottom: 2px solid #8B4513;
+        padding: 1rem;
+        flex-direction: row;
         gap: 1rem;
         text-align: left;
         flex: 0 0 auto;
     }
 
     .author-avatar {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
         margin: 0;
     }
+
+    .forum-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .forum-header h1 {
+        font-size: 1.8rem;
+    }
 }
+
+/* =================================================
+   ANIMATIONS
+   ================================================= */
 
 @keyframes pop {
     0% {
@@ -332,4 +701,46 @@
 
 .reaction-btn:active {
     animation: pop 0.3s ease;
+}
+
+/* Entrance animation for topic cards */
+.topic-card {
+    animation: slideInFromLeft 0.5s ease forwards;
+    opacity: 0;
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.topics-list .topic-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.topics-list .topic-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.topics-list .topic-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.topics-list .topic-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.topics-list .topic-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.topics-list .topic-card:nth-child(n+6) {
+    animation-delay: 0.6s;
 }
