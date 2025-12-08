@@ -108,8 +108,10 @@ body.show-curtains::after {
 /* Apply opening animation */
 body.curtain-opening::after {
     animation: curtainOpenLeft 1s ease-out forwards;
+    z-index: 9999;
 }
 
 .curtain-right.opening {
     animation: curtainOpenRight 1s ease-out forwards;
+    z-index: 9999;
 }

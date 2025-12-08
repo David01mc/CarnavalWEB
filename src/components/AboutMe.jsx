@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import '../styles/components/about.css';
 
 function AboutMe() {
+    const curtainCreatedRef = useRef(false);
+
     // Trigger curtain animation on mount
     useEffect(() => {
         // Add show-curtains class to body
@@ -12,7 +14,9 @@ function AboutMe() {
         if (!rightCurtain) {
             rightCurtain = document.createElement('div');
             rightCurtain.className = 'curtain-right opening';
+            rightCurtain.id = 'about-curtain-right';
             document.body.appendChild(rightCurtain);
+            curtainCreatedRef.current = true;
         } else {
             rightCurtain.classList.add('opening');
         }
@@ -20,8 +24,9 @@ function AboutMe() {
         // Remove animation class after animation completes
         const timer = setTimeout(() => {
             document.body.classList.remove('curtain-opening');
-            if (rightCurtain) {
-                rightCurtain.classList.remove('opening');
+            const curtain = document.getElementById('about-curtain-right') || document.querySelector('.curtain-right');
+            if (curtain) {
+                curtain.classList.remove('opening');
             }
         }, 1000);
 
@@ -29,9 +34,17 @@ function AboutMe() {
             clearTimeout(timer);
             // Clean up when leaving the page
             document.body.classList.remove('show-curtains', 'curtain-opening');
-            const curtain = document.querySelector('.curtain-right');
-            if (curtain) {
-                curtain.remove();
+            // Only remove if we created it
+            if (curtainCreatedRef.current) {
+                const curtain = document.getElementById('about-curtain-right');
+                if (curtain && curtain.parentNode === document.body) {
+                    try {
+                        document.body.removeChild(curtain);
+                    } catch (e) {
+                        // Ignore if already removed
+                    }
+                }
+                curtainCreatedRef.current = false;
             }
         };
     }, []);
