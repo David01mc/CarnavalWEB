@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import QRModal from './QRModal';
 
 function FeaturedAgrupacion({ agrupacion }) {
     const [expandedLyric, setExpandedLyric] = useState(null);
     const [expandedAuthor, setExpandedAuthor] = useState(null);
+    const [qrData, setQrData] = useState(null);
 
     const toggleLyric = (index) => {
         setExpandedLyric(expandedLyric === index ? null : index);
@@ -10,6 +13,16 @@ function FeaturedAgrupacion({ agrupacion }) {
 
     const toggleAuthor = (index) => {
         setExpandedAuthor(expandedAuthor === index ? null : index);
+    };
+
+    const handleShareQR = (e, lyric) => {
+        e.stopPropagation();
+        const lyricIndex = agrupacion.lyrics.findIndex(l => l === lyric);
+        const url = `${window.location.origin}/?view=agrupacion&id=${agrupacion._id}&lyricIndex=${lyricIndex}`;
+        setQrData({
+            value: url,
+            title: lyric.title
+        });
     };
 
     return (
@@ -153,9 +166,19 @@ function FeaturedAgrupacion({ agrupacion }) {
                                             )}
                                         </div>
                                     </div>
-                                    <button className="expand-btn">
-                                        <i className={`fas fa-chevron-${expandedLyric === idx ? 'up' : 'down'}`}></i>
-                                    </button>
+                                    <div className="lyric-actions">
+                                        <button
+                                            className="icon-btn qr-btn"
+                                            onClick={(e) => handleShareQR(e, lyric)}
+                                            title="Generar QR para esta letra"
+                                            style={{ marginRight: '0.5rem' }}
+                                        >
+                                            <i className="fas fa-qrcode"></i>
+                                        </button>
+                                        <button className="expand-btn">
+                                            <i className={`fas fa-chevron-${expandedLyric === idx ? 'up' : 'down'}`}></i>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {expandedLyric === idx && (
@@ -223,7 +246,17 @@ function FeaturedAgrupacion({ agrupacion }) {
                         </div>
                     </div>
                 )}
-        </div>
+            {/* QR Modal */}
+            <AnimatePresence>
+                {qrData && (
+                    <QRModal
+                        value={qrData.value}
+                        title={qrData.title}
+                        onClose={() => setQrData(null)}
+                    />
+                )}
+            </AnimatePresence>
+        </div >
     );
 }
 

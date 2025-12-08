@@ -62,6 +62,43 @@ function AppContent() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [selectedAgrupacion, setSelectedAgrupacion] = useState(null);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
+  const [selectedLyricIndex, setSelectedLyricIndex] = useState(null);
+
+  // Deep Linking Effect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('view');
+    const id = params.get('id');
+    const lyricIndex = params.get('lyricIndex');
+
+    if (view === 'agrupacion' && id) {
+      // Fetch specific agrupacion
+      const fetchDeepLink = async () => {
+        try {
+          // If we have the token, use it
+          const token = localStorage.getItem('token');
+          const headers = token ? { 'x-auth-token': token } : {};
+
+          const response = await fetch(`${API_ENDPOINT}/${id}`, { headers });
+          if (response.ok) {
+            const data = await response.json();
+            setSelectedAgrupacion(data);
+            if (lyricIndex !== null) {
+              setSelectedLyricIndex(parseInt(lyricIndex));
+            }
+            setCurrentView('collection'); // Switch to collection view to show background
+          }
+        } catch (error) {
+          console.error("Error fetching deep link:", error);
+        }
+      };
+
+      fetchDeepLink();
+
+      // Clean URL without reload
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -433,7 +470,11 @@ function AppContent() {
         {selectedAgrupacion && (
           <AgrupacionDetailModal
             agrupacion={selectedAgrupacion}
-            onClose={() => setSelectedAgrupacion(null)}
+            initialLyricIndex={selectedLyricIndex}
+            onClose={() => {
+              setSelectedAgrupacion(null);
+              setSelectedLyricIndex(null);
+            }}
             onEdit={(item) => {
               setEditingItem(item);
               setShowForm(true);

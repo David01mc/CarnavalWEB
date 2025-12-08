@@ -1,11 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import QRModal from './QRModal';
 import '../styles/components/agrupacion-detail.css';
 
-const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthorClick }) => {
+const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthorClick, initialLyricIndex = null }) => {
     const { user } = useAuth();
     const [selectedLyric, setSelectedLyric] = useState(null);
+    const [qrData, setQrData] = useState(null);
+
+    // Auto-select lyric based on prop
+    useEffect(() => {
+        if (initialLyricIndex !== null && agrupacion.lyrics && agrupacion.lyrics[initialLyricIndex]) {
+            setSelectedLyric(agrupacion.lyrics[initialLyricIndex]);
+        }
+    }, [initialLyricIndex, agrupacion]);
+
+    const handleShareQR = (e, lyric) => {
+        e.stopPropagation();
+        const lyricIndex = agrupacion.lyrics.findIndex(l => l === lyric);
+        const url = `${window.location.origin}/?view=agrupacion&id=${agrupacion._id}&lyricIndex=${lyricIndex}`;
+        setQrData({
+            value: url,
+            title: lyric.title
+        });
+    };
 
     // Close on escape key and lock body scroll
     useEffect(() => {
@@ -185,7 +204,16 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                     {selectedLyric && (
                         <div className="lyric-panel">
                             <div className="lyric-header">
-                                <h3>{selectedLyric.title || 'Letra'}</h3>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
+                                    <h3>{selectedLyric.title || 'Letra'}</h3>
+                                    <button
+                                        className="icon-btn qr-btn"
+                                        onClick={(e) => handleShareQR(e, selectedLyric)}
+                                        title="Generar QR para esta letra"
+                                    >
+                                        <i className="fas fa-qrcode"></i>
+                                    </button>
+                                </div>
                                 <button className="close-lyric-btn" onClick={() => setSelectedLyric(null)}>
                                     <i className="fas fa-times"></i>
                                 </button>
@@ -203,6 +231,16 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                         </div>
                     )}
                 </div>
+                {/* QR Modal */}
+                <AnimatePresence>
+                    {qrData && (
+                        <QRModal
+                            value={qrData.value}
+                            title={qrData.title}
+                            onClose={() => setQrData(null)}
+                        />
+                    )}
+                </AnimatePresence>
             </motion.div>
         </motion.div>
     );
