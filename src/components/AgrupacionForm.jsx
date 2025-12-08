@@ -166,14 +166,14 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
         <div className="modal-overlay" onClick={onCancel}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>{initialData ? '✏️ Editar Agrupación' : '➕ Nueva Agrupación'}</h2>
+                    <h2>{initialData ? <><i className="fas fa-edit"></i> Editar Agrupación</> : <><i className="fas fa-plus"></i> Nueva Agrupación</>}</h2>
                     <button className="close-btn" onClick={onCancel}>×</button>
                 </div>
 
                 <div className="modal-body">
                     <form onSubmit={handleSubmit}>
                         {/* Basic Information */}
-                        <h3 style={{ marginBottom: '1rem', color: 'var(--primary-light)' }}>📋 Información Básica</h3>
+                        <h3 style={{ marginBottom: '1rem', color: 'var(--primary-light)' }}><i className="fas fa-clipboard-list"></i> Información Básica</h3>
 
                         <div className="form-group">
                             <label>Nombre *</label>
@@ -257,7 +257,7 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
 
                         {/* New Fields */}
                         <h3 style={{ marginTop: '2rem', marginBottom: '1rem', color: 'var(--primary-light)' }}>
-                            🎪 Información Adicional
+                            <i className="fas fa-info-circle"></i> Información Adicional
                         </h3>
 
                         <div className="form-row">
@@ -287,7 +287,7 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
 
                         {/* Características */}
                         <h4 style={{ marginTop: '1.5rem', marginBottom: '0.5rem', color: 'var(--text)' }}>
-                            ⭐ Características Principales
+                            <i className="fas fa-star"></i> Características Principales
                         </h4>
 
                         <div className="array-field">
@@ -312,13 +312,13 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
                             ))}
 
                             <button type="button" className="btn btn-secondary" onClick={() => addArrayItem('caracteristicas')}>
-                                ➕ Añadir Característica
+                                <i className="fas fa-plus"></i> Añadir Característica
                             </button>
                         </div>
 
                         {/* Componentes */}
                         <h4 style={{ marginTop: '1.5rem', marginBottom: '0.5rem', color: 'var(--text)' }}>
-                            👥 Componentes de la Agrupación
+                            <i className="fas fa-users"></i> Componentes de la Agrupación
                         </h4>
 
                         <div className="array-field">
@@ -343,13 +343,13 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
                             ))}
 
                             <button type="button" className="btn btn-secondary" onClick={() => addArrayItem('componentes')}>
-                                ➕ Añadir Componente
+                                <i className="fas fa-plus"></i> Añadir Componente
                             </button>
                         </div>
 
                         {/* Authors */}
                         <h3 style={{ marginTop: '2rem', marginBottom: '1rem', color: 'var(--primary-light)' }}>
-                            ✍️ Autores
+                            <i className="fas fa-pen-fancy"></i> Autores
                         </h3>
 
                         <div className="array-field">
@@ -415,13 +415,13 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
                             ))}
 
                             <button type="button" className="btn btn-secondary" onClick={addAuthor}>
-                                ➕ Añadir Autor
+                                <i className="fas fa-plus"></i> Añadir Autor
                             </button>
                         </div>
 
                         {/* Lyrics */}
                         <h3 style={{ marginTop: '2rem', marginBottom: '1rem', color: 'var(--primary-light)' }}>
-                            🎵 Letras
+                            <i className="fas fa-music"></i> Letras
                         </h3>
 
                         <div className="array-field">
@@ -488,7 +488,7 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
                                     {/* Features de la letra */}
                                     <div style={{ marginTop: '1rem', padding: '1rem', background: 'var(--background)', borderRadius: '8px' }}>
                                         <h5 style={{ marginBottom: '0.5rem', color: 'var(--text)', fontSize: '0.95rem' }}>
-                                            🏷️ Features/Palabras Clave
+                                            <i className="fas fa-tags"></i> Features/Palabras Clave
                                         </h5>
                                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.5rem' }}>
                                             {(lyric.features || []).map((feature, fIndex) => (
@@ -525,20 +525,20 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
                                             onClick={() => addLyricFeature(index)}
                                             style={{ fontSize: '0.85rem', padding: '0.4rem 0.8rem' }}
                                         >
-                                            ➕ Añadir Feature
+                                            <i className="fas fa-plus"></i> Añadir Feature
                                         </button>
                                     </div>
                                 </div>
                             ))}
 
                             <button type="button" className="btn btn-secondary" onClick={addLyric}>
-                                ➕ Añadir Letra
+                                <i className="fas fa-plus"></i> Añadir Letra
                             </button>
                         </div>
 
                         {/* YouTube Links */}
                         <h3 style={{ marginTop: '2rem', marginBottom: '1rem', color: 'var(--primary-light)' }}>
-                            📺 YouTube
+                            <i className="fab fa-youtube"></i> YouTube
                         </h3>
 
                         <div className="array-field">
@@ -563,13 +563,13 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
                             ))}
 
                             <button type="button" className="btn btn-secondary" onClick={() => addArrayItem('youtube')}>
-                                ➕ Añadir YouTube
+                                <i className="fas fa-plus"></i> Añadir YouTube
                             </button>
                         </div>
 
                         {/* Spotify Links */}
                         <h3 style={{ marginTop: '2rem', marginBottom: '1rem', color: 'var(--primary-light)' }}>
-                            🎧 Spotify
+                            <i className="fab fa-spotify"></i> Spotify
                         </h3>
 
                         <div className="array-field">
@@ -594,7 +594,7 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
                             ))}
 
                             <button type="button" className="btn btn-secondary" onClick={() => addArrayItem('spotify')}>
-                                ➕ Añadir Spotify
+                                <i className="fas fa-plus"></i> Añadir Spotify
                             </button>
                         </div>
 
@@ -610,7 +610,7 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
                                 Cancelar
                             </button>
                             <button type="submit" className="btn btn-success" style={{ flex: 1 }}>
-                                💾 Guardar
+                                <i className="fas fa-save"></i> Guardar
                             </button>
                         </div>
                     </form>
