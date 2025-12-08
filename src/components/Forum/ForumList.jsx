@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { TheaterMasks, Spotlight } from '../LottieAnimations';
 import '../../styles/components/forum.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -82,13 +83,27 @@ const ForumList = ({ onViewChange, onTopicSelect }) => {
             <div className="forum-curtain forum-curtain-right"></div>
 
             <div className="forum-header">
-                <div>
-                    <h1>Foro de Carnaval</h1>
-                    <p>Debate sobre agrupaciones, noticias y rumores</p>
+                {/* Spotlight Animation */}
+                <div className="forum-spotlight">
+                    <Spotlight style={{ width: '100%', height: 80, opacity: 0.6 }} />
                 </div>
+
+                <div className="forum-header-content">
+                    <div className="forum-header-left">
+                        <TheaterMasks style={{ width: 80, height: 80 }} />
+                    </div>
+                    <div className="forum-header-center">
+                        <h1>Foro de Carnaval</h1>
+                        <p>Debate sobre agrupaciones, noticias y rumores</p>
+                    </div>
+                    <div className="forum-header-right">
+                        <TheaterMasks style={{ width: 80, height: 80, transform: 'scaleX(-1)' }} />
+                    </div>
+                </div>
+
                 {user && (
                     <button
-                        className="btn btn-primary"
+                        className="btn btn-primary forum-new-topic-btn"
                         onClick={() => setShowCreateForm(!showCreateForm)}
                     >
                         <i className="fas fa-plus"></i> Nuevo Tema

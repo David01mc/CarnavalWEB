@@ -58,12 +58,12 @@
 }
 
 /* =================================================
-   FORUM HEADER - MARQUEE STYLE
+   FORUM HEADER - MARQUEE STYLE WITH LOTTIE
    ================================================= */
 
 .forum-header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     margin-bottom: 2rem;
     padding: 1.5rem 2rem;
@@ -72,6 +72,43 @@
     border-radius: 16px;
     position: relative;
     overflow: hidden;
+}
+
+/* Spotlight animation container */
+.forum-spotlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Header content with masks */
+.forum-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.forum-header-left,
+.forum-header-right {
+    flex-shrink: 0;
+}
+
+.forum-header-center {
+    text-align: center;
+    flex: 1;
+}
+
+.forum-new-topic-btn {
+    margin-top: 1rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* Marquee lights effect */
@@ -85,6 +122,7 @@
     text-align: center;
     animation: marquee-lights 2s ease-in-out infinite;
     letter-spacing: 15px;
+    z-index: 2;
 }
 
 @keyframes marquee-lights {
