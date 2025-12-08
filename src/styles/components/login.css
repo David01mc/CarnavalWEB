@@ -186,6 +186,56 @@
     transform: scale(1.1);
 }
 
+/* Override form-group styles when using login-input */
+.form-group .login-input,
+.form-group input.login-input {
+    padding: 1rem 1rem 1rem 1rem;
+    background: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    color: #1a1a1a;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: none;
+    box-shadow: none;
+    transform: none;
+}
+
+.form-group .login-input::placeholder {
+    color: #888;
+}
+
+.form-group .login-input:focus,
+.form-group input.login-input:focus {
+    outline: none;
+    background: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(139, 0, 0, 0.1);
+    transform: none;
+}
+
+/* Orange labels for registration form */
+.form-group label {
+    color: #ff9800 !important;
+}
+
+/* Gradient button style for registration form */
+form .btn.btn-primary.btn-block {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 1.25rem !important;
+    border-radius: 12px !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 6px 20px rgba(139, 0, 0, 0.35) !important;
+}
+
+form .btn.btn-primary.btn-block:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 0, 0, 0.5) !important;
+}
+
 .toggle-password {
     position: absolute;
     right: 1rem;

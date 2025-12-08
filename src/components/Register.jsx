@@ -90,6 +90,7 @@ function RegisterForm({ onSuccess }) {
                         id="username"
                         name="username"
                         type="text"
+                        className="login-input"
                         value={formData.username}
                         onChange={handleChange}
                         placeholder="Elige un nombre de usuario"
@@ -106,6 +107,7 @@ function RegisterForm({ onSuccess }) {
                         id="email"
                         name="email"
                         type="email"
+                        className="login-input"
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="tu@email.com"
@@ -121,6 +123,7 @@ function RegisterForm({ onSuccess }) {
                         id="password"
                         name="password"
                         type="password"
+                        className="login-input"
                         value={formData.password}
                         onChange={handleChange}
                         placeholder="Mínimo 6 caracteres"
@@ -137,6 +140,7 @@ function RegisterForm({ onSuccess }) {
                         id="confirmPassword"
                         name="confirmPassword"
                         type="password"
+                        className="login-input"
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         placeholder="Repite tu contraseña"
@@ -153,6 +157,7 @@ function RegisterForm({ onSuccess }) {
                         id="registrationCode"
                         name="registrationCode"
                         type="text"
+                        className="login-input"
                         value={formData.registrationCode}
                         onChange={handleChange}
                         placeholder="Código de 6 dígitos"

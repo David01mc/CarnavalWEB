@@ -120,6 +120,7 @@ function Navbar({ onViewChange, onLoginClick, onRegisterClick, currentView }) {
                                 className="dropdown-item logout-item"
                                 onClick={() => {
                                     logout();
+                                    onViewChange('home');
                                     setMenuOpen(false);
                                 }}
                             >
