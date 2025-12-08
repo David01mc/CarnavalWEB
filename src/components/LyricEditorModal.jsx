@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import '../styles/components/lyric-editor.css';
 
 // Try to get API key from any env variable
-const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY ||
-    'AIzaSyANKrmHSH-8-DLJWRsBB0hkKBrMrxM4ob8'; // Fallback to hardcoded key for testing
+const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY
 
 function LyricEditorModal({ lyrics, onSave, onCancel }) {
     const [editingLyrics, setEditingLyrics] = useState(lyrics || []);
