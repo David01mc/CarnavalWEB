@@ -1,6 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { body, validationResult } from 'express-validator';
 import { MongoClient, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
@@ -8,6 +9,16 @@ import auth from '../middleware/auth.js';
 import axios from 'axios';
 
 dotenv.config();
+
+// Generate daily 6-digit registration code
+function generateDailyCode() {
+    const seed = process.env.CODE_SEED || 'carnaval-dev-secret-2024';
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const hash = crypto.createHash('sha256').update(seed + today).digest('hex');
+    // Convert first 8 hex chars to number, then mod to get 6 digits
+    const code = (parseInt(hash.substring(0, 8), 16) % 1000000).toString().padStart(6, '0');
+    return code;
+}
 
 const router = express.Router();
 
@@ -58,7 +69,8 @@ router.post(
         body('username', 'Username is required').notEmpty(),
         body('email', 'Please include a valid email').isEmail(),
         body('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
-        body('recaptchaToken', 'reCAPTCHA token is required').notEmpty()
+        body('recaptchaToken', 'reCAPTCHA token is required').notEmpty(),
+        body('registrationCode', 'Registration code is required').notEmpty()
     ],
     async (req, res) => {
         const errors = validationResult(req);
@@ -66,9 +78,17 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { username, email, password, role, recaptchaToken } = req.body;
+        const { username, email, password, role, recaptchaToken, registrationCode } = req.body;
 
         try {
+            // Verify registration code FIRST
+            const expectedCode = generateDailyCode();
+            if (registrationCode !== expectedCode) {
+                return res.status(400).json({
+                    msg: 'Código de registro inválido. Contacta con un administrador.'
+                });
+            }
+
             // Verify reCAPTCHA token
             const recaptchaResult = await verifyRecaptcha(recaptchaToken);
 
@@ -277,5 +297,29 @@ router.put(
         }
     }
 );
+
+// @route   GET /api/auth/registration-code
+// @desc    Get current daily registration code (admin only)
+// @access  Private (Admin only)
+router.get('/registration-code', auth, async (req, res) => {
+    try {
+        // Check if user is admin
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ msg: 'Acceso denegado. Solo administradores.' });
+        }
+
+        const code = generateDailyCode();
+        const today = new Date().toISOString().split('T')[0];
+
+        res.json({
+            code,
+            validUntil: today + 'T23:59:59Z',
+            message: 'Este código cambia cada día a medianoche (UTC)'
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
 
 export default router;

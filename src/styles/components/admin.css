@@ -462,7 +462,7 @@
 .form-group textarea {
     width: 100%;
     padding: 1rem 1.25rem;
-    border: 2px solid rgba(102, 126, 234, 0.2);
+    border: 2px solid rgba(255, 215, 0, 0.2);
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-color);
@@ -476,11 +476,11 @@
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--admin-purple);
+    border-color: var(--secondary);
     background: rgba(255, 255, 255, 0.08);
     box-shadow:
-        0 0 0 4px rgba(102, 126, 234, 0.1),
-        0 4px 12px rgba(102, 126, 234, 0.2);
+        0 0 0 4px rgba(255, 215, 0, 0.1),
+        0 4px 12px rgba(255, 215, 0, 0.2);
     transform: translateY(-2px);
 }
 

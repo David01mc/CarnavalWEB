@@ -9,7 +9,8 @@ function RegisterForm({ onSuccess }) {
         username: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        registrationCode: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -49,7 +50,8 @@ function RegisterForm({ onSuccess }) {
                 formData.username,
                 formData.email,
                 formData.password,
-                recaptchaToken
+                recaptchaToken,
+                formData.registrationCode
             );
 
             if (result.success) {
@@ -141,6 +143,27 @@ function RegisterForm({ onSuccess }) {
                         required
                         minLength={6}
                     />
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="registrationCode">
+                        <i className="fas fa-key"></i> Código de Registro
+                    </label>
+                    <input
+                        id="registrationCode"
+                        name="registrationCode"
+                        type="text"
+                        value={formData.registrationCode}
+                        onChange={handleChange}
+                        placeholder="Código de 6 dígitos"
+                        required
+                        maxLength={6}
+                        pattern="[0-9]{6}"
+                        style={{ letterSpacing: '0.5em', textAlign: 'center', fontWeight: 'bold' }}
+                    />
+                    <small style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>
+                        <i className="fas fa-info-circle"></i> Solicita este código a un administrador
+                    </small>
                 </div>
 
                 <button

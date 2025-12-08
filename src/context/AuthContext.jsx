@@ -59,13 +59,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (username, email, password, recaptchaToken) => {
+    const register = async (username, email, password, recaptchaToken, registrationCode) => {
         try {
             const res = await axios.post(`${API_URL}/api/auth/register`, {
                 username,
                 email,
                 password,
-                recaptchaToken
+                recaptchaToken,
+                registrationCode
             });
             setToken(res.data.token);
             setUser(res.data.user);
