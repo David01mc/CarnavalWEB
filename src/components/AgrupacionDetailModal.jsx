@@ -1,13 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import QRModal from './QRModal';
 import '../styles/components/agrupacion-detail.css';
 
-const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthorClick, initialLyricIndex = null }) => {
+const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthorClick, onRelatedAgrupacionClick, initialLyricIndex = null }) => {
     const { user } = useAuth();
     const [selectedLyric, setSelectedLyric] = useState(null);
     const [qrData, setQrData] = useState(null);
+
+    // Collect unique related agrupaciones from all authors
+    const relatedAgrupaciones = useMemo(() => {
+        console.log('DEBUG: agrupacion.authors:', agrupacion.authors);
+        if (!agrupacion.authors || agrupacion.authors.length === 0) return [];
+
+        const allRelated = new Set();
+        agrupacion.authors.forEach(author => {
+            console.log('DEBUG: author:', author.name, 'agrupaciones_relacionadas:', author.agrupaciones_relacionadas);
+            if (author.agrupaciones_relacionadas) {
+                author.agrupaciones_relacionadas.forEach(name => {
+                    // Don't include "No hay" or the current agrupación's name
+                    if (name && name !== 'No hay' && name.toLowerCase() !== agrupacion.name?.toLowerCase()) {
+                        allRelated.add(name);
+                    }
+                });
+            }
+        });
+        return Array.from(allRelated).sort();
+    }, [agrupacion]);
 
     // Auto-select lyric based on prop
     useEffect(() => {
@@ -179,6 +199,31 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                                     )}
                                 </div>
                             </div>
+
+                            {/* Related Agrupaciones */}
+                            {relatedAgrupaciones.length > 0 && (
+                                <div className="detail-section">
+                                    <h3 className="section-title"><i className="fas fa-link"></i> Agrupaciones Relacionadas ({relatedAgrupaciones.length})</h3>
+                                    <div className="related-agrupaciones-list">
+                                        {relatedAgrupaciones.map((name, idx) => (
+                                            <button
+                                                key={idx}
+                                                className="related-agrupacion-tag"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (onRelatedAgrupacionClick) {
+                                                        onRelatedAgrupacionClick(name);
+                                                    }
+                                                }}
+                                                title={`Ver ${name}`}
+                                            >
+                                                <i className="fas fa-theater-masks"></i>
+                                                <span>{name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Admin Actions */}

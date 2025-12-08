@@ -488,6 +488,22 @@ function AppContent() {
                 setSelectedAuthor(author);
               }
             }}
+            onRelatedAgrupacionClick={async (name) => {
+              // Search for the agrupacion by name
+              try {
+                const response = await fetch(`${API_URL}/api/agrupaciones?title=${encodeURIComponent(name)}&limit=1`);
+                const data = await response.json();
+                if (data.data && data.data.length > 0) {
+                  // Close current and open the related one
+                  setSelectedLyricIndex(null);
+                  setSelectedAgrupacion(data.data[0]);
+                } else {
+                  console.log('Agrupación no encontrada:', name);
+                }
+              } catch (error) {
+                console.error('Error buscando agrupación relacionada:', error);
+              }
+            }}
           />
         )}
       </AnimatePresence>

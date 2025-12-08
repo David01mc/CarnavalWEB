@@ -526,3 +526,42 @@
         opacity: 0;
     }
 }
+
+/* Related Agrupaciones Section */
+.related-agrupaciones-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.related-agrupacion-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.9rem;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 20px;
+    color: var(--secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.related-agrupacion-tag:hover {
+    background: rgba(255, 215, 0, 0.25);
+    border-color: var(--secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+}
+
+.related-agrupacion-tag i {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+.related-agrupacion-tag span {
+    white-space: nowrap;
+}
