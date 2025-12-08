@@ -4,6 +4,50 @@
     margin: 0 auto;
     padding: 2rem;
     color: var(--text-color);
+    position: relative;
+    min-height: 80vh;
+}
+
+/* Theater Curtains for Forum */
+.forum-curtain {
+    position: fixed;
+    top: 80px;
+    bottom: 0;
+    width: 80px;
+    z-index: 50;
+    pointer-events: none;
+}
+
+.forum-curtain-left {
+    left: 0;
+    background:
+        linear-gradient(to right,
+            #5A0000 0%,
+            #6B0000 20%,
+            #8B0000 40%,
+            #6B0000 60%,
+            #5A0000 80%,
+            rgba(90, 0, 0, 0.3) 100%);
+    box-shadow:
+        inset -15px 0 30px rgba(0, 0, 0, 0.4),
+        15px 0 25px rgba(0, 0, 0, 0.2);
+    border-right: 3px solid #FFD700;
+}
+
+.forum-curtain-right {
+    right: 0;
+    background:
+        linear-gradient(to left,
+            #5A0000 0%,
+            #6B0000 20%,
+            #8B0000 40%,
+            #6B0000 60%,
+            #5A0000 80%,
+            rgba(90, 0, 0, 0.3) 100%);
+    box-shadow:
+        inset 15px 0 30px rgba(0, 0, 0, 0.4),
+        -15px 0 25px rgba(0, 0, 0, 0.2);
+    border-left: 3px solid #FFD700;
 }
 
 .forum-header {

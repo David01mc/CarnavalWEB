@@ -77,6 +77,10 @@ const ForumList = ({ onViewChange, onTopicSelect }) => {
 
     return (
         <div className="forum-container">
+            {/* Theater Curtains */}
+            <div className="forum-curtain forum-curtain-left"></div>
+            <div className="forum-curtain forum-curtain-right"></div>
+
             <div className="forum-header">
                 <div>
                     <h1>Foro de Carnaval</h1>
