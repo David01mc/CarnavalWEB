@@ -19,7 +19,7 @@
     border-radius: 20px;
     padding: 2rem;
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     position: relative;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     display: flex;
@@ -74,9 +74,9 @@
     background: white;
     padding: 1.5rem;
     border-radius: 12px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     width: 100%;
-    max-width: 300px;
+    max-width: 400px;
 }
 
 .qr-wrapper {
