@@ -179,3 +179,19 @@
     opacity: 1;
   }
 }
+
+/* Dropdown Footer - Pinned at bottom */
+.dropdown-footer {
+  padding: 1rem;
+  background: linear-gradient(to bottom,
+      #4A0000 0%,
+      #5A0000 100%);
+  border-top: 3px solid #FFD700;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.dropdown-footer .dropdown-item {
+  margin-bottom: 0;
+}

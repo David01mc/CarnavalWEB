@@ -17,6 +17,7 @@ import AdminAgrupaciones from './components/Admin/AdminAgrupaciones';
 import AdminUsers from './components/Admin/AdminUsers';
 import TaskManager from './components/Admin/TaskManager';
 import Calendar2026 from './components/Calendar2026';
+import AboutMe from './components/AboutMe';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
@@ -325,6 +326,8 @@ function AppContent() {
         <AdminUsers />
       ) : currentView === 'calendar-2026' ? (
         <Calendar2026 />
+      ) : currentView === 'about' ? (
+        <AboutMe />
       ) : (
         <div className="collection-layout">
           {/* Floating Toggle Button (Visible when sidebar is collapsed) */}

@@ -153,6 +153,17 @@ function Navbar({ onViewChange, onLoginClick, onRegisterClick, currentView }) {
                         </>
                     )}
                 </div>
+
+                {/* Footer with About Me */}
+                <div className="dropdown-footer">
+                    <button
+                        className={`dropdown-item ${currentView === 'about' ? 'active' : ''}`}
+                        onClick={() => handleNavigation('about')}
+                    >
+                        <i className="fas fa-info-circle"></i>
+                        <span>Acerca de Mí</span>
+                    </button>
+                </div>
             </div>
 
             {/* Overlay when menu is open */}
