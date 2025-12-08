@@ -469,6 +469,7 @@ function AppContent() {
       <AnimatePresence>
         {selectedAgrupacion && (
           <AgrupacionDetailModal
+            key={selectedAgrupacion._id}
             agrupacion={selectedAgrupacion}
             initialLyricIndex={selectedLyricIndex}
             onClose={() => {

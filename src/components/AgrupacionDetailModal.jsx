@@ -67,9 +67,11 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                 exit={{ opacity: 0, y: 50, scale: 0.95 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
             >
-                <button className="modal-close-btn" onClick={onClose}>
-                    <i className="fas fa-times"></i>
-                </button>
+
+                {/* Local Curtains Effect */}
+                <div className="modal-curtain-valance"></div>
+                <div className="modal-curtain-left"></div>
+                <div className="modal-curtain-right"></div>
 
                 <div className="modal-layout">
                     {/* Left Panel: Main Details */}
