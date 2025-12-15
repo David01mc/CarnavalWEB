@@ -6,8 +6,56 @@ import '../styles/components/agrupacion-detail.css';
 
 const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthorClick, onRelatedAgrupacionClick, initialLyricIndex = null }) => {
     const { user } = useAuth();
-    const [selectedLyric, setSelectedLyric] = useState(null);
+    const [selectedLyricIndex, setSelectedLyricIndex] = useState(null);
     const [qrData, setQrData] = useState(null);
+    const [touchStart, setTouchStart] = useState(null);
+    const [touchEnd, setTouchEnd] = useState(null);
+
+    // Get current lyric from index
+    const selectedLyric = selectedLyricIndex !== null && agrupacion.lyrics
+        ? agrupacion.lyrics[selectedLyricIndex]
+        : null;
+
+    // Navigation functions
+    const goToPrevLyric = () => {
+        if (selectedLyricIndex > 0) {
+            setSelectedLyricIndex(selectedLyricIndex - 1);
+        }
+    };
+
+    const goToNextLyric = () => {
+        if (agrupacion.lyrics && selectedLyricIndex < agrupacion.lyrics.length - 1) {
+            setSelectedLyricIndex(selectedLyricIndex + 1);
+        }
+    };
+
+    const hasPrevLyric = selectedLyricIndex > 0;
+    const hasNextLyric = agrupacion.lyrics && selectedLyricIndex < agrupacion.lyrics.length - 1;
+
+    // Swipe handlers for mobile navigation
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe && hasNextLyric) {
+            goToNextLyric();
+        } else if (isRightSwipe && hasPrevLyric) {
+            goToPrevLyric();
+        }
+    };
 
     // Collect unique related agrupaciones from all authors
     const relatedAgrupaciones = useMemo(() => {
@@ -32,14 +80,14 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
     // Auto-select lyric based on prop
     useEffect(() => {
         if (initialLyricIndex !== null && agrupacion.lyrics && agrupacion.lyrics[initialLyricIndex]) {
-            setSelectedLyric(agrupacion.lyrics[initialLyricIndex]);
+            setSelectedLyricIndex(initialLyricIndex);
         }
     }, [initialLyricIndex, agrupacion]);
 
     const handleShareQR = (e, lyric) => {
         e.stopPropagation();
-        const lyricIndex = agrupacion.lyrics.findIndex(l => l === lyric);
-        const url = `${window.location.origin}/?view=agrupacion&id=${agrupacion._id}&lyricIndex=${lyricIndex}`;
+        const lyricIdx = agrupacion.lyrics.findIndex(l => l === lyric);
+        const url = `${window.location.origin}/?view=agrupacion&id=${agrupacion._id}&lyricIndex=${lyricIdx}`;
         setQrData({
             value: url,
             title: lyric.title
@@ -92,6 +140,11 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                 <div className="modal-curtain-valance"></div>
                 <div className="modal-curtain-left"></div>
                 <div className="modal-curtain-right"></div>
+
+                {/* Close Button */}
+                <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
+                    <i className="fas fa-times"></i>
+                </button>
 
                 <div className="modal-layout">
                     {/* Left Panel: Main Details */}
@@ -176,8 +229,8 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                                         {agrupacion.lyrics.map((lyric, idx) => (
                                             <div
                                                 key={idx}
-                                                className={`lyric-item ${selectedLyric === lyric ? 'active' : ''}`}
-                                                onClick={() => setSelectedLyric(lyric)}
+                                                className={`lyric-item ${selectedLyricIndex === idx ? 'active' : ''}`}
+                                                onClick={() => setSelectedLyricIndex(idx)}
                                             >
                                                 <i className="fas fa-file-audio"></i>
                                                 <span>{lyric.title || `Letra ${idx + 1}`}</span>
@@ -249,22 +302,58 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
 
                     {/* Right Panel: Lyric Content */}
                     {selectedLyric && (
-                        <div className="lyric-panel">
-                            <div className="lyric-header">
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
-                                    <h3>{selectedLyric.title || 'Letra'}</h3>
-                                    <button
-                                        className="icon-btn qr-btn"
-                                        onClick={(e) => handleShareQR(e, selectedLyric)}
-                                        title="Generar QR para esta letra"
-                                    >
-                                        <i className="fas fa-qrcode"></i>
-                                    </button>
-                                </div>
-                                <button className="close-lyric-btn" onClick={() => setSelectedLyric(null)}>
+                        <div
+                            className="lyric-panel"
+                            onTouchStart={onTouchStart}
+                            onTouchMove={onTouchMove}
+                            onTouchEnd={onTouchEnd}
+                        >
+                            {/* Top Row: QR left, X right */}
+                            <div className="lyric-header-top">
+                                <button
+                                    className="lyric-action-btn"
+                                    onClick={(e) => handleShareQR(e, selectedLyric)}
+                                    title="Generar QR para esta letra"
+                                >
+                                    <i className="fas fa-qrcode"></i>
+                                </button>
+                                <button
+                                    className="lyric-action-btn lyric-close-btn"
+                                    onClick={() => setSelectedLyricIndex(null)}
+                                >
                                     <i className="fas fa-times"></i>
                                 </button>
                             </div>
+
+                            {/* Navigation Row: Prev | Title + Counter | Next */}
+                            <div className="lyric-nav-row">
+                                <button
+                                    className="lyric-nav-btn"
+                                    onClick={goToPrevLyric}
+                                    disabled={!hasPrevLyric}
+                                    aria-label="Letra anterior"
+                                >
+                                    <i className="fas fa-chevron-left"></i>
+                                </button>
+
+                                <div className="lyric-header-center">
+                                    <h3>{selectedLyric.title || 'Letra'}</h3>
+                                    <span className="lyric-counter">
+                                        {selectedLyricIndex + 1} / {agrupacion.lyrics.length}
+                                    </span>
+                                </div>
+
+                                <button
+                                    className="lyric-nav-btn"
+                                    onClick={goToNextLyric}
+                                    disabled={!hasNextLyric}
+                                    aria-label="Letra siguiente"
+                                >
+                                    <i className="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+
+                            {/* Lyric Content with swipe hint */}
                             <div className="lyric-content">
                                 {selectedLyric.content ? (
                                     <pre>{selectedLyric.content}</pre>
@@ -274,6 +363,13 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                                         <p>Contenido de la letra no disponible</p>
                                     </div>
                                 )}
+                            </div>
+
+                            {/* Swipe hint for mobile */}
+                            <div className="swipe-hint">
+                                <i className="fas fa-hand-point-left"></i>
+                                <span>Desliza para cambiar de letra</span>
+                                <i className="fas fa-hand-point-right"></i>
                             </div>
                         </div>
                     )}
