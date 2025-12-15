@@ -6,7 +6,7 @@ import InstagramFeed from './InstagramFeed';
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
 const API_ENDPOINT = `${API_URL}/api/agrupaciones`;
 
-function Home() {
+function Home({ onViewChange, onSelectAgrupacion }) {
   const [featuredAgrupacion, setFeaturedAgrupacion] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -86,7 +86,10 @@ function Home() {
             <i className="fas fa-spinner fa-spin"></i> Cargando agrupación del día...
           </div>
         ) : featuredAgrupacion ? (
-          <FeaturedAgrupacion agrupacion={featuredAgrupacion} />
+          <FeaturedAgrupacion
+            agrupacion={featuredAgrupacion}
+            onClick={() => onSelectAgrupacion && onSelectAgrupacion(featuredAgrupacion)}
+          />
         ) : (
           <div className="empty-state">
             <div style={{ fontSize: '4rem' }}>
@@ -96,6 +99,76 @@ function Home() {
             <p>Agrega algunas agrupaciones para ver la destacada del día</p>
           </div>
         )}
+      </section>
+
+      {/* Quick Navigation Cards */}
+      <section className="quick-nav-section">
+        <div className="quick-nav-grid">
+          <button
+            className="quick-nav-card letras"
+            onClick={() => onViewChange && onViewChange('collection')}
+          >
+            <div className="quick-nav-icon">
+              <i className="fas fa-music"></i>
+            </div>
+            <div className="quick-nav-content">
+              <h3>Letras</h3>
+              <p>Explora la colección completa</p>
+            </div>
+            <div className="quick-nav-arrow">
+              <i className="fas fa-arrow-right"></i>
+            </div>
+          </button>
+
+          <button
+            className="quick-nav-card calendario"
+            onClick={() => onViewChange && onViewChange('calendar')}
+          >
+            <div className="quick-nav-icon">
+              <i className="fas fa-calendar-alt"></i>
+            </div>
+            <div className="quick-nav-content">
+              <h3>Calendario 2026</h3>
+              <p>Programa del concurso</p>
+            </div>
+            <div className="quick-nav-arrow">
+              <i className="fas fa-arrow-right"></i>
+            </div>
+          </button>
+
+          <button
+            className="quick-nav-card foro"
+            onClick={() => onViewChange && onViewChange('forum')}
+          >
+            <div className="quick-nav-icon">
+              <i className="fas fa-comments"></i>
+            </div>
+            <div className="quick-nav-content">
+              <h3>Foro</h3>
+              <p>Únete a la conversación</p>
+            </div>
+            <div className="quick-nav-arrow">
+              <i className="fas fa-arrow-right"></i>
+            </div>
+          </button>
+
+          <button
+            className="quick-nav-card ia wip"
+            disabled
+          >
+            <div className="wip-badge">Próximamente</div>
+            <div className="quick-nav-icon">
+              <i className="fas fa-robot"></i>
+            </div>
+            <div className="quick-nav-content">
+              <h3>IA Carnavalera</h3>
+              <p>En desarrollo...</p>
+            </div>
+            <div className="quick-nav-arrow">
+              <i className="fas fa-hourglass-half"></i>
+            </div>
+          </button>
+        </div>
       </section>
 
       {/* Hero Section - Carnaval Introduction */}

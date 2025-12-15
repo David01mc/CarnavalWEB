@@ -1,279 +1,46 @@
-import { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import QRModal from './QRModal';
-
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
-
-function FeaturedAgrupacion({ agrupacion }) {
-    const [expandedLyric, setExpandedLyric] = useState(null);
-    const [expandedAuthor, setExpandedAuthor] = useState(null);
-    const [qrData, setQrData] = useState(null);
-    const [localLyrics, setLocalLyrics] = useState(agrupacion.lyrics || []);
-
-    const toggleLyric = async (index) => {
-        if (expandedLyric !== index) {
-            // Expanding - increment view count
-            try {
-                await fetch(`${API_URL}/api/agrupaciones/${agrupacion._id}/lyrics/${index}/view`, {
-                    method: 'POST'
-                });
-                // Update local view count
-                setLocalLyrics(prev => prev.map((lyric, i) =>
-                    i === index ? { ...lyric, views: parseInt(lyric.views || 0, 10) + 1 } : lyric
-                ));
-            } catch (err) {
-                console.error('Error incrementing lyric view:', err);
-            }
-        }
-        setExpandedLyric(expandedLyric === index ? null : index);
-    };
-
-    const toggleAuthor = (index) => {
-        setExpandedAuthor(expandedAuthor === index ? null : index);
-    };
-
-    const handleShareQR = (e, lyric) => {
-        e.stopPropagation();
-        const lyricIndex = localLyrics.findIndex(l => l === lyric);
-        const url = `${window.location.origin}/?view=agrupacion&id=${agrupacion._id}&lyricIndex=${lyricIndex}`;
-        setQrData({
-            value: url,
-            title: lyric.title
-        });
-    };
-
+function FeaturedAgrupacion({ agrupacion, onClick }) {
     return (
-        <div className="featured-agrupacion">
-            {/* Large Image Section */}
-            {agrupacion.image && (
-                <div className="featured-image-large">
+        <div className="featured-agrupacion-simple" onClick={onClick}>
+            {/* Large Image with Gradient Overlay */}
+            <div className="featured-image-container">
+                {agrupacion.image ? (
                     <img
                         src={agrupacion.image}
                         alt={agrupacion.name}
-                        className="featured-image-main"
+                        className="featured-image"
                     />
-                    <div className="featured-badge-large">
-                        <i className="fas fa-star"></i> DESTACADA DEL DÍA
+                ) : (
+                    <div className="featured-image-placeholder">
+                        <i className="fas fa-theater-masks"></i>
                     </div>
+                )}
+
+                {/* Badge */}
+                <div className="featured-badge">
+                    <i className="fas fa-star"></i> DESTACADA DEL DÍA
                 </div>
-            )}
 
-            {/* Info Section */}
-            <div className="featured-info-section">
-                <h2 className="featured-title-large">{agrupacion.name}</h2>
-
-                <div className="featured-meta-large">
-                    {agrupacion.category && (
-                        <span className="meta-badge-large">
-                            <i className="fas fa-folder"></i> {agrupacion.category}
-                        </span>
-                    )}
-                    {agrupacion.year && (
-                        <span className="meta-badge-large">
-                            <i className="fas fa-calendar-alt"></i> {agrupacion.year}
-                        </span>
-                    )}
-                    {agrupacion.posición && (
-                        <span className="meta-badge-large highlight">
-                            <i className="fas fa-trophy"></i> {agrupacion.posición}
-                        </span>
-                    )}
+                {/* Gradient Overlay with Info */}
+                <div className="featured-overlay">
+                    <h2 className="featured-title">{agrupacion.name}</h2>
+                    <div className="featured-meta">
+                        {agrupacion.category && (
+                            <span className="meta-badge">
+                                <i className="fas fa-masks-theater"></i> {agrupacion.category}
+                            </span>
+                        )}
+                        {agrupacion.year && (
+                            <span className="meta-badge year">
+                                <i className="fas fa-calendar-alt"></i> {agrupacion.year}
+                            </span>
+                        )}
+                    </div>
+                    <div className="featured-cta">
+                        <span><i className="fas fa-hand-pointer"></i> Toca para ver más</span>
+                    </div>
                 </div>
             </div>
-
-            {/* Authors Section - Expandable */}
-            {agrupacion.authors && agrupacion.authors.length > 0 && (
-                <div className="featured-section">
-                    <h3 className="section-title">
-                        <i className="fas fa-pen-fancy"></i> Autores ({agrupacion.authors.length})
-                    </h3>
-                    <div className="authors-list">
-                        {agrupacion.authors.map((author, idx) => (
-                            <div key={idx} className="author-item">
-                                <div
-                                    className="author-header"
-                                    onClick={() => toggleAuthor(idx)}
-                                >
-                                    <div className="author-header-content">
-                                        {author.image && (
-                                            <img
-                                                src={author.image}
-                                                alt={author.name}
-                                                className="author-image-small"
-                                            />
-                                        )}
-                                        <div className="author-title-section">
-                                            <h4 className="author-name-title">{author.name}</h4>
-                                            {author.role && (
-                                                <p className="author-role-text">
-                                                    <i className="fas fa-music"></i> {author.role}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <button className="expand-btn">
-                                        <i className={`fas fa-chevron-${expandedAuthor === idx ? 'up' : 'down'}`}></i>
-                                    </button>
-                                </div>
-
-                                {expandedAuthor === idx && (
-                                    <div className="author-content">
-                                        {author.image && (
-                                            <div className="author-image-large-container">
-                                                <img
-                                                    src={author.image}
-                                                    alt={author.name}
-                                                    className="author-image-large"
-                                                />
-                                            </div>
-                                        )}
-                                        {author.descripcion && (
-                                            <div className="author-description">
-                                                <h5><i className="fas fa-info-circle"></i> Descripción</h5>
-                                                <p>{author.descripcion}</p>
-                                            </div>
-                                        )}
-                                        {author.agrupaciones_relacionadas && author.agrupaciones_relacionadas.length > 0 && (
-                                            <div className="author-related">
-                                                <h5><i className="fas fa-link"></i> Agrupaciones Relacionadas</h5>
-                                                {author.agrupaciones_relacionadas[0] === "No hay" ? (
-                                                    <p className="no-related">No hay agrupaciones relacionadas</p>
-                                                ) : (
-                                                    <div className="related-tags">
-                                                        {author.agrupaciones_relacionadas.map((agrup, i) => (
-                                                            <span key={i} className="related-tag">
-                                                                {agrup}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* Lyrics Section */}
-            {localLyrics && localLyrics.length > 0 && (
-                <div className="featured-section">
-                    <h3 className="section-title">
-                        <i className="fas fa-music"></i> Letras ({localLyrics.length})
-                    </h3>
-                    <div className="lyrics-list">
-                        {localLyrics.map((lyric, idx) => (
-                            <div key={idx} className={`lyric-item ${expandedLyric === idx ? 'expanded' : ''}`}>
-                                <div
-                                    className="lyric-header"
-                                    onClick={() => toggleLyric(idx)}
-                                >
-                                    <div className="lyric-title-section">
-                                        <h4 className="lyric-title">{lyric.title}</h4>
-                                        <div className="lyric-meta">
-                                            <span className="lyric-type">
-                                                <i className="fas fa-tag"></i> {lyric.type}
-                                            </span>
-                                            {lyric.views && (
-                                                <span className="lyric-views">
-                                                    <i className="fas fa-eye"></i> {lyric.views} vistas
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="lyric-actions">
-                                        <button
-                                            className="icon-btn qr-btn"
-                                            onClick={(e) => handleShareQR(e, lyric)}
-                                            title="Generar QR para esta letra"
-                                            style={{ marginRight: '0.5rem' }}
-                                        >
-                                            <i className="fas fa-qrcode"></i>
-                                        </button>
-                                        <button className="expand-btn">
-                                            <i className={`fas fa-chevron-${expandedLyric === idx ? 'up' : 'down'}`}></i>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {expandedLyric === idx && (
-                                    <div className="lyric-content">
-                                        <div className="lyric-text">
-                                            {lyric.content.split('\n').map((line, lineIdx) => (
-                                                <p key={lineIdx}>{line || '\u00A0'}</p>
-                                            ))}
-                                        </div>
-                                        <div className="lyric-footer">
-                                            {lyric.last_modification && (
-                                                <span className="lyric-date">
-                                                    <i className="fas fa-clock"></i> Última modificación: {lyric.last_modification}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* YouTube & Spotify Links */}
-            {((agrupacion.youtube && agrupacion.youtube.length > 0) ||
-                (agrupacion.spotify && agrupacion.spotify.length > 0)) && (
-                    <div className="featured-section">
-                        <h3 className="section-title">
-                            <i className="fas fa-play-circle"></i> Multimedia
-                        </h3>
-                        <div className="multimedia-links">
-                            {agrupacion.youtube && agrupacion.youtube.length > 0 && (
-                                <div className="multimedia-group">
-                                    <h4><i className="fab fa-youtube"></i> YouTube</h4>
-                                    {agrupacion.youtube.map((link, idx) => (
-                                        <a
-                                            key={idx}
-                                            href={link}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="multimedia-link youtube"
-                                        >
-                                            <i className="fab fa-youtube"></i> Ver en YouTube
-                                        </a>
-                                    ))}
-                                </div>
-                            )}
-                            {agrupacion.spotify && agrupacion.spotify.length > 0 && (
-                                <div className="multimedia-group">
-                                    <h4><i className="fab fa-spotify"></i> Spotify</h4>
-                                    {agrupacion.spotify.map((link, idx) => (
-                                        <a
-                                            key={idx}
-                                            href={link}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="multimedia-link spotify"
-                                        >
-                                            <i className="fab fa-spotify"></i> Escuchar en Spotify
-                                        </a>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-            {/* QR Modal */}
-            <AnimatePresence>
-                {qrData && (
-                    <QRModal
-                        value={qrData.value}
-                        title={qrData.title}
-                        onClose={() => setQrData(null)}
-                    />
-                )}
-            </AnimatePresence>
-        </div >
+        </div>
     );
 }
 

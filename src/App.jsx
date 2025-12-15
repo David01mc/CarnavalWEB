@@ -308,7 +308,13 @@ function AppContent() {
       )}
 
       {currentView === 'home' ? (
-        <Home onViewChange={setCurrentView} />
+        <Home
+          onViewChange={setCurrentView}
+          onSelectAgrupacion={(agrupacion) => {
+            setSelectedAgrupacion(agrupacion);
+            setCurrentView('collection');
+          }}
+        />
       ) : currentView === 'forum' ? (
         selectedTopicId ? (
           <ForumTopic
@@ -485,7 +491,7 @@ function AppContent() {
       <AnimatePresence>
         {selectedAgrupacion && (
           <AgrupacionDetailModal
-            key={selectedAgrupacion._id}
+            key="agrupacion-modal"
             agrupacion={selectedAgrupacion}
             agrupaciones={agrupaciones}
             initialLyricIndex={selectedLyricIndex}
