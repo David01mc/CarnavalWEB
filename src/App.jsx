@@ -138,6 +138,10 @@ function AppContent() {
       params.append('page', pageNum);
       params.append('limit', 12);
 
+      // Default sort: year descending (newest first)
+      params.append('sort', 'year');
+      params.append('order', 'desc');
+
       const response = await fetch(`${API_ENDPOINT}?${params}`);
       if (!response.ok) throw new Error('Error al cargar los datos');
 
@@ -241,18 +245,16 @@ function AppContent() {
 
   // Toggle curtains based on current view
   useEffect(() => {
-    const showCurtainViews = ['home', 'calendar-2026', 'profile', 'admin-users'];
+    const showCurtainViews = ['home', 'collection', 'calendar-2026', 'profile', 'admin-users'];
 
     if (showCurtainViews.includes(currentView)) {
-      // Trigger opening animation when entering profile or home
-      if (currentView === 'profile' || currentView === 'home') {
-        setCurtainAnimating(true);
-        document.body.classList.add('curtain-opening');
-        setTimeout(() => {
-          setCurtainAnimating(false);
-          document.body.classList.remove('curtain-opening');
-        }, 1000); // Animation duration
-      }
+      // Trigger opening animation when entering any curtain view
+      setCurtainAnimating(true);
+      document.body.classList.add('curtain-opening');
+      setTimeout(() => {
+        setCurtainAnimating(false);
+        document.body.classList.remove('curtain-opening');
+      }, 1200); // Animation duration
       document.body.classList.add('show-curtains');
     } else {
       document.body.classList.remove('show-curtains');
@@ -264,8 +266,8 @@ function AppContent() {
 
   return (
     <div className="app">
-      {/* Theater Curtain Elements - Show on Home, Calendar, Profile, and Admin Users */}
-      {(['home', 'calendar-2026', 'profile', 'admin-users'].includes(currentView)) && (
+      {/* Theater Curtain Elements - Show on views with animation */}
+      {(['home', 'collection', 'calendar-2026', 'profile', 'admin-users'].includes(currentView)) && (
         <>
           <div className={`curtain-right ${curtainAnimating ? 'opening' : ''}`}></div>
           <div className="curtain-valance"></div>
@@ -485,10 +487,30 @@ function AppContent() {
           <AgrupacionDetailModal
             key={selectedAgrupacion._id}
             agrupacion={selectedAgrupacion}
+            agrupaciones={agrupaciones}
             initialLyricIndex={selectedLyricIndex}
             onClose={() => {
               setSelectedAgrupacion(null);
               setSelectedLyricIndex(null);
+            }}
+            onNavigatePrev={() => {
+              const currentIndex = agrupaciones.findIndex(a => a._id === selectedAgrupacion._id);
+              if (currentIndex > 0) {
+                setSelectedLyricIndex(null);
+                setSelectedAgrupacion(agrupaciones[currentIndex - 1]);
+              }
+            }}
+            onNavigateNext={() => {
+              const currentIndex = agrupaciones.findIndex(a => a._id === selectedAgrupacion._id);
+              if (currentIndex < agrupaciones.length - 1) {
+                setSelectedLyricIndex(null);
+                setSelectedAgrupacion(agrupaciones[currentIndex + 1]);
+
+                // Auto-load more when reaching near the end (last 3 items)
+                if (currentIndex >= agrupaciones.length - 4 && hasMore && !loading) {
+                  setPage(prevPage => prevPage + 1);
+                }
+              }
             }}
             onEdit={(item) => {
               setEditingItem(item);

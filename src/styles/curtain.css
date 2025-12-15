@@ -153,8 +153,10 @@ body.curtain-opening::after {
     }
 }
 
-/* Mobile - Hide curtains completely for maximum content space */
+/* Mobile - Show opening animation then hide */
 @media (max-width: 768px) {
+
+    /* Static curtains hidden */
     body.show-curtains::after {
         display: none !important;
     }
@@ -167,14 +169,53 @@ body.curtain-opening::after {
         display: none !important;
     }
 
-    /* Disable curtain opening animation on mobile */
+    /* BUT allow opening animation to play */
     body.curtain-opening::after {
-        animation: none;
-        display: none;
+        display: block !important;
+        width: 50%;
+        animation: mobileCurtainOpenLeft 1.2s ease-out forwards;
+        z-index: 9999;
     }
 
     .curtain-right.opening {
-        animation: none;
-        display: none;
+        display: block !important;
+        width: 50%;
+        animation: mobileCurtainOpenRight 1.2s ease-out forwards;
+        z-index: 9999;
+    }
+
+    /* Mobile animation - curtains open and fade out completely */
+    @keyframes mobileCurtainOpenLeft {
+        0% {
+            width: 50%;
+            opacity: 1;
+        }
+
+        70% {
+            width: 0%;
+            opacity: 1;
+        }
+
+        100% {
+            width: 0%;
+            opacity: 0;
+        }
+    }
+
+    @keyframes mobileCurtainOpenRight {
+        0% {
+            width: 50%;
+            opacity: 1;
+        }
+
+        70% {
+            width: 0%;
+            opacity: 1;
+        }
+
+        100% {
+            width: 0%;
+            opacity: 0;
+        }
     }
 }

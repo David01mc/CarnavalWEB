@@ -4,28 +4,51 @@ import { motion, AnimatePresence } from 'framer-motion';
 import QRModal from './QRModal';
 import '../styles/components/agrupacion-detail.css';
 
-const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthorClick, onRelatedAgrupacionClick, initialLyricIndex = null }) => {
+const AgrupacionDetailModal = ({
+    agrupacion,
+    agrupaciones = [],
+    onClose,
+    onEdit,
+    onDelete,
+    onAuthorClick,
+    onRelatedAgrupacionClick,
+    onNavigatePrev,
+    onNavigateNext,
+    initialLyricIndex = null
+}) => {
     const { user } = useAuth();
     const [selectedLyricIndex, setSelectedLyricIndex] = useState(null);
     const [qrData, setQrData] = useState(null);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
+    const [slideDirection, setSlideDirection] = useState(null); // 'left' or 'right'
+
+    // Calculate current agrupacion position in list
+    const currentAgrupacionIndex = agrupaciones.findIndex(a => a._id === agrupacion._id);
+    const hasPrevAgrupacion = currentAgrupacionIndex > 0;
+    const hasNextAgrupacion = currentAgrupacionIndex < agrupaciones.length - 1 && currentAgrupacionIndex !== -1;
 
     // Get current lyric from index
     const selectedLyric = selectedLyricIndex !== null && agrupacion.lyrics
         ? agrupacion.lyrics[selectedLyricIndex]
         : null;
 
-    // Navigation functions
+    // Navigation functions with animation direction
     const goToPrevLyric = () => {
         if (selectedLyricIndex > 0) {
+            setSlideDirection('right');
             setSelectedLyricIndex(selectedLyricIndex - 1);
+            // Reset animation after it completes
+            setTimeout(() => setSlideDirection(null), 300);
         }
     };
 
     const goToNextLyric = () => {
         if (agrupacion.lyrics && selectedLyricIndex < agrupacion.lyrics.length - 1) {
+            setSlideDirection('left');
             setSelectedLyricIndex(selectedLyricIndex + 1);
+            // Reset animation after it completes
+            setTimeout(() => setSlideDirection(null), 300);
         }
     };
 
@@ -50,10 +73,20 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
         const isLeftSwipe = distance > minSwipeDistance;
         const isRightSwipe = distance < -minSwipeDistance;
 
-        if (isLeftSwipe && hasNextLyric) {
-            goToNextLyric();
-        } else if (isRightSwipe && hasPrevLyric) {
-            goToPrevLyric();
+        // If viewing a lyric, navigate between lyrics
+        if (selectedLyric) {
+            if (isLeftSwipe && hasNextLyric) {
+                goToNextLyric();
+            } else if (isRightSwipe && hasPrevLyric) {
+                goToPrevLyric();
+            }
+        } else {
+            // If not viewing a lyric, navigate between agrupaciones
+            if (isLeftSwipe && hasNextAgrupacion && onNavigateNext) {
+                onNavigateNext();
+            } else if (isRightSwipe && hasPrevAgrupacion && onNavigatePrev) {
+                onNavigatePrev();
+            }
         }
     };
 
@@ -141,14 +174,53 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                 <div className="modal-curtain-left"></div>
                 <div className="modal-curtain-right"></div>
 
-                {/* Close Button */}
-                <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
-                    <i className="fas fa-times"></i>
-                </button>
+                {/* Navigation and Close Buttons */}
+                <div className="modal-header-actions">
+                    {/* Previous Agrupacion */}
+                    {agrupaciones.length > 1 && (
+                        <button
+                            className="modal-nav-btn"
+                            onClick={onNavigatePrev}
+                            disabled={!hasPrevAgrupacion}
+                            aria-label="Agrupación anterior"
+                        >
+                            <i className="fas fa-chevron-left"></i>
+                        </button>
+                    )}
+
+                    {/* Position Counter */}
+                    {agrupaciones.length > 1 && currentAgrupacionIndex !== -1 && (
+                        <span className="modal-counter">
+                            {currentAgrupacionIndex + 1} / {agrupaciones.length}
+                        </span>
+                    )}
+
+                    {/* Next Agrupacion */}
+                    {agrupaciones.length > 1 && (
+                        <button
+                            className="modal-nav-btn"
+                            onClick={onNavigateNext}
+                            disabled={!hasNextAgrupacion}
+                            aria-label="Agrupación siguiente"
+                        >
+                            <i className="fas fa-chevron-right"></i>
+                        </button>
+                    )}
+
+                    {/* Close Button */}
+                    <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
+                        <i className="fas fa-times"></i>
+                    </button>
+                </div>
 
                 <div className="modal-layout">
-                    {/* Left Panel: Main Details */}
-                    <div className="detail-panel">
+                    {/* Left Panel: Main Details with swipe support */}
+                    <div
+                        className="detail-panel"
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd}
+                    >
                         {/* Header Image & Title */}
                         <div className="detail-header">
                             {agrupacion.image ? (
@@ -353,8 +425,8 @@ const AgrupacionDetailModal = ({ agrupacion, onClose, onEdit, onDelete, onAuthor
                                 </button>
                             </div>
 
-                            {/* Lyric Content with swipe hint */}
-                            <div className="lyric-content">
+                            {/* Lyric Content with swipe animation */}
+                            <div className={`lyric-content ${slideDirection ? `slide-${slideDirection}` : ''}`}>
                                 {selectedLyric.content ? (
                                     <pre>{selectedLyric.content}</pre>
                                 ) : (

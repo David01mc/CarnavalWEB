@@ -46,27 +46,69 @@
     height: 100%;
 }
 
-.modal-close-btn {
+/* Modal Header Navigation */
+.modal-header-actions {
     position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.modal-nav-btn {
     background: rgba(0, 0, 0, 0.5);
     border: none;
     color: white;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    z-index: 10;
     backdrop-filter: blur(4px);
 }
 
-.modal-close-btn:hover {
+.modal-nav-btn:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.modal-counter {
+    color: white;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 1rem;
+    backdrop-filter: blur(4px);
+    font-weight: 500;
+}
+
+.modal-close-btn {
+    background: rgba(139, 0, 0, 0.6);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    margin-left: 0.5rem;
+}
+
+.modal-close-btn:hover {
+    background: rgba(200, 0, 0, 0.8);
     transform: rotate(90deg);
 }
 
@@ -196,6 +238,39 @@
 /* Swipe hint - only visible on mobile */
 .swipe-hint {
     display: none;
+}
+
+/* Swipe Animation Classes */
+.lyric-content.slide-left {
+    animation: slideInFromRight 0.3s ease-out;
+}
+
+.lyric-content.slide-right {
+    animation: slideInFromLeft 0.3s ease-out;
+}
+
+@keyframes slideInFromRight {
+    from {
+        transform: translateX(50%);
+        opacity: 0.5;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-50%);
+        opacity: 0.5;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 .lyric-content {
@@ -696,12 +771,12 @@
         flex-wrap: wrap;
     }
 
-    /* Hide curtain effects on mobile for cleaner look */
-    .modal-curtain-valance,
-    .modal-curtain-left,
-    .modal-curtain-right {
+    /* Keep curtain animation on mobile, just hide the valance */
+    .modal-curtain-valance {
         display: none;
     }
+
+    /* Curtain animation plays normally - they fade to opacity:0 at end */
 }
 
 /* Modal Curtains */
