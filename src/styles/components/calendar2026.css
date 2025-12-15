@@ -827,17 +827,458 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
-    .day-details-modal {
-        width: 95vw;
-        height: 85vh;
+
+/* Tablet breakpoint */
+@media (max-width: 1024px) {
+    .calendar-container {
+        padding: 1rem;
+    }
+
+    .calendar-title {
+        font-size: 2rem;
+    }
+
+    .month-title {
+        font-size: 1.5rem;
+    }
+
+    .calendar-day-card {
+        height: 100px;
+        padding: 0.6rem;
+    }
+
+    .cs-name {
+        font-size: 0.85rem;
+    }
+
+    .modal-content-wrapper.split-view {
+        grid-template-columns: 1fr 320px;
     }
 
     .day-performances-horizontal {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+}
+
+/* =============================================
+   MOBILE RESPONSIVE STYLES - iPhone Optimized
+   ============================================= */
+
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+    .calendar-container {
+        padding: 0.5rem;
+        width: 100%;
+    }
+
+    .calendar-header.compact {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .calendar-title {
+        font-size: 1.6rem;
+        display: none;
+        /* Hide on mobile, navbar already shows title */
+    }
+
+    .export-calendar-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        width: auto;
+        justify-content: center;
+        border-radius: 8px;
+    }
+
+    .export-calendar-btn span {
+        display: none;
+        /* Show only icon on mobile */
+    }
+
+    .export-calendar-btn i:last-child {
+        display: none;
+    }
+
+    .export-dropdown-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: auto;
+        border-radius: 20px 20px 0 0;
+        min-width: 100%;
+        z-index: 10001;
+    }
+
+    .export-option {
+        padding: 1.25rem 1.5rem;
+    }
+
+    /* Month Navigation - More compact */
+    .month-navigation {
+        padding: 0;
+        margin-bottom: 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .month-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .nav-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+
+    /* Weekdays Header - VISIBLE and clear */
+    .weekdays-header {
+        gap: 2px;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .weekday-name {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--primary);
+        text-align: center;
+        padding: 0.3rem 0;
+    }
+
+    /* Calendar Grid - Clean squares */
+    .calendar-grid {
+        gap: 3px;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .calendar-day-card {
+        height: auto;
+        aspect-ratio: 1;
+        padding: 0.2rem;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+    }
+
+    .calendar-day-card.has-events {
+        border-width: 2px;
+    }
+
+    .date-header {
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        gap: 2px;
+    }
+
+    .date-number {
+        font-size: 0.85rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .phase-badge {
+        display: none;
+        /* Hide phase text on mobile */
+    }
+
+    .gold-icon {
+        font-size: 0.6rem;
+        position: absolute;
+        top: 2px;
+        right: 2px;
+    }
+
+    .calendar-day-card {
+        position: relative;
+    }
+
+    .cabeza-serie-preview {
+        display: none;
+        /* Hide name preview on mobile */
+    }
+
+    .day-summary {
+        font-size: 0.55rem;
+        margin-top: 2px;
+        opacity: 0.8;
+    }
+
+    /* ========================
+       MODAL - Full Screen iOS
+       ======================== */
+    .day-details-overlay {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .day-details-modal {
+        width: 100vw;
+        height: 92vh;
+        max-height: 92vh;
+        border-radius: 16px 16px 0 0;
+    }
+
+    .day-details-header {
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .day-details-header>div:first-child {
+        flex-wrap: nowrap;
+        justify-content: center;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .day-details-header h2 {
+        font-size: 1.1rem;
+    }
+
+    .phase-badge-modal {
+        margin-left: 0;
+        margin-top: 0;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .modal-nav-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+    }
+
+    .close-modal-btn {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* Split view - stack on mobile */
+    .modal-content-wrapper.split-view {
         grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+    }
+
+    .editor-panel {
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-left: 0;
+        padding-top: 0.75rem;
+        max-height: 45vh;
+    }
+
+    /* Performance cards - single column scroll */
+    .day-performances-horizontal {
+        grid-template-columns: 1fr;
+        padding: 0.5rem;
+        gap: 0.5rem;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .performance-card-vertical {
         min-width: 100%;
+        padding: 0.75rem;
+    }
+
+    .perf-header {
+        min-height: auto;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .perf-name-vertical {
+        font-size: 1rem;
+    }
+
+    .perf-prev-year {
+        font-size: 0.8rem;
+    }
+
+    .perf-type {
+        font-size: 0.75rem;
+        padding: 0.15rem 0.5rem;
+    }
+
+    .crown-icon-center {
+        font-size: 1.2rem;
+    }
+
+    .perf-details-vertical {
+        min-height: auto;
+        font-size: 0.85rem;
+    }
+
+    .detail-item {
+        min-height: auto;
+        padding: 0.4rem 0;
+        gap: 8px;
+    }
+
+    .detail-item .icon {
+        font-size: 0.85rem;
+        width: 14px;
+    }
+
+    /* Admin buttons */
+    .add-agrupacion-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .delete-agrupacion-btn {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.7rem;
+        margin-top: 0.4rem;
+    }
+
+    /* Empty State */
+    .empty-state-message {
+        padding: 1.5rem 1rem;
+        min-height: 150px;
+    }
+
+    .empty-state-message i {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-message h3 {
+        font-size: 1rem;
+    }
+
+    .empty-state-message p {
+        font-size: 0.85rem;
+    }
+}
+
+/* =============================================
+   SMALL MOBILE (iPhone SE, small Android)
+   ============================================= */
+@media (max-width: 390px) {
+    .calendar-container {
+        padding: 0.25rem;
+    }
+
+    .month-title {
+        font-size: 1rem;
+    }
+
+    .nav-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+
+    .weekday-name {
+        font-size: 0.55rem;
+    }
+
+    .calendar-grid {
+        gap: 2px;
+    }
+
+    .calendar-day-card {
+        min-height: 36px;
+        border-radius: 4px;
+    }
+
+    .date-number {
+        font-size: 0.75rem;
+    }
+
+    .gold-icon {
+        font-size: 0.5rem;
+    }
+
+    .day-summary {
+        display: none;
+    }
+
+    .day-details-header h2 {
+        font-size: 1rem;
+    }
+
+    .modal-nav-btn {
+        width: 26px;
+        height: 26px;
+    }
+
+    .perf-name-vertical {
+        font-size: 0.95rem;
+    }
+
+    .detail-item {
+        font-size: 0.8rem;
+    }
+}
+
+/* =============================================
+   LANDSCAPE MOBILE
+   ============================================= */
+@media (max-width: 768px) and (orientation: landscape) {
+    .day-details-modal {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .day-details-header {
+        padding: 0.5rem 1rem;
+    }
+
+    .day-performances-horizontal {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .perf-header {
+        min-height: auto;
+    }
+
+    .perf-details-vertical {
+        min-height: auto;
+    }
+
+    .detail-item {
+        padding: 0.3rem 0;
+        min-height: auto;
+    }
+}
+
+/* =============================================
+   TOUCH TARGETS - iOS Accessibility
+   ============================================= */
+@media (max-width: 768px) {
+
+    /* Ensure minimum 44px touch targets per Apple HIG */
+    .calendar-day-card.has-events {
+        min-height: 44px;
+    }
+
+    .nav-btn,
+    .modal-nav-btn,
+    .close-modal-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .export-calendar-btn {
+        min-height: 44px;
     }
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format, parse, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isSameDay } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { useAuth } from '../context/AuthContext';
 import AdminPhaseEditor from './AdminPhaseEditor';
 import '../styles/components/calendar2026.css';
 
@@ -22,7 +23,8 @@ function Calendar2026() {
     const [selectedDay, setSelectedDay] = useState(null);
     const [months, setMonths] = useState([]);
     const [currentMonthIndex, setCurrentMonthIndex] = useState(1); // Default to Jan 2026 (Index 1)
-    const [isAdmin, setIsAdmin] = useState(true); // TODO: Replace with actual auth
+    const { user } = useAuth();
+    const isAdmin = user && (user.role === 'admin' || user.isAdmin);
     const [showEditor, setShowEditor] = useState(false);
     const [showExportMenu, setShowExportMenu] = useState(false);
 
