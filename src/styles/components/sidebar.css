@@ -161,14 +161,17 @@
   .filters-sidebar {
     position: fixed;
     left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
+    top: 50px;
+    /* Below navbar */
+    width: 85vw;
+    max-width: 320px;
+    height: calc(100vh - 50px);
     z-index: 500;
     border-right: none;
     border-radius: 0;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    overflow-y: auto;
   }
 
   .filters-sidebar:not(.collapsed) {
@@ -176,7 +179,6 @@
   }
 
   .filters-sidebar.collapsed {
-    left: 0;
     transform: translateX(-100%);
   }
 
@@ -184,6 +186,10 @@
     padding: 1rem;
     position: sticky;
     top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .sidebar-header h3 {
@@ -191,8 +197,11 @@
   }
 
   .toggle-sidebar-btn {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
   }
 
   .sidebar-content {
@@ -228,7 +237,8 @@
 
   .collection-main {
     padding: 0.75rem;
-    padding-top: 0;
+    padding-top: 60px;
+    /* Space below fixed navbar */
   }
 }
 
