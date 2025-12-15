@@ -46,23 +46,16 @@
     height: 100%;
 }
 
-/* Modal Header Navigation */
-.modal-header-actions {
+/* Close Button - Top Right */
+.modal-close-btn {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    z-index: 10;
-}
-
-.modal-nav-btn {
     background: rgba(0, 0, 0, 0.5);
     border: none;
     color: white;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -70,46 +63,52 @@
     cursor: pointer;
     transition: all 0.2s ease;
     backdrop-filter: blur(4px);
-}
-
-.modal-nav-btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.modal-nav-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-
-.modal-counter {
-    color: white;
-    font-size: 0.8rem;
-    padding: 0.25rem 0.75rem;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 1rem;
-    backdrop-filter: blur(4px);
-    font-weight: 500;
-}
-
-.modal-close-btn {
-    background: rgba(139, 0, 0, 0.6);
-    border: none;
-    color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(4px);
-    margin-left: 0.5rem;
+    z-index: 100;
 }
 
 .modal-close-btn:hover {
-    background: rgba(200, 0, 0, 0.8);
+    background: rgba(255, 255, 255, 0.2);
     transform: rotate(90deg);
+}
+
+/* Side Navigation Arrows - Fixed centered on sides */
+.modal-side-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    font-size: 1.1rem;
+}
+
+.modal-side-nav-left {
+    left: 0.5rem;
+}
+
+.modal-side-nav-right {
+    right: 0.5rem;
+}
+
+.modal-side-nav:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--primary);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.modal-side-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 
 /* Left Panel (Main Details) */
@@ -873,6 +872,7 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
+    max-width: 100%;
 }
 
 .related-agrupacion-tag:hover {
@@ -885,8 +885,19 @@
 .related-agrupacion-tag i {
     font-size: 0.75rem;
     opacity: 0.8;
+    flex-shrink: 0;
 }
 
 .related-agrupacion-tag span {
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+}
+
+/* Mobile: smaller max-width for badges */
+@media (max-width: 768px) {
+    .related-agrupacion-tag span {
+        max-width: 180px;
+    }
 }

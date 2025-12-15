@@ -174,44 +174,32 @@ const AgrupacionDetailModal = ({
                 <div className="modal-curtain-left"></div>
                 <div className="modal-curtain-right"></div>
 
-                {/* Navigation and Close Buttons */}
-                <div className="modal-header-actions">
-                    {/* Previous Agrupacion */}
-                    {agrupaciones.length > 1 && (
+                {/* Close Button - Top Right */}
+                <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
+                    <i className="fas fa-times"></i>
+                </button>
+
+                {/* Navigation Arrows - Fixed on sides */}
+                {agrupaciones.length > 1 && (
+                    <>
                         <button
-                            className="modal-nav-btn"
+                            className="modal-side-nav modal-side-nav-left"
                             onClick={onNavigatePrev}
                             disabled={!hasPrevAgrupacion}
                             aria-label="Agrupación anterior"
                         >
                             <i className="fas fa-chevron-left"></i>
                         </button>
-                    )}
-
-                    {/* Position Counter */}
-                    {agrupaciones.length > 1 && currentAgrupacionIndex !== -1 && (
-                        <span className="modal-counter">
-                            {currentAgrupacionIndex + 1} / {agrupaciones.length}
-                        </span>
-                    )}
-
-                    {/* Next Agrupacion */}
-                    {agrupaciones.length > 1 && (
                         <button
-                            className="modal-nav-btn"
+                            className="modal-side-nav modal-side-nav-right"
                             onClick={onNavigateNext}
                             disabled={!hasNextAgrupacion}
                             aria-label="Agrupación siguiente"
                         >
                             <i className="fas fa-chevron-right"></i>
                         </button>
-                    )}
-
-                    {/* Close Button */}
-                    <button className="modal-close-btn" onClick={onClose} aria-label="Cerrar">
-                        <i className="fas fa-times"></i>
-                    </button>
-                </div>
+                    </>
+                )}
 
                 <div className="modal-layout">
                     {/* Left Panel: Main Details with swipe support */}
