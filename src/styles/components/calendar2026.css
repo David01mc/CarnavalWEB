@@ -1035,37 +1035,54 @@
 
     .day-details-header {
         padding: 0.75rem 1rem;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .day-details-header>div:first-child {
+        flex: 1;
+        display: flex;
         flex-wrap: nowrap;
-        justify-content: center;
-        width: 100%;
-        gap: 0.5rem;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.4rem;
+        overflow: hidden;
+    }
+
+    .day-details-header>div:last-child {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        flex-shrink: 0;
     }
 
     .day-details-header h2 {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        white-space: nowrap;
     }
 
     .phase-badge-modal {
         margin-left: 0;
         margin-top: 0;
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
+        font-size: 0.6rem;
+        padding: 0.2rem 0.4rem;
+        white-space: nowrap;
     }
 
     .modal-nav-btn {
-        width: 30px;
-        height: 30px;
-        font-size: 0.85rem;
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+        min-width: 28px;
     }
 
     .close-modal-btn {
         width: 28px;
         height: 28px;
+        min-width: 28px;
     }
 
     /* Split view - stack on mobile */

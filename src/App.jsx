@@ -60,7 +60,10 @@ function AppContent() {
   const [deleteItem, setDeleteItem] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    // Start collapsed on mobile devices
+    return window.innerWidth <= 768;
+  });
   const [selectedAgrupacion, setSelectedAgrupacion] = useState(null);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [selectedLyricIndex, setSelectedLyricIndex] = useState(null);
@@ -330,6 +333,14 @@ function AppContent() {
         <AboutMe />
       ) : (
         <div className="collection-layout">
+          {/* Sidebar Overlay for Mobile */}
+          {!sidebarCollapsed && (
+            <div
+              className="sidebar-overlay visible"
+              onClick={() => setSidebarCollapsed(true)}
+            />
+          )}
+
           {/* Floating Toggle Button (Visible when sidebar is collapsed) */}
           {sidebarCollapsed && (
             <button

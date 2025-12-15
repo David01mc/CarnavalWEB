@@ -116,17 +116,7 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .filters-sidebar {
-    position: fixed;
-    left: 0;
-    top: 80px;
-    z-index: 200;
-    box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
-  }
-
-  .filters-sidebar.collapsed {
-    left: -300px;
-  }
+  /* Sidebar styles are now in sidebar.css */
 }
 
 @media (max-width: 768px) {
@@ -134,7 +124,5 @@
     grid-template-columns: 1fr;
   }
 
-  .collection-main {
-    padding: 1rem;
-  }
+  /* Collection main styles are now in sidebar.css */
 }

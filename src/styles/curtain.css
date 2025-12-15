@@ -115,3 +115,66 @@ body.curtain-opening::after {
     animation: curtainOpenRight 1s ease-out forwards;
     z-index: 9999;
 }
+
+/* =============================================
+   CURTAINS MOBILE RESPONSIVE
+   ============================================= */
+
+/* Tablet - Reduce curtain size */
+@media (max-width: 1024px) {
+    body.show-curtains::after {
+        width: 6%;
+        background-size: 50px auto;
+    }
+
+    .curtain-right {
+        width: 6%;
+        background-size: 50px auto;
+    }
+
+    @keyframes curtainOpenLeft {
+        0% {
+            width: 50%;
+        }
+
+        100% {
+            width: 6%;
+        }
+    }
+
+    @keyframes curtainOpenRight {
+        0% {
+            width: 50%;
+        }
+
+        100% {
+            width: 6%;
+        }
+    }
+}
+
+/* Mobile - Hide curtains completely for maximum content space */
+@media (max-width: 768px) {
+    body.show-curtains::after {
+        display: none !important;
+    }
+
+    .curtain-right {
+        display: none !important;
+    }
+
+    .curtain-valance {
+        display: none !important;
+    }
+
+    /* Disable curtain opening animation on mobile */
+    body.curtain-opening::after {
+        animation: none;
+        display: none;
+    }
+
+    .curtain-right.opening {
+        animation: none;
+        display: none;
+    }
+}
