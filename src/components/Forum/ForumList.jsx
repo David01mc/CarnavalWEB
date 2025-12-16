@@ -78,10 +78,6 @@ const ForumList = ({ onViewChange, onTopicSelect }) => {
 
     return (
         <div className="forum-container">
-            {/* Theater Curtains */}
-            <div className="forum-curtain forum-curtain-left"></div>
-            <div className="forum-curtain forum-curtain-right"></div>
-
             <div className="forum-header">
                 {/* Spotlight Animation */}
                 <div className="forum-spotlight">

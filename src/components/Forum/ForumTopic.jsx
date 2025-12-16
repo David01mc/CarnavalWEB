@@ -142,12 +142,9 @@ const ForumTopic = ({ topicId, onBack }) => {
 
     return (
         <div className="forum-container">
-            {/* Theater Curtains */}
-            <div className="forum-curtain forum-curtain-left"></div>
-            <div className="forum-curtain forum-curtain-right"></div>
-
-            <button className="btn btn-secondary mb-4" onClick={onBack}>
-                <i className="fas fa-arrow-left"></i> Volver al Foro
+            <button className="forum-back-btn" onClick={onBack}>
+                <i className="fas fa-arrow-left"></i>
+                <span>Volver al Foro</span>
             </button>
 
             <div className="topic-detail-header">

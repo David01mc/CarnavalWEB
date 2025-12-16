@@ -245,7 +245,7 @@ function AppContent() {
 
   // Toggle curtains based on current view
   useEffect(() => {
-    const showCurtainViews = ['home', 'collection', 'calendar-2026', 'profile', 'admin-users'];
+    const showCurtainViews = ['home', 'calendar-2026', 'profile', 'admin-users'];
 
     if (showCurtainViews.includes(currentView)) {
       // Trigger opening animation when entering any curtain view
@@ -267,7 +267,7 @@ function AppContent() {
   return (
     <div className="app">
       {/* Theater Curtain Elements - Show on views with animation */}
-      {(['home', 'collection', 'calendar-2026', 'profile', 'admin-users'].includes(currentView)) && (
+      {(['home', 'calendar-2026', 'profile', 'admin-users'].includes(currentView)) && (
         <>
           <div className={`curtain-right ${curtainAnimating ? 'opening' : ''}`}></div>
           <div className="curtain-valance"></div>

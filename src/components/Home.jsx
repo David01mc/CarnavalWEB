@@ -122,7 +122,7 @@ function Home({ onViewChange, onSelectAgrupacion }) {
 
           <button
             className="quick-nav-card calendario"
-            onClick={() => onViewChange && onViewChange('calendar')}
+            onClick={() => onViewChange && onViewChange('calendar-2026')}
           >
             <div className="quick-nav-icon">
               <i className="fas fa-calendar-alt"></i>
