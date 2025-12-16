@@ -17,6 +17,7 @@ import AdminAgrupaciones from './components/Admin/AdminAgrupaciones';
 import AdminUsers from './components/Admin/AdminUsers';
 import TaskManager from './components/Admin/TaskManager';
 import Calendar2026 from './components/Calendar2026';
+import Bingo2026 from './components/Bingo2026';
 import AboutMe from './components/AboutMe';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -245,7 +246,7 @@ function AppContent() {
 
   // Toggle curtains based on current view
   useEffect(() => {
-    const showCurtainViews = ['home', 'calendar-2026', 'profile', 'admin-users'];
+    const showCurtainViews = ['home', 'calendar-2026', 'bingo-2026', 'profile', 'admin-users'];
 
     if (showCurtainViews.includes(currentView)) {
       // Trigger opening animation when entering any curtain view
@@ -267,7 +268,7 @@ function AppContent() {
   return (
     <div className="app">
       {/* Theater Curtain Elements - Show on views with animation */}
-      {(['home', 'calendar-2026', 'profile', 'admin-users'].includes(currentView)) && (
+      {(['home', 'calendar-2026', 'bingo-2026', 'profile', 'admin-users'].includes(currentView)) && (
         <>
           <div className={`curtain-right ${curtainAnimating ? 'opening' : ''}`}></div>
           <div className="curtain-valance"></div>
@@ -337,6 +338,8 @@ function AppContent() {
         <AdminUsers />
       ) : currentView === 'calendar-2026' ? (
         <Calendar2026 />
+      ) : currentView === 'bingo-2026' ? (
+        <Bingo2026 />
       ) : currentView === 'about' ? (
         <AboutMe />
       ) : (

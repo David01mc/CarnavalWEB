@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import forumRoutes from './routes/forum.js';
 import taskRoutes, { setDb as setTaskDb } from './routes/tasks.js';
+import bingoRoutes, { setDb as setBingoDb } from './routes/bingo.js';
 import usersRoutes from './routes/users.js';
 import auth from './middleware/auth.js';
 import { createTaskIndexes } from './models/Task.js';
@@ -62,6 +63,9 @@ async function connectDB() {
 
     // Inject db into task routes
     setTaskDb(db);
+
+    // Inject db into bingo routes
+    setBingoDb(db);
   } catch (error) {
     console.error('❌ MongoDB connection error:', error);
     process.exit(1);
@@ -73,6 +77,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/bingo', bingoRoutes);
 
 // GET all Preliminares 2026 data (public)
 app.get('/api/preliminares2026', async (req, res) => {

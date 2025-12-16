@@ -110,6 +110,24 @@
   color: var(--success);
 }
 
+.quick-nav-card.bingo {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.15) 0%, rgba(230, 126, 34, 0.2) 100%);
+  border-color: #FF9800;
+}
+
+.quick-nav-card.bingo::before {
+  background: linear-gradient(135deg, #FF9800 0%, #E67E22 100%);
+}
+
+.quick-nav-card.bingo:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(255, 152, 0, 0.3);
+}
+
+.quick-nav-card.bingo .quick-nav-icon {
+  color: #FF9800;
+}
+
 .quick-nav-card.ia {
   background: linear-gradient(135deg, rgba(156, 39, 176, 0.15) 0%, rgba(123, 31, 162, 0.2) 100%);
   border-color: #9c27b0;

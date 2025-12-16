@@ -153,6 +153,22 @@ function Home({ onViewChange, onSelectAgrupacion }) {
           </button>
 
           <button
+            className="quick-nav-card bingo"
+            onClick={() => onViewChange && onViewChange('bingo-2026')}
+          >
+            <div className="quick-nav-icon">
+              <i className="fas fa-th"></i>
+            </div>
+            <div className="quick-nav-content">
+              <h3>Bingo 2026</h3>
+              <p>¿Cuántos clichés encuentras?</p>
+            </div>
+            <div className="quick-nav-arrow">
+              <i className="fas fa-arrow-right"></i>
+            </div>
+          </button>
+
+          <button
             className="quick-nav-card ia wip"
             disabled
           >

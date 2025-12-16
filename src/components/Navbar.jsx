@@ -79,6 +79,14 @@ function Navbar({ onViewChange, onLoginClick, onRegisterClick, currentView }) {
                         <span>Foro</span>
                     </button>
 
+                    <button
+                        className={`dropdown-item ${currentView === 'bingo-2026' ? 'active' : ''}`}
+                        onClick={() => handleNavigation('bingo-2026')}
+                    >
+                        <i className="fas fa-th"></i>
+                        <span>Bingo 2026</span>
+                    </button>
+
                     <div className="dropdown-divider"></div>
 
                     {user ? (
