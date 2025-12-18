@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import '../styles/components/author-detail.css';
 
-const AuthorDetailModal = ({ author, onClose }) => {
+const AuthorDetailModal = ({ author, onClose, onAgrupacionClick }) => {
     // Close on escape key and lock body scroll
     useEffect(() => {
         const handleEsc = (e) => {
@@ -63,8 +63,27 @@ const AuthorDetailModal = ({ author, onClose }) => {
                         </div>
                     )}
 
-                    {/* Future: List of agrupaciones by this author could go here */}
-                    {/* For now, just the basic info as requested */}
+                    {/* Agrupaciones del autor */}
+                    {author.agrupaciones_relacionadas && author.agrupaciones_relacionadas.length > 0 && (
+                        <div className="author-section">
+                            <h3><i className="fas fa-theater-masks"></i> Agrupaciones ({author.agrupaciones_relacionadas.filter(a => a && a !== 'No hay').length})</h3>
+                            <div className="author-agrupaciones-list">
+                                {author.agrupaciones_relacionadas
+                                    .filter(name => name && name !== 'No hay')
+                                    .map((name, idx) => (
+                                        <button
+                                            key={idx}
+                                            className="author-agrupacion-tag"
+                                            onClick={() => onAgrupacionClick && onAgrupacionClick(name)}
+                                            title={`Ver ${name}`}
+                                        >
+                                            <i className="fas fa-music"></i>
+                                            {name}
+                                        </button>
+                                    ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

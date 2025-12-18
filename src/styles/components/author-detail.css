@@ -8,8 +8,8 @@
     background: rgba(0, 0, 0, 0.6);
     /* Slightly lighter than main modal to distinguish layers if stacked */
     backdrop-filter: blur(4px);
-    z-index: 1100;
-    /* Higher z-index than AgrupacionDetailModal (1000) */
+    z-index: 10001;
+    /* Higher z-index than AgrupacionDetailModal (9999) to appear on top */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -120,4 +120,37 @@
         transform: scale(1);
         opacity: 1;
     }
+}
+
+/* Author Agrupaciones List */
+.author-agrupaciones-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.author-agrupacion-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--text);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.author-agrupacion-tag i {
+    color: var(--primary-light);
+    font-size: 0.75rem;
+}
+
+.author-agrupacion-tag:hover {
+    background: rgba(var(--primary-rgb), 0.15);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
 }

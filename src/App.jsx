@@ -559,13 +559,31 @@ function AppContent() {
           <AuthorDetailModal
             author={selectedAuthor}
             onClose={() => setSelectedAuthor(null)}
+            onAgrupacionClick={async (name) => {
+              // Search for the agrupacion by name
+              try {
+                const response = await fetch(`${API_URL}/api/agrupaciones?title=${encodeURIComponent(name)}&limit=1`);
+                const data = await response.json();
+                if (data.data && data.data.length > 0) {
+                  // Close author modal and open agrupacion
+                  setSelectedAuthor(null);
+                  setSelectedLyricIndex(null);
+                  setSelectedAgrupacion(data.data[0]);
+                } else {
+                  console.log('Agrupación no encontrada:', name);
+                }
+              } catch (error) {
+                console.error('Error buscando agrupación:', error);
+              }
+            }}
           />
         )}
       </AnimatePresence>
 
       {showForm && (
         <AgrupacionForm
-          item={editingItem}
+          key={editingItem?._id || 'new'}
+          initialData={editingItem}
           onSave={handleSave}
           onCancel={() => {
             setShowForm(false);

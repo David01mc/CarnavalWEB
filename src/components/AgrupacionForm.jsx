@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LyricEditorModal from './LyricEditorModal';
 
 function AgrupacionForm({ initialData, onSave, onCancel }) {
-    const [formData, setFormData] = useState(() => {
-        // Ensure all fields have default values, even if initialData is missing them
+    // Helper function to build form data from initialData
+    const buildFormData = (data) => {
         const defaults = {
             name: '',
             category: '',
@@ -22,24 +22,30 @@ function AgrupacionForm({ initialData, onSave, onCancel }) {
             spotify: []
         };
 
-        // Merge initialData with defaults, ensuring arrays are never undefined
-        if (initialData) {
+        if (data) {
             return {
                 ...defaults,
-                ...initialData,
-                callejera: initialData.callejera || 'No',
-                descripcion: initialData.descripcion || '',
-                caracteristicas: initialData.caracteristicas || [],
-                componentes: initialData.componentes || [],
-                authors: initialData.authors || [],
-                lyrics: initialData.lyrics || [],
-                youtube: initialData.youtube || [],
-                spotify: initialData.spotify || []
+                ...data,
+                callejera: data.callejera || 'No',
+                descripcion: data.descripcion || '',
+                caracteristicas: data.caracteristicas || [],
+                componentes: data.componentes || [],
+                authors: data.authors || [],
+                lyrics: data.lyrics || [],
+                youtube: data.youtube || [],
+                spotify: data.spotify || []
             };
         }
 
         return defaults;
-    });
+    };
+
+    const [formData, setFormData] = useState(() => buildFormData(initialData));
+
+    // Update formData when initialData changes (fixes edit mode not showing existing data)
+    useEffect(() => {
+        setFormData(buildFormData(initialData));
+    }, [initialData]);
 
     // State for Lyric Editor Modal
     const [showLyricEditor, setShowLyricEditor] = useState(false);

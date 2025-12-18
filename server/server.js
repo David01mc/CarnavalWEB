@@ -166,7 +166,7 @@ app.delete('/api/preliminares2026/:id', async (req, res) => {
 // GET all entries (public)
 app.get('/api/agrupaciones', async (req, res) => {
   try {
-    const { title, author, category, year } = req.query;
+    const { title, author, category, year, sort, order } = req.query;
     const query = {};
 
     // Build query conditions
@@ -194,11 +194,38 @@ app.get('/api/agrupaciones', async (req, res) => {
     const skip = (page - 1) * limit;
 
     const total = await db.collection('agrupaciones').countDocuments(query);
-    const agrupaciones = await db.collection('agrupaciones')
-      .find(query)
-      .skip(skip)
-      .limit(limit)
-      .toArray();
+
+    // Default sort by year descending (newest first)
+    const sortField = sort || 'year';
+    const sortOrder = order === 'asc' ? 1 : -1; // Default descending
+
+    let agrupaciones;
+
+    // If sorting by year, use aggregation to convert string to number
+    if (sortField === 'year') {
+      agrupaciones = await db.collection('agrupaciones')
+        .aggregate([
+          { $match: query },
+          {
+            $addFields: {
+              yearNum: { $toInt: { $ifNull: ['$year', '0'] } }
+            }
+          },
+          { $sort: { yearNum: sortOrder, name: 1 } },
+          { $skip: skip },
+          { $limit: limit },
+          { $project: { yearNum: 0 } } // Remove temporary field
+        ])
+        .toArray();
+    } else {
+      // Regular sort for other fields
+      agrupaciones = await db.collection('agrupaciones')
+        .find(query)
+        .sort({ [sortField]: sortOrder })
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+    }
 
     res.json({
       data: agrupaciones,

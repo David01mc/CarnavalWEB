@@ -48,7 +48,7 @@ function LyricEditorModal({ lyrics, onSave, onCancel }) {
             views: '0',
             url: '',
             content: '',
-            features: [],
+            lyrics_features: [],
             last_modification: new Date().toLocaleString('es-ES')
         };
         setEditingLyrics([...editingLyrics, newLyric]);
@@ -78,7 +78,7 @@ function LyricEditorModal({ lyrics, onSave, onCancel }) {
         if (selectedIndex < 0) return;
         setEditingLyrics(prev => prev.map((lyric, i) =>
             i === selectedIndex
-                ? { ...lyric, features: [...(lyric.features || []), ''] }
+                ? { ...lyric, lyrics_features: [...(lyric.lyrics_features || []), ''] }
                 : lyric
         ));
     };
@@ -90,7 +90,7 @@ function LyricEditorModal({ lyrics, onSave, onCancel }) {
             i === selectedIndex
                 ? {
                     ...lyric,
-                    features: (lyric.features || []).map((f, fi) => fi === featureIndex ? value : f)
+                    lyrics_features: (lyric.lyrics_features || []).map((f, fi) => fi === featureIndex ? value : f)
                 }
                 : lyric
         ));
@@ -103,7 +103,7 @@ function LyricEditorModal({ lyrics, onSave, onCancel }) {
             i === selectedIndex
                 ? {
                     ...lyric,
-                    features: (lyric.features || []).filter((_, fi) => fi !== featureIndex)
+                    lyrics_features: (lyric.lyrics_features || []).filter((_, fi) => fi !== featureIndex)
                 }
                 : lyric
         ));
@@ -215,7 +215,7 @@ function LyricEditorModal({ lyrics, onSave, onCancel }) {
                                         <div className="features-section">
                                             <h5><i className="fas fa-tags"></i> Features/Palabras Clave</h5>
                                             <div className="features-list">
-                                                {(currentLyric.features || []).map((feature, fIndex) => (
+                                                {(currentLyric.lyrics_features || []).map((feature, fIndex) => (
                                                     <div key={fIndex} className="feature-item">
                                                         <input
                                                             type="text"

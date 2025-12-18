@@ -152,6 +152,7 @@ const AdminAgrupaciones = () => {
             {/* Use the full AgrupacionForm modal */}
             {showForm && (
                 <AgrupacionForm
+                    key={editingAgrupacion?._id || 'new'}
                     initialData={editingAgrupacion}
                     onSave={handleSave}
                     onCancel={handleCancelForm}

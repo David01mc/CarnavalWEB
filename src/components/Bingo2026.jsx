@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { useAuth } from '../context/AuthContext';
@@ -6,6 +6,9 @@ import BingoCellModal from './BingoCellModal';
 import '../styles/components/bingo.css';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
+
+// Colores de carnaval para las burbujas
+const BUBBLE_COLORS = ['#FFD700', '#FF6347', '#FF1493', '#00CED1', '#9400D3', '#32CD32', '#FFA500'];
 
 function Bingo2026() {
     const { user } = useAuth();
@@ -15,7 +18,65 @@ function Bingo2026() {
     const [error, setError] = useState(null);
     const [selectedCell, setSelectedCell] = useState(null);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [bubbles, setBubbles] = useState([]);
     const isAdmin = user && (user.role === 'admin' || user.isAdmin);
+
+    // Generar burbujas iniciales - movimiento horizontal bidireccional
+    const generateBubbles = useCallback(() => {
+        const newBubbles = [];
+        for (let i = 0; i < 12; i++) {
+            const goingRight = i % 2 === 0; // Alternar dirección
+            newBubbles.push({
+                id: i,
+                y: 10 + Math.random() * 75, // Posición vertical aleatoria
+                size: 35 + Math.random() * 45,
+                color: BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)],
+                duration: 25 + Math.random() * 20, // Más lento para suavizar
+                delay: (i * 3) + Math.random() * 5, // Bien escalonadas
+                wobbleAmount: 8 + Math.random() * 15, // Vaivén suave
+                direction: goingRight ? 'right' : 'left'
+            });
+        }
+        setBubbles(newBubbles);
+    }, []);
+
+    useEffect(() => {
+        generateBubbles();
+    }, [generateBubbles]);
+
+    // Explotar burbuja con confetti
+    const popBubble = useCallback((bubble, event) => {
+        event.stopPropagation();
+        const rect = event.currentTarget.getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+        confetti({
+            particleCount: 40,
+            spread: 70,
+            origin: { x, y },
+            colors: [bubble.color, '#FFD700', '#FF6347', '#FF1493'],
+            startVelocity: 25,
+            gravity: 0.7
+        });
+
+        // Remover burbuja y regenerar una nueva
+        setBubbles(prev => {
+            const filtered = prev.filter(b => b.id !== bubble.id);
+            const goingRight = Math.random() > 0.5;
+            const newBubble = {
+                id: Date.now(),
+                y: 10 + Math.random() * 75,
+                size: 35 + Math.random() * 45,
+                color: BUBBLE_COLORS[Math.floor(Math.random() * BUBBLE_COLORS.length)],
+                duration: 25 + Math.random() * 20,
+                delay: 0,
+                wobbleAmount: 8 + Math.random() * 15,
+                direction: goingRight ? 'right' : 'left'
+            };
+            return [...filtered, newBubble];
+        });
+    }, []);
 
     // Fetch template and user data
     const fetchData = useCallback(async () => {
@@ -232,140 +293,203 @@ function Bingo2026() {
     }
 
     return (
-        <div className="bingo-container">
-            <header className="bingo-header">
-                <div className="bingo-header-top">
-                    <motion.h1
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                    >
-                        <i className="fas fa-th"></i> Bingo Carnaval 2026
-                    </motion.h1>
-                    <button
-                        className="btn btn-reset"
-                        onClick={() => setShowResetConfirm(true)}
-                        disabled={markedCount === 0}
-                        title="Resetear Bingo"
-                    >
-                        <i className="fas fa-redo"></i>
-                    </button>
-                </div>
-                <p className="bingo-subtitle">
-                    ¿Cuántos clichés puedes encontrar en las letras?
-                </p>
-            </header>
-
-            {error && (
-                <div className="bingo-error">
-                    <i className="fas fa-exclamation-circle"></i> {error}
-                    <button onClick={() => setError(null)}>×</button>
-                </div>
-            )}
-
-            {/* Progress Bar */}
-            <div className="bingo-progress">
-                <div className="progress-info">
-                    <span>{markedCount} / {totalCells} casillas</span>
-                    <span>{Math.round(progressPercent)}%</span>
-                </div>
-                <div className="progress-bar">
-                    <motion.div
-                        className="progress-fill"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progressPercent}%` }}
-                        transition={{ duration: 0.5 }}
-                    />
-                </div>
-            </div>
-
-            {/* Bingo Grid */}
-            <motion.div
-                className="bingo-grid"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-            >
-                {template?.cells?.map((cell, index) => {
-                    const cellData = getCellData(cell.id);
-                    const isMarked = !!cellData;
-
+        <>
+            {/* Burbujas flotantes decorativas - atraviesan toda la pantalla */}
+            <div className="bubbles-container">
+                {bubbles.map(bubble => {
+                    const isGoingRight = bubble.direction === 'right';
                     return (
                         <motion.div
-                            key={cell.id}
-                            className={`bingo-cell ${isMarked ? 'marked' : ''}`}
-                            onClick={() => handleCellClick(cell)}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.02 }}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                        >
-                            <div className="cell-content">
-                                <span className="cell-title">{cell.title}</span>
-                                {isMarked && (
-                                    <div className="cell-mark">
-                                        <i className="fas fa-check"></i>
-                                    </div>
-                                )}
-                                {isMarked && (
-                                    <div className="cell-info">
-                                        <span className="cell-agrupacion">{cellData.agrupacionName}</span>
-                                        <span className="cell-pase">{cellData.pase}</span>
-                                    </div>
-                                )}
-                            </div>
-                        </motion.div>
+                            key={bubble.id}
+                            className="floating-bubble"
+                            onClick={(e) => popBubble(bubble, e)}
+                            style={{
+                                width: bubble.size,
+                                height: bubble.size,
+                                top: `${bubble.y}%`,
+                                left: isGoingRight ? 0 : 'auto',
+                                right: isGoingRight ? 'auto' : 0,
+                                background: `radial-gradient(circle at 30% 30%, ${bubble.color}99, ${bubble.color}55)`,
+                                boxShadow: `0 0 25px ${bubble.color}66, inset 0 0 25px rgba(255,255,255,0.4)`
+                            }}
+                            initial={{
+                                x: isGoingRight ? '-100px' : '100px',
+                                opacity: 0
+                            }}
+                            animate={{
+                                x: isGoingRight ? 'calc(100vw + 100px)' : 'calc(-100vw - 100px)',
+                                y: [
+                                    `${-bubble.wobbleAmount}px`,
+                                    `${bubble.wobbleAmount}px`,
+                                    `${-bubble.wobbleAmount}px`,
+                                    `${bubble.wobbleAmount}px`,
+                                    `${-bubble.wobbleAmount}px`,
+                                    `${bubble.wobbleAmount}px`
+                                ],
+                                opacity: [0, 0.9, 0.9, 0.9, 0.9, 0]
+                            }}
+                            transition={{
+                                x: {
+                                    duration: bubble.duration,
+                                    delay: bubble.delay,
+                                    repeat: Infinity,
+                                    ease: 'linear'
+                                },
+                                y: {
+                                    duration: bubble.duration / 4,
+                                    delay: bubble.delay,
+                                    repeat: Infinity,
+                                    ease: 'easeInOut'
+                                },
+                                opacity: {
+                                    duration: bubble.duration,
+                                    delay: bubble.delay,
+                                    repeat: Infinity,
+                                    times: [0, 0.03, 0.3, 0.7, 0.97, 1]
+                                }
+                            }}
+                            whileHover={{ scale: 1.3 }}
+                            whileTap={{ scale: 0.7 }}
+                        />
                     );
                 })}
-            </motion.div>
+            </div>
 
-            {/* Reset Confirmation Modal */}
-            <AnimatePresence>
-                {showResetConfirm && (
-                    <motion.div
-                        className="bingo-modal-overlay"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setShowResetConfirm(false)}
-                    >
-                        <motion.div
-                            className="bingo-confirm-modal"
-                            initial={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.9, opacity: 0 }}
-                            onClick={e => e.stopPropagation()}
+            <div className="bingo-container">
+                <header className="bingo-header">
+                    <div className="bingo-header-top">
+                        <motion.h1
+                            initial={{ y: -20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
                         >
-                            <h3><i className="fas fa-exclamation-triangle"></i> ¿Resetear Bingo?</h3>
-                            <p>Se borrarán todas tus casillas marcadas. Esta acción no se puede deshacer.</p>
-                            <div className="confirm-actions">
-                                <button className="btn btn-secondary" onClick={() => setShowResetConfirm(false)}>
-                                    Cancelar
-                                </button>
-                                <button className="btn btn-danger" onClick={handleReset}>
-                                    <i className="fas fa-trash"></i> Sí, Resetear
-                                </button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            <i className="fas fa-th"></i> Bingo Carnaval 2026
+                        </motion.h1>
+                        <button
+                            className="btn btn-reset"
+                            onClick={() => setShowResetConfirm(true)}
+                            disabled={markedCount === 0}
+                            title="Resetear Bingo"
+                        >
+                            <i className="fas fa-redo"></i>
+                        </button>
+                    </div>
+                    <p className="bingo-subtitle">
+                        ¿Cuántos clichés puedes encontrar en las letras?
+                    </p>
+                </header>
 
-            {/* Cell Modal */}
-            <AnimatePresence>
-                {selectedCell && (
-                    <BingoCellModal
-                        cell={selectedCell}
-                        cellData={getCellData(selectedCell.id)}
-                        isAdmin={isAdmin}
-                        onSave={(data) => handleCellSave(selectedCell.id, data)}
-                        onUnmark={() => handleCellUnmark(selectedCell.id)}
-                        onTitleEdit={(newTitle) => handleTitleEdit(selectedCell.id, newTitle)}
-                        onClose={() => setSelectedCell(null)}
-                    />
+                {error && (
+                    <div className="bingo-error">
+                        <i className="fas fa-exclamation-circle"></i> {error}
+                        <button onClick={() => setError(null)}>×</button>
+                    </div>
                 )}
-            </AnimatePresence>
-        </div>
+
+                {/* Progress Bar */}
+                <div className="bingo-progress">
+                    <div className="progress-info">
+                        <span>{markedCount} / {totalCells} casillas</span>
+                        <span>{Math.round(progressPercent)}%</span>
+                    </div>
+                    <div className="progress-bar">
+                        <motion.div
+                            className="progress-fill"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progressPercent}%` }}
+                            transition={{ duration: 0.5 }}
+                        />
+                    </div>
+                </div>
+
+                {/* Bingo Grid */}
+                <motion.div
+                    className="bingo-grid"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    {template?.cells?.map((cell, index) => {
+                        const cellData = getCellData(cell.id);
+                        const isMarked = !!cellData;
+
+                        return (
+                            <motion.div
+                                key={cell.id}
+                                className={`bingo-cell ${isMarked ? 'marked' : ''}`}
+                                onClick={() => handleCellClick(cell)}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.02 }}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
+                                <div className="cell-content">
+                                    <span className="cell-title">{cell.title}</span>
+                                    {isMarked && (
+                                        <div className="cell-mark">
+                                            <i className="fas fa-check"></i>
+                                        </div>
+                                    )}
+                                    {isMarked && (
+                                        <div className="cell-info">
+                                            <span className="cell-agrupacion">{cellData.agrupacionName}</span>
+                                            <span className="cell-pase">{cellData.pase}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </motion.div>
+
+                {/* Reset Confirmation Modal */}
+                <AnimatePresence>
+                    {showResetConfirm && (
+                        <motion.div
+                            className="bingo-modal-overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowResetConfirm(false)}
+                        >
+                            <motion.div
+                                className="bingo-confirm-modal"
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                onClick={e => e.stopPropagation()}
+                            >
+                                <h3><i className="fas fa-exclamation-triangle"></i> ¿Resetear Bingo?</h3>
+                                <p>Se borrarán todas tus casillas marcadas. Esta acción no se puede deshacer.</p>
+                                <div className="confirm-actions">
+                                    <button className="btn btn-secondary" onClick={() => setShowResetConfirm(false)}>
+                                        Cancelar
+                                    </button>
+                                    <button className="btn btn-danger" onClick={handleReset}>
+                                        <i className="fas fa-trash"></i> Sí, Resetear
+                                    </button>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Cell Modal */}
+                <AnimatePresence>
+                    {selectedCell && (
+                        <BingoCellModal
+                            cell={selectedCell}
+                            cellData={getCellData(selectedCell.id)}
+                            isAdmin={isAdmin}
+                            onSave={(data) => handleCellSave(selectedCell.id, data)}
+                            onUnmark={() => handleCellUnmark(selectedCell.id)}
+                            onTitleEdit={(newTitle) => handleTitleEdit(selectedCell.id, newTitle)}
+                            onClose={() => setSelectedCell(null)}
+                        />
+                    )}
+                </AnimatePresence>
+            </div>
+        </>
     );
 }
 
