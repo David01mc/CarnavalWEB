@@ -69,6 +69,12 @@ function AppContent() {
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [selectedLyricIndex, setSelectedLyricIndex] = useState(null);
 
+  // Handle view change with scroll to top
+  const handleViewChange = (view) => {
+    window.scrollTo(0, 0);
+    setCurrentView(view);
+  };
+
   // Deep Linking Effect
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -281,7 +287,7 @@ function AppContent() {
         onLoginClick={() => setShowLogin(true)}
         onRegisterClick={() => setShowRegister(true)}
         currentView={currentView}
-        onViewChange={setCurrentView}
+        onViewChange={handleViewChange}
       />
 
       {showLogin && (
@@ -310,10 +316,10 @@ function AppContent() {
 
       {currentView === 'home' ? (
         <Home
-          onViewChange={setCurrentView}
+          onViewChange={handleViewChange}
           onSelectAgrupacion={(agrupacion) => {
             setSelectedAgrupacion(agrupacion);
-            setCurrentView('collection');
+            handleViewChange('collection');
           }}
         />
       ) : currentView === 'forum' ? (
