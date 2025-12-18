@@ -53,53 +53,50 @@
   pointer-events: none;
 }
 
-.floating-photo.visible {
-  opacity: 0.6;
-  animation: fallingSway 5s ease-in forwards;
+/* Make photos with agrupacion clickable */
+.floating-photo.clickable {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
-.floating-photo.fading {
-  opacity: 0;
-  transition: opacity 1s ease-out;
+.floating-photo.clickable:hover {
+  opacity: 0.9 !important;
+  box-shadow:
+    0 6px 25px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(255, 215, 0, 0.3);
 }
 
-/* Falling with gentle swaying animation */
+/* Falling animation - straight down */
 @keyframes fallingSway {
   0% {
     opacity: 0;
     transform: translateY(0) rotate(var(--initial-rotation, 0deg));
   }
 
-  5% {
+  8% {
     opacity: 0.6;
-    transform: translateY(20px) rotate(var(--initial-rotation, 0deg));
+    transform: translateY(50px) rotate(var(--initial-rotation, 0deg));
   }
 
-  20% {
-    transform: translateY(100px) rotate(calc(var(--initial-rotation, 0deg) + 2deg));
-  }
-
-  35% {
-    transform: translateY(180px) rotate(calc(var(--initial-rotation, 0deg) - 2deg));
-  }
-
-  50% {
-    transform: translateY(280px) rotate(calc(var(--initial-rotation, 0deg) + 1.5deg));
-  }
-
-  65% {
-    transform: translateY(380px) rotate(calc(var(--initial-rotation, 0deg) - 1.5deg));
-  }
-
-  80% {
-    transform: translateY(480px) rotate(calc(var(--initial-rotation, 0deg) + 1deg));
-    opacity: 0.4;
+  90% {
+    opacity: 0.3;
+    transform: translateY(650px) rotate(var(--initial-rotation, 0deg));
   }
 
   100% {
-    transform: translateY(600px) rotate(var(--initial-rotation, 0deg));
+    transform: translateY(700px) rotate(var(--initial-rotation, 0deg));
     opacity: 0;
   }
+}
+
+.floating-photo.visible {
+  opacity: 0.6;
+  animation: fallingSway 8s ease-in-out forwards;
+}
+
+.floating-photo.fading {
+  opacity: 0 !important;
+  transition: opacity 2.5s ease-out;
 }
 
 .floating-photo img {
@@ -458,6 +455,52 @@
 }
 
 /* =========================================
+   Section Separator with GTF Logo
+   ========================================= */
+.section-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 3rem 2rem;
+  background: var(--surface);
+}
+
+.separator-line {
+  flex: 1;
+  max-width: 200px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #FFD700 50%, transparent 100%);
+}
+
+.separator-logo {
+  width: 60px;
+  height: auto;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+.separator-logo:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .section-separator {
+    padding: 2rem 1rem;
+    gap: 1rem;
+  }
+
+  .separator-line {
+    max-width: 80px;
+  }
+
+  .separator-logo {
+    width: 45px;
+  }
+}
+
+/* =========================================
    SECTION: Tipos de Agrupaciones
    ========================================= */
 .section-tipos {
@@ -761,6 +804,7 @@
    SECTION: Contribuir / Call to Action
    ========================================= */
 .section-contribuir {
+  position: relative;
   padding: 5rem 0;
   background: linear-gradient(135deg, rgba(139, 0, 0, 0.2) 0%, rgba(255, 215, 0, 0.1) 100%);
   border-top: 2px solid rgba(255, 215, 0, 0.3);
@@ -768,6 +812,7 @@
   opacity: 0;
   transform: translateY(40px);
   transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 }
 
 .section-contribuir.visible {
@@ -882,6 +927,72 @@
 
 .contribuir-note i {
   color: #FFD700;
+}
+
+/* =========================================
+   Typewriter Ambient Lyrics
+   ========================================= */
+.ambient-typewriter {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: rgba(255, 215, 0, 0.3);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  transition: opacity 1.2s ease;
+  user-select: none;
+  max-width: 250px;
+}
+
+.ambient-typewriter.side-left {
+  text-align: left;
+}
+
+.ambient-typewriter.side-right {
+  text-align: right;
+  transform: translateX(-100%);
+  /* Alinea el final del texto con la posición X */
+}
+
+.ambient-typewriter.typing,
+.ambient-typewriter.visible,
+.ambient-typewriter.deleting {
+  opacity: 1;
+}
+
+.ambient-typewriter.complete {
+  opacity: 0;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: typewriter-blink 0.8s infinite;
+  color: #FFD700;
+}
+
+@keyframes typewriter-blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .ambient-typewriter {
+    font-size: 0.8rem;
+    white-space: normal;
+    max-width: 140px;
+    color: rgba(255, 215, 0, 0.25);
+  }
 }
 
 .footer-curtain-decor {

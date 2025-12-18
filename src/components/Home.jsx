@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import FeaturedAgrupacion from './FeaturedAgrupacion';
+import cfgLogo from '../assets/cfg-logo.png';
 
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/+$/, '');
 
@@ -57,6 +58,67 @@ const FOTOS_NOSTALGICAS = [
   '/carnaval-5.jpg'
 ];
 
+const AMBIENT_PHRASES = [
+  "Me han dicho que la locura...",
+  "En el escalon de cada noche...",
+  "Si caminito de falla...",
+  "Y cuando yo era un tonto...",
+  "Con permiso buenas tardes...",
+  "Tampoco pa ponerse ajín!",
+  "Lo que diga mi mujer...",
+  "Somos la ratatatata...",
+  "Nací una noche plata de carnavales...",
+  "Quien ha dicho ole, quien ha dicho bravo...",
+  "¡Que se le seque la hierbabuena!",
+  "¡Menos trabajo y más Carnaval!",
+  "Come on baby, come on baby...",
+  "Iba por canalejas...",
+  "Un viento de trece años...",
+  "Remueve y remueve que esto se ha acabao...",
+];
+
+// Componente para el efecto de máquina de escribir ambiental
+const TypewriterLyric = ({ phrase, x, y, side, onComplete }) => {
+  const [displayedText, setDisplayedText] = useState('');
+  const [phase, setPhase] = useState('typing');
+
+  useEffect(() => {
+    let timeout;
+    if (phase === 'typing') {
+      if (displayedText.length < phrase.length) {
+        timeout = setTimeout(() => {
+          setDisplayedText(phrase.slice(0, displayedText.length + 1));
+        }, 50 + Math.random() * 80);
+      } else {
+        timeout = setTimeout(() => setPhase('visible'), 800);
+      }
+    } else if (phase === 'visible') {
+      timeout = setTimeout(() => setPhase('deleting'), 1000);
+    } else if (phase === 'deleting') {
+      if (displayedText.length > 0) {
+        timeout = setTimeout(() => {
+          setDisplayedText(prev => prev.slice(0, -1));
+        }, 20 + Math.random() * 30);
+      } else {
+        setPhase('complete');
+      }
+    } else if (phase === 'complete') {
+      timeout = setTimeout(onComplete, 200);
+    }
+    return () => clearTimeout(timeout);
+  }, [displayedText, phase, phrase, onComplete]);
+
+  return (
+    <div
+      className={`ambient-typewriter ${phase} side-${side}`}
+      style={{ left: `${x}%`, top: `${y}%` }}
+    >
+      <span className="typewriter-text">{displayedText}</span>
+      <span className="typewriter-cursor">|</span>
+    </div>
+  );
+};
+
 function Home({ onViewChange, onSelectAgrupacion }) {
   const [featuredAgrupacion, setFeaturedAgrupacion] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -65,56 +127,177 @@ function Home({ onViewChange, onSelectAgrupacion }) {
 
   // Floating photos state
   const [floatingPhotos, setFloatingPhotos] = useState([]);
-  const photoIndexRef = useRef(0);
+  const [agrupacionImages, setAgrupacionImages] = useState([]);
+  const photoIdRef = useRef(0);
 
-  // Generate random position and rotation for a photo (avoiding center)
-  const generatePhotoProps = () => {
-    // Avoid center zone: only left (0-20%) or right (70-90%) sides
-    const isLeft = Math.random() > 0.5;
-    const x = isLeft
-      ? Math.random() * 15          // Left side: 0-15%
-      : 70 + Math.random() * 20;    // Right side: 70-90%
+
+  // Fetch agrupaciones with images from API
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/agrupaciones?limit=200`);
+        if (response.ok) {
+          const data = await response.json();
+          // Filter agrupaciones with valid images and keep full object
+          const agrupacionesWithImages = data.data
+            .filter(a => a.image && a.image.startsWith('http'));
+          if (agrupacionesWithImages.length > 0) {
+            setAgrupacionImages(agrupacionesWithImages);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching agrupacion images:', err);
+      }
+    };
+    fetchImages();
+  }, []);
+
+  // Generate random position and rotation for a photo
+  // Covers the border zone (left, right, and top edges)
+  const generatePhotoProps = (existingPhotos = []) => {
+    // Define spawn zones around the border (avoiding curtains at 0-6% and 94-100%)
+    const zones = [
+      // Left column (after curtain at 10%)
+      { x: [12, 22], y: [5, 70] },
+      // Right column (before curtain at 90%)
+      { x: [75, 87], y: [5, 70] },
+      // Top row (avoiding center content)
+      { x: [22, 38], y: [2, 15] },
+      { x: [62, 78], y: [2, 15] },
+    ];
+
+    // Pick a random zone
+    const zone = zones[Math.floor(Math.random() * zones.length)];
+
+    // Generate position within zone
+    let x = zone.x[0] + Math.random() * (zone.x[1] - zone.x[0]);
+    let y = zone.y[0] + Math.random() * (zone.y[1] - zone.y[0]);
+
+    // Try to avoid overlapping with existing photos
+    for (let attempts = 0; attempts < 5; attempts++) {
+      const tooClose = existingPhotos.some(p =>
+        Math.abs(p.x - x) < 12 && Math.abs(p.y - y) < 15
+      );
+      if (!tooClose) break;
+      // Try a different position
+      const newZone = zones[Math.floor(Math.random() * zones.length)];
+      x = newZone.x[0] + Math.random() * (newZone.x[1] - newZone.x[0]);
+      y = newZone.y[0] + Math.random() * (newZone.y[1] - newZone.y[0]);
+    }
+
+    // Use agrupacion data if available, fallback to static images
+    let src, agrupacion = null;
+    if (agrupacionImages.length > 0) {
+      const randomAgrupacion = agrupacionImages[Math.floor(Math.random() * agrupacionImages.length)];
+      src = randomAgrupacion.image;
+      agrupacion = randomAgrupacion;
+    } else {
+      src = FOTOS_NOSTALGICAS[Math.floor(Math.random() * FOTOS_NOSTALGICAS.length)];
+    }
 
     return {
-      id: Date.now() + Math.random(),
-      src: FOTOS_NOSTALGICAS[photoIndexRef.current % FOTOS_NOSTALGICAS.length],
+      id: photoIdRef.current++,
+      src,
+      agrupacion,
       x,
-      y: 5 + Math.random() * 25,    // Start near top: 5-30%
+      y,
       rotation: -15 + Math.random() * 30, // -15 to +15 degrees
       visible: true
     };
   };
 
+  // Get max photos based on screen width
+  const getMaxPhotos = () => {
+    return window.innerWidth <= 768 ? 3 : 6;
+  };
+
   // Floating photos animation effect
   useEffect(() => {
-    // Add first photo after a short delay
-    const initialTimeout = setTimeout(() => {
-      const initialPhoto = generatePhotoProps();
-      setFloatingPhotos([initialPhoto]);
-      photoIndexRef.current++;
-    }, 1000);
+    // Wait for images to be loaded
+    const startDelay = setTimeout(() => {
+      // Add first photo
+      setFloatingPhotos([generatePhotoProps([])]);
+    }, 1500);
 
     const interval = setInterval(() => {
-      const newPhoto = generatePhotoProps();
-      photoIndexRef.current++;
-
       setFloatingPhotos(prev => {
-        // Mark old photos as fading
-        const updated = prev.map(p => ({ ...p, visible: false }));
-        return [...updated.slice(-1), newPhoto];
+        const maxPhotos = getMaxPhotos();
+        // Keep only visible photos up to max limit
+        const activePhotos = prev.filter(p => p.visible).slice(-(maxPhotos - 1));
+        // Add new photo avoiding overlaps
+        return [...activePhotos, generatePhotoProps(activePhotos)];
       });
 
-      // Clean up old photos after animation completes
+      // Mark oldest photo as fading after 6 seconds
+      setTimeout(() => {
+        setFloatingPhotos(prev => {
+          if (prev.length > 0) {
+            const [oldest, ...rest] = prev;
+            return [{ ...oldest, visible: false }, ...rest];
+          }
+          return prev;
+        });
+      }, 6000);
+
+      // Remove faded photos after transition completes (3s after fading)
       setTimeout(() => {
         setFloatingPhotos(prev => prev.filter(p => p.visible));
-      }, 6000);
-    }, 5000); // New photo every 5 seconds
+      }, 9500);
+    }, 2500); // New photo every 2.5 seconds
 
     return () => {
-      clearTimeout(initialTimeout);
+      clearTimeout(startDelay);
       clearInterval(interval);
     };
+  }, [agrupacionImages]);
+
+  // Efecto ambiental de letras tipo máquina de escribir para la sección de contribución
+  const [ambientLyrics, setAmbientLyrics] = useState([]);
+  const lastPhraseIndex = useRef(-1);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAmbientLyrics(prev => {
+        // Limpiar frases completadas automáticamente si hay exceso (seguridad)
+        const activeLyrics = prev.length;
+
+        // Si ya hay 4 o más, no añadir nueva
+        if (activeLyrics >= 4) return prev;
+
+        // Si hay menos de 2, forzar añadir. Si hay entre 2 y 4, añadir aleatoriamente.
+        // Pero siempre intentar mantener al menos 2.
+        if (activeLyrics >= 2 && Math.random() > 0.6) return prev;
+
+        // Filtrar frases que ya están mostrándose para no repetir
+        const currentPhrases = prev.map(l => l.phrase);
+        const availablePhrases = AMBIENT_PHRASES.filter(p => !currentPhrases.includes(p));
+
+        // Si no hay frases disponibles (raro), no hacer nada
+        if (availablePhrases.length === 0) return prev;
+
+        // Elegir una frase aleatoria de las disponibles
+        const randomIndex = Math.floor(Math.random() * availablePhrases.length);
+        const selectedPhrase = availablePhrases[randomIndex];
+        lastPhraseIndex.current = AMBIENT_PHRASES.indexOf(selectedPhrase);
+
+        const isLeft = Math.random() > 0.5;
+        const newLyric = {
+          id: Date.now(),
+          phrase: selectedPhrase,
+          x: isLeft ? 12 + Math.random() * 13 : 75 + Math.random() * 12,
+          y: 10 + Math.random() * 70,
+          side: isLeft ? 'left' : 'right'
+        };
+        return [...prev, newLyric];
+      });
+    }, 2500); // Comprobar más frecuentemente para mantener el flujo constante
+
+    return () => clearInterval(interval);
   }, []);
+
+  const handleLyricComplete = (id) => {
+    setAmbientLyrics(prev => prev.filter(l => l.id !== id));
+  };
 
   // Intersection Observer for scroll animations
   useEffect(() => {
@@ -209,14 +392,20 @@ function Home({ onViewChange, onSelectAgrupacion }) {
           {floatingPhotos.map((photo) => (
             <div
               key={photo.id}
-              className={`floating-photo ${photo.visible ? 'visible' : 'fading'}`}
+              className={`floating-photo ${photo.visible ? 'visible' : 'fading'} ${photo.agrupacion ? 'clickable' : ''}`}
               style={{
                 left: `${photo.x}%`,
                 top: `${photo.y}%`,
                 '--initial-rotation': `${photo.rotation}deg`
               }}
+              onClick={() => {
+                if (photo.agrupacion && onSelectAgrupacion) {
+                  onSelectAgrupacion(photo.agrupacion);
+                }
+              }}
+              title={photo.agrupacion ? `${photo.agrupacion.name} (${photo.agrupacion.year})` : ''}
             >
-              <img src={photo.src} alt="Carnaval de Cádiz" />
+              <img src={photo.src} alt={photo.agrupacion?.name || 'Carnaval de Cádiz'} />
             </div>
           ))}
         </div>
@@ -304,6 +493,13 @@ function Home({ onViewChange, onSelectAgrupacion }) {
           </div>
         </div>
       </section>
+
+      {/* Decorative Separator with CFG Logo */}
+      <div className="section-separator">
+        <div className="separator-line"></div>
+        <img src={cfgLogo} alt="Carnaval de Cádiz" className="separator-logo" />
+        <div className="separator-line"></div>
+      </div>
 
       {/* ============================================
           SECTION: Tipos de Agrupaciones
@@ -463,6 +659,17 @@ function Home({ onViewChange, onSelectAgrupacion }) {
         ref={(el) => (sectionRefs.current['contribuir-section'] = el)}
       >
         <div className="contribuir-container">
+          {/* Ambient Typewriter Lyrics */}
+          {ambientLyrics.map(lyric => (
+            <TypewriterLyric
+              key={lyric.id}
+              phrase={lyric.phrase}
+              x={lyric.x}
+              y={lyric.y}
+              side={lyric.side}
+              onComplete={() => handleLyricComplete(lyric.id)}
+            />
+          ))}
           <div className="contribuir-icon">
             <i className="fas fa-hand-holding-heart"></i>
           </div>
